@@ -329,6 +329,16 @@ export const mockExams: Exam[] = [
     notes: 'Llevar tabla oficial de transformadas de Laplace sin anotaciones adicionales.',
     topics: ['Transformada de Laplace', 'Problemas con valor inicial', 'Convolución'],
   },
+  {
+    id: 'exam-mat3-p2',
+    subjectId: 'sub-mat-3',
+    title: 'Parcial 2: Transformadas de Laplace y Sistemas Lineales',
+    date: `${addDays(21)}T07:00:00`,
+    weight: 20,
+    location: 'Edificio E · Salón 102',
+    notes: 'Llevar tabla oficial de transformadas de Laplace sin anotaciones adicionales.',
+    topics: ['Transformada de Laplace', 'Problemas con valor inicial', 'Convolución'],
+  },
 
   // Academic Communication II (Final Test: 30%, Project: 35%)
   {
