@@ -56,40 +56,78 @@ RECALCULA ──► Al completar la sesión, actualiza el estado académico y aj
 
 ```mermaid
 flowchart TD
-    A[⚙️ Onboarding Inteligente] -->|Jasper Icesi / OCR / Plantillas| B[(IndexedDB Local-First)]
-    B --> C[📅 Horario Semanal Interactivo]
-    B --> D[⏱️ Rutinas Fijas & Compromisos]
-    C & D --> E[🧠 Motor Académico Determinístico]
+    A[Onboarding Inteligente] -->|Jasper Icesi / OCR / Plantillas| B[(IndexedDB Local-First)]
+    B --> C[Horario Semanal Interactivo]
+    B --> D[Rutinas Fijas & Compromisos]
+    C & D --> E[Motor Académico Determinístico]
     E --> F{¿Dónde estoy ahora?}
     F -->|En Clase| G[Ver tiempo restante & aula física]
-    F -->|En Hueco Libre| H[💡 ¿Qué hago ahora? - Acción Prioritaria]
+    F -->|En Hueco Libre| H[¿Qué hago ahora? - Acción Prioritaria]
     F -->|Descanso| I[Recarga & Planificación de Siguiente Hito]
-    H --> J[🎯 Sesión Pomodoro Adaptativa]
+    H --> J[Sesión Pomodoro Adaptativa]
     J -->|Completado / Parcial| B
-    B -.->|Sincronización Opcional| K[(☁️ Supabase Cloud PostgreSQL + RLS)]
+    B -.->|Sincronización Opcional| K[(Supabase Cloud PostgreSQL + RLS)]
 ```
 
 ---
 
 ## 3. Características Principales
 
-### 3.1. Asistente de Configuración Inicial (Onboarding Inteligente)
-* **Ingesta Oficial Jasper / Banner de Icesi:** Extrae de forma automática perfil del estudiante (`Luis Ernesto Rodríguez Gurrute`), código (`A00414805`), programa (`Ingeniería Industrial`), GPA histórico (`4.3`), y carga todas las materias activas (`CFT 11373`, `CFT 11370`, `IND 05359`, `CFT 11356`, `IND 05358`) con horarios y aulas.
-* **Reconocimiento Óptico (OCR de Imágenes):** Permite arrastrar capturas de pantalla de horarios (`.png`, `.jpg`, `.webp`) procesadas localmente.
-* **Catálogo de Plantillas Oficiales Icesi:** Programas calibrados listos para usar en un clic (Ingeniería Industrial, Sistemas, Administración y Medicina).
-* **Creador Paso a Paso:** Wizard manual para estructurar el semestre desde cero.
+### 3.1. Asistente de Configuración Inicial (Onboarding Inteligente de 3 Pasos)
 
-### 3.2. Horario Semanal Interactivo & Rutinas Fijas
+El flujo de bienvenida guía al estudiante en menos de 60 segundos desde la personalización de su perfil hasta un semestre completamente modelado:
+
+* **Paso 1: Identidad & Programa Académico:** Configuración de nombre, código estudiantil y selección del programa oficial de pregrado entre 10 carreras de la Universidad Icesi.
+* **Paso 2: Magic Drop & Carga Rápida de Horario:**
+  * **Magic Drop (Ctrl+V / Cmd+V):** Zona de captura universal con detección de pegado directo desde el portapapeles. Procesa reportes de matrícula en texto plano o HTML extraídos de Jasper/Banner.
+  * **Catálogo Determinístico de NRCs:** Reconocimiento de códigos NRC contra el catálogo oficial de Icesi (`nrcCatalog.ts`), completando automáticamente nombre de materia, salón físico, profesor y créditos académicos sin depender de APIs externas ni cuotas de IA.
+  * **Catálogo de 10 Plantillas Oficiales Icesi:** Carga instantánea en 1 clic de semestres calibrados con materias reales, créditos y aulas asignadas:
+    1. *Ingeniería Industrial* (Fundamentos de Optimización, Gestión de Operaciones, Termofluidos, Ergonomía, Finanzas).
+    2. *Ingeniería de Sistemas* (Estructuras de Datos, Arquitectura de Software, Bases de Datos, Redes, Cálculo Multivariado).
+    3. *Economía y Negocios Internacionales* (Microeconomía Intermedia, Macroeconomía, Econometría, Comercio Internacional).
+    4. *Ingeniería Telemática* (Protocolos de Comunicación, Redes Ópticas, Seguridad en Redes, Sistemas Distribuidos).
+    5. *Diseño de Medios Interactivos (DMI)* (Taller de Experiencia de Usuario, Programación Creativa, Modelado 3D, Narrativa Transmedia).
+    6. *Administración de Empresas* (Contabilidad Gerencial, Mercadeo Estratégico, Gestión de Talento, Teoría Organizacional).
+    7. *Medicina* (Anatomía Clínica, Fisiología Humana, Bioquímica Médica, Histología, Embriología Médica).
+    8. *Biología* (Biología Celular, Genética General, Ecología de Poblaciones, Botánica Aplicada, Zoología).
+    9. *Derecho* (Derecho Constitucional Colombiano, Obligaciones Civiles, Derecho Penal General, Teoría del Estado).
+    10. *Psicología* (Procesos Cognitivos, Psicología del Desarrollo, Neuropsicología, Métodos de Investigación).
+  * **Reconocimiento Óptico (OCR Local de Imágenes):** Arrastra o pega capturas de pantalla de horarios (.png, .jpg, .webp) procesadas localmente en el cliente.
+  * **Configurador Manual Asistido:** Wizard paso a paso para estudiantes que deseen estructurar su horario desde cero.
+* **Paso 3: Revelación de Valor & Diagnóstico Inicial:** Muestra antes de ingresar al dashboard el diagnóstico de horas libres netas, huecos de estudio aprovechables y alertas de asignaturas de alto riesgo.
+
+### 3.2. Panel de Control y Revelación Progresiva (Progressive Disclosure)
+
+* **Enfoque Inteligente por Materia:** En lugar de saturar al estudiante con información simultánea, el radar identifica la asignatura prioritaria ("Tu Enfoque") según proximidad de exámenes, porcentaje en juego y notas registradas, mostrando su explicación causal detallada.
+* **Agrupación Limpia de Materias Estables:** Las asignaturas bajo control o sin riesgo inmediato se colapsan ordenadamente con un interruptor para inspección rápida, reduciendo la fatiga de decisión.
+* **Tarjeta de Acción Inmediata (NowActionCard):** Explica exactamente qué hacer en el bloque actual: estudiar en un hueco de tiempo, dirigirse al aula de la siguiente clase o tomar un descanso regenerativo.
+* **Sesión Pomodoro Integrada:** Un clic para entrar en modo de estudio concentrado con temporizador adaptativo sincronizado con la tarea activa.
+
+### 3.3. Herramientas de Productividad Universitaria
+
+* **Compartir Semestre en 1 Clic (WhatsApp & Enlace Base64):**
+  * Generación instantánea de reporte textual formateado para WhatsApp con el listado de materias, créditos, códigos NRC y carga semanal.
+  * Enlace portable con estado de configuración codificado en Base64 para respaldo o visualización rápida.
+* **Selector Rápido de Carrera (+ Cambiar):** Acceso permanente en la barra lateral para alternar entre los 10 programas oficiales de Icesi o reiniciar el asistente de configuración desde cero.
+* **Buzón Rápido Estilo Mensajería (Atajo ⌘K / Ctrl+K):**
+  * Captura ultrarrápida de eventos, quizes, talleres y notas mediante lenguaje natural.
+  * Entrada optimizada con chips de ejemplo y confirmación directa con la tecla Enter.
+  * Procesamiento híbrido: análisis determinístico local prioritario y respaldo mediante servidor de extracción inteligente.
+
+### 3.4. Horario Semanal Interactivo & Rutinas Fijas
+
 * Edición integral en vivo: nombre de materia, código NRC, profesor, color distintivo, límite de inasistencias y salón físico.
 * Bloques de tiempo fijos para compromisos cotidianos: **almuerzo, gimnasio, traslados y trabajo**.
 * Control de inasistencias por clase con radar preventivo de pérdida de materia por faltas.
 
-### 3.3. Motor Académico Determinístico Puro
+### 3.5. Motor Académico Determinístico Puro
+
 * **Cálculo de Huecos Libres (`calculateFreeSlots`):** Divide los espacios entre clases descontando tiempos de traslado y margen personal.
 * **Radar de Riesgo Causal (`calculateRisk`):** Analiza notas acumuladas, peso del próximo examen, faltas restantes y proximidad de entregas.
 * **Detección de Conflictos (`detectConflicts`):** Previene solapamientos de clases o actividades fijas.
 
-### 3.4. Sincronización en la Nube con Supabase (PostgreSQL + RLS)
+### 3.6. Sincronización en la Nube con Supabase (PostgreSQL + RLS)
+
 * Arquitectura **Local-First**: Operatividad 100% offline garantizada en el navegador con Dexie.js.
 * Respaldo y restauración en la nube con Supabase Auth y PostgreSQL.
 * Seguridad garantizada mediante **Row Level Security (RLS)**: Cada estudiante solo puede leer y modificar sus propios datos mediante `auth.uid()`.
@@ -110,7 +148,7 @@ El proyecto fue auditado exhaustivamente bajo el estándar **OWASP 2025 Top 10**
 | **Protección en Base de Datos** | Políticas RLS estrictas en todas las tablas | Conforme |
 
 El informe completo de seguridad se encuentra disponible en:  
-📄 [cyber-neo-report.md](cyber-neo-report.md)
+[cyber-neo-report.md](cyber-neo-report.md)
 
 ---
 
@@ -132,10 +170,10 @@ El informe completo de seguridad se encuentra disponible en:
 │   │   └── layout.tsx                    # Shell del sistema y modales diferidos
 │   │
 │   ├── components/
-│   │   ├── dashboard/                    # NowActionCard, DecisionHeroCard, Widgets
-│   │   ├── layout/                       # Sidebar institucional, TopHeader, MobileNav
-│   │   ├── modals/
-│   │   │   └── GlobalModals.tsx          # Carga diferida dinámica de los 9 modales (Client Component)
+│   │   ├── dashboard/                    # NowActionCard, DecisionHeroCard, Widgets con Progressive Disclosure
+│   │   ├── layout/                       # Sidebar con selector de carrera, TopHeader con compartir
+│   │   ├── modals/                       # Modales globales: ShareSemesterModal, CareerSwitchModal, InboxModal
+│   │   ├── onboarding/                   # Asistente de 3 pasos: OnboardingFlow, Magic Drop, preview de carrera
 │   │   ├── schedule/SmartTimetable.tsx   # Rejilla horaria interactiva con rutinas y clases
 │   │   └── radar/RiskCard.tsx            # Visualización cuantitativa del riesgo académico
 │   │
@@ -144,7 +182,8 @@ El informe completo de seguridad se encuentra disponible en:
 │   │
 │   ├── lib/
 │   │   ├── academic-engine/              # Lógica de cálculo pura sin dependencias de UI
-│   │   ├── importer/                     # Parser Jasper Icesi y OCR de horarios
+│   │   ├── importer/                     # Parser Jasper Icesi, OCR y catálogo de NRCs (nrcCatalog.ts)
+│   │   ├── templates/                    # Catálogo de 10 plantillas oficiales Icesi (academicTemplates.ts)
 │   │   ├── storage/                      # Repositorios tipados en IndexedDB (Dexie.js)
 │   │   └── supabase/                     # Cliente singleton y servicio de sincronización cloud
 │   │
