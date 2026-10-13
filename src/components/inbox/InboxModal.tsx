@@ -170,39 +170,75 @@ export function InboxModal() {
 
         {/* Body */}
         <div className="p-5 overflow-y-auto flex-1 space-y-4">
-          {/* Input caótico */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-[var(--ink-secondary)] block">
-              Pega cualquier mensaje o apunte aquí:
-            </label>
-            <textarea
-              value={rawText}
-              onChange={(e) => setRawText(e.target.value)}
-              placeholder="Ejemplo: 'Muchachos el parcial de estadística quedó para el 24 a las 2, vale 20%. El ejercicio 3 se entrega mañana en parejas.'"
-              rows={3}
-              className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-2xl p-3.5 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-indigo-500 transition-colors resize-none font-sans leading-relaxed"
-            />
+          {/* Input estilo mensaje de chat/WhatsApp */}
+          <div className="space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-[var(--muted)]">
-                Atajo rápido: <kbd className="font-mono bg-[var(--paper)] px-1.5 py-0.5 rounded border border-[var(--border)] text-[10px]">⌘K</kbd>
+              <label className="text-xs font-bold text-[var(--ink-secondary)] flex items-center gap-1.5">
+                <span>Escribe o pega como si fuera un chat de WhatsApp:</span>
+              </label>
+              <span className="text-[10px] font-mono font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-md">
+                ⚡ Detección automática en 0.05s
               </span>
+            </div>
+
+            <div className="relative">
+              <textarea
+                value={rawText}
+                onChange={(e) => setRawText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey && rawText.trim()) {
+                    e.preventDefault();
+                    handleProcess();
+                  }
+                }}
+                placeholder="Ej: 'Parcial de Anatomía el próximo jueves a las 7am vale 30%' o 'Taller de Vías Metabólicas para mañana a las 11pm'..."
+                rows={2}
+                className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-2xl p-3.5 pr-24 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-indigo-500 transition-colors resize-none font-sans leading-relaxed"
+              />
               <button
                 onClick={handleProcess}
                 disabled={isProcessing || !rawText.trim()}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+                className="absolute right-2.5 bottom-3 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
               >
                 {isProcessing ? (
                   <>
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Analizando...</span>
+                    <span>...</span>
                   </>
                 ) : (
                   <>
                     <Send className="w-3.5 h-3.5" />
-                    <span>Procesar en Buzón</span>
+                    <span>Enviar</span>
                   </>
                 )}
               </button>
+            </div>
+
+            {/* Chips de prueba rápida estilo WhatsApp */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+              <span className="text-[10px] text-[var(--muted)] font-mono">Ejemplos:</span>
+              {[
+                'Parcial el próximo jueves 7am vale 25%',
+                'Taller en parejas para este viernes 11pm',
+                'Quiz sorpresa mañana a las 9am',
+              ].map((chip) => (
+                <button
+                  key={chip}
+                  type="button"
+                  onClick={() => {
+                    setRawText(chip);
+                    // auto process
+                    setTimeout(() => {
+                      const fallback = preprocessInboxText(chip, enrolledContext, new Date());
+                      setExtractedItems(fallback);
+                      setSourceEngine('preprocessor');
+                    }, 50);
+                  }}
+                  className="text-[10px] px-2.5 py-1 rounded-lg bg-[var(--paper)] border border-[var(--border)] text-[var(--ink-secondary)] hover:text-indigo-500 hover:border-indigo-500/40 transition-colors cursor-pointer"
+                >
+                  + &quot;{chip}&quot;
+                </button>
+              ))}
             </div>
           </div>
 
