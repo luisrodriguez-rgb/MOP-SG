@@ -51,6 +51,14 @@ const CommandPalette = dynamic(
   () => import('@/components/command/CommandPalette').then((m) => m.CommandPalette),
   { ssr: false }
 );
+const ShareSemesterModal = dynamic(
+  () => import('@/components/modals/ShareSemesterModal').then((m) => m.ShareSemesterModal),
+  { ssr: false }
+);
+const CareerSwitchModal = dynamic(
+  () => import('@/components/modals/CareerSwitchModal').then((m) => m.CareerSwitchModal),
+  { ssr: false }
+);
 
 export function GlobalModals() {
   return (
@@ -67,6 +75,8 @@ export function GlobalModals() {
       <InboxModal />
       <CalendarImportModal />
       <CommandPalette />
+      <ShareSemesterModal />
+      <CareerSwitchModal />
     </>
   );
 }

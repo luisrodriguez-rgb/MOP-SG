@@ -11,6 +11,7 @@ import {
   Bell,
   Sparkles,
   Timer,
+  Share2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
@@ -23,6 +24,7 @@ export function TopHeader() {
     openProfile,
     openInbox,
     openCalendarModal,
+    openShareModal,
     focusSession,
     tickFocusSession,
     togglePauseFocus,
@@ -162,6 +164,16 @@ export function TopHeader() {
 
           {/* Theme Toggle */}
           <ThemeToggle />
+
+          {/* Botón Compartir Semestre (WhatsApp / Enlace) */}
+          <button
+            onClick={openShareModal}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
+            title="Compartir semestre por WhatsApp o enlace portátil"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Compartir</span>
+          </button>
 
           {/* Botón Buzón Inteligente ⌘K */}
           <button
