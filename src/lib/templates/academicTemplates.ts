@@ -449,4 +449,320 @@ export const ACADEMIC_TEMPLATES: AcademicTemplate[] = [
     ],
     attendance: [],
   },
+
+  // 6. INGENIERÍA TELEMÁTICA - SEMESTRE 4
+  {
+    id: 'template-telematica-4',
+    name: 'Ingeniería Telemática · Semestre 4',
+    faculty: 'Facultad de Ingeniería, Diseño y Ciencias Aplicadas',
+    semesterNumber: 4,
+    badge: 'Telemática',
+    description: 'Redes de Comunicación I, Sistemas Distribuidos, Arquitectura de Computadores y Probabilidad.',
+    profile: {
+      id: 'profile-tel',
+      name: 'Estudiante de Telemática',
+      studentCode: 'A00481234',
+      documentId: '1105432198',
+      university: 'Universidad Icesi',
+      program: 'Ingeniería Telemática',
+      semesterNumber: 4,
+      cohort: '202510',
+      gpa: 4.4,
+      avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Telematica%20Icesi',
+    },
+    semester: {
+      id: 'sem-2026-2-telematica',
+      userId: 'profile-tel',
+      name: 'Semestre 2026-2 (Ingeniería Telemática)',
+      startDate: '2026-08-03',
+      endDate: '2026-12-05',
+      totalWeeks: 16,
+      isActive: true,
+    },
+    subjects: [
+      { id: 'sub-tel-redes', semesterId: 'sem-2026-2-telematica', code: 'TEL 08201', name: 'Redes de Comunicación I', credits: 4, professor: 'Ing. Álvaro Rendón', color: '#0284c7', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-tel-dist', semesterId: 'sem-2026-2-telematica', code: 'SIS 08310', name: 'Sistemas Distribuidos', credits: 4, professor: 'Dr. Andrés Delgado', color: '#3b3abf', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-tel-arqui', semesterId: 'sem-2026-2-telematica', code: 'TEL 08205', name: 'Arquitectura de Computadores', credits: 3, professor: 'MSc. Julián Moreno', color: '#7c3aed', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-tel-prob', semesterId: 'sem-2026-2-telematica', code: 'CFT 11375', name: 'Probabilidad y Estadística', credits: 3, professor: 'Dra. María Elena Restrepo', color: '#ea580c', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-tel-mat', semesterId: 'sem-2026-2-telematica', code: 'MAT 08320', name: 'Matemáticas Especiales', credits: 4, professor: 'Dr. Diego Fernando Cruz', color: '#0d9488', maxAbsences: 5, passingGrade: 3.0 },
+    ],
+    scheduleBlocks: [
+      { id: 'sb-tel-red-1', subjectId: 'sub-tel-redes', dayOfWeek: 1, startTime: '07:00', endTime: '09:00', location: 'Laboratorio de Redes y Telecomunicaciones' },
+      { id: 'sb-tel-red-2', subjectId: 'sub-tel-redes', dayOfWeek: 3, startTime: '07:00', endTime: '09:00', location: 'Laboratorio de Redes y Telecomunicaciones' },
+      { id: 'sb-tel-dist-1', subjectId: 'sub-tel-dist', dayOfWeek: 2, startTime: '09:00', endTime: '11:00', location: 'Edificio C Sala 204' },
+      { id: 'sb-tel-dist-2', subjectId: 'sub-tel-dist', dayOfWeek: 4, startTime: '09:00', endTime: '11:00', location: 'Edificio C Sala 204' },
+      { id: 'sb-tel-arq-1', subjectId: 'sub-tel-arqui', dayOfWeek: 1, startTime: '11:00', endTime: '13:00', location: 'Salón 102B' },
+      { id: 'sb-tel-arq-2', subjectId: 'sub-tel-arqui', dayOfWeek: 3, startTime: '11:00', endTime: '13:00', location: 'Salón 102B' },
+      { id: 'sb-tel-prob-1', subjectId: 'sub-tel-prob', dayOfWeek: 2, startTime: '14:00', endTime: '16:00', location: 'Edificio D Aula 302' },
+      { id: 'sb-tel-mat-1', subjectId: 'sub-tel-mat', dayOfWeek: 5, startTime: '08:00', endTime: '11:00', location: 'Auditorio Varela' },
+    ],
+    routines: [],
+    exams: [
+      { id: 'ex-tel-red-1', subjectId: 'sub-tel-redes', title: 'Parcial 1: Modelo OSI, TCP/IP y Subnetting', date: addDays(4), weight: 25 },
+      { id: 'ex-tel-dist-1', subjectId: 'sub-tel-dist', title: 'Parcial 1: Comunicación RPC y Algoritmos de Consenso', date: addDays(11), weight: 25 },
+    ],
+    assignments: [
+      { id: 'as-tel-red-1', subjectId: 'sub-tel-redes', title: 'Topología Packet Tracer: VLANs y Enrutamiento OSPF', dueDate: addDays(2), estimatedMinutes: 90, priority: 'high', status: 'pending' },
+    ],
+    attendance: [],
+  },
+
+  // 7. DISEÑO DE MEDIOS INTERACTIVOS - SEMESTRE 4
+  {
+    id: 'template-diseno-medios-4',
+    name: 'Diseño de Medios Interactivos · Semestre 4',
+    faculty: 'Facultad de Ingeniería, Diseño y Ciencias Aplicadas',
+    semesterNumber: 4,
+    badge: 'DMI',
+    description: 'Programación Interactiva II, Experiencia de Usuario UX/UI, Modelado 3D y Narrativa Transmedia.',
+    profile: {
+      id: 'profile-dmi',
+      name: 'Estudiante de DMI',
+      studentCode: 'A00490128',
+      documentId: '1106543289',
+      university: 'Universidad Icesi',
+      program: 'Diseño de Medios Interactivos',
+      semesterNumber: 4,
+      cohort: '202510',
+      gpa: 4.5,
+      avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=DMI%20Icesi',
+    },
+    semester: {
+      id: 'sem-2026-2-dmi',
+      userId: 'profile-dmi',
+      name: 'Semestre 2026-2 (Diseño de Medios Interactivos)',
+      startDate: '2026-08-03',
+      endDate: '2026-12-05',
+      totalWeeks: 16,
+      isActive: true,
+    },
+    subjects: [
+      { id: 'sub-dmi-prog', semesterId: 'sem-2026-2-dmi', code: 'DMI 04210', name: 'Programación Interactiva II', credits: 4, professor: 'Ing. Juan Manuel Reyes', color: '#8b5cf6', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-dmi-ux', semesterId: 'sem-2026-2-dmi', code: 'DMI 04225', name: 'Diseño de Experiencia UX/UI', credits: 3, professor: 'Dis. Natalia Gómez', color: '#ec4899', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-dmi-3d', semesterId: 'sem-2026-2-dmi', code: 'DMI 04230', name: 'Modelado y Animación 3D', credits: 4, professor: 'MSc. Andrés Caicedo', color: '#f59e0b', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-dmi-narr', semesterId: 'sem-2026-2-dmi', code: 'DMI 04218', name: 'Narrativa Transmedia', credits: 3, professor: 'Mg. Santiago Rivas', color: '#06b6d4', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-dmi-taller', semesterId: 'sem-2026-2-dmi', code: 'DMI 04250', name: 'Taller de Medios II', credits: 4, professor: 'Dra. Carolina Hoyos', color: '#10b981', maxAbsences: 4, passingGrade: 3.0 },
+    ],
+    scheduleBlocks: [
+      { id: 'sb-dmi-prog-1', subjectId: 'sub-dmi-prog', dayOfWeek: 1, startTime: '09:00', endTime: '12:00', location: 'Laboratorio de Creatividad Digital (Edificio I)' },
+      { id: 'sb-dmi-ux-1', subjectId: 'sub-dmi-ux', dayOfWeek: 2, startTime: '08:00', endTime: '11:00', location: 'Edificio C Sala Mac 1' },
+      { id: 'sb-dmi-3d-1', subjectId: 'sub-dmi-3d', dayOfWeek: 3, startTime: '14:00', endTime: '17:00', location: 'Laboratorio de Animación y Render' },
+      { id: 'sb-dmi-narr-1', subjectId: 'sub-dmi-narr', dayOfWeek: 4, startTime: '10:00', endTime: '12:00', location: 'Edificio B Salón 201' },
+      { id: 'sb-dmi-taller-1', subjectId: 'sub-dmi-taller', dayOfWeek: 5, startTime: '08:00', endTime: '12:00', location: 'Taller Central de Prototipado' },
+    ],
+    routines: [],
+    exams: [
+      { id: 'ex-dmi-ux-1', subjectId: 'sub-dmi-ux', title: 'Entrega Prototipo Funcional Figma & Test de Usabilidad', date: addDays(5), weight: 30 },
+      { id: 'ex-dmi-3d-1', subjectId: 'sub-dmi-3d', title: 'Entrega Modelo 3D Personaje Rigging y Texturizado', date: addDays(14), weight: 25 },
+    ],
+    assignments: [
+      { id: 'as-dmi-prog-1', subjectId: 'sub-dmi-prog', title: 'Videojuego Web Three.js / P5.js: Mecánicas e Interacción', dueDate: addDays(3), estimatedMinutes: 120, priority: 'high', status: 'pending' },
+    ],
+    attendance: [],
+  },
+
+  // 8. DERECHO - SEMESTRE 3
+  {
+    id: 'template-derecho-3',
+    name: 'Derecho · Semestre 3',
+    faculty: 'Facultad de Derecho y Ciencias Sociales',
+    semesterNumber: 3,
+    badge: 'Derecho',
+    description: 'Derecho Constitucional Colombiano, Teoría General del Proceso, Obligaciones I y Penal General.',
+    profile: {
+      id: 'profile-der',
+      name: 'Estudiante de Derecho',
+      studentCode: 'A00472190',
+      documentId: '1104321987',
+      university: 'Universidad Icesi',
+      program: 'Derecho',
+      semesterNumber: 3,
+      cohort: '202520',
+      gpa: 4.3,
+      avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Derecho%20Icesi',
+    },
+    semester: {
+      id: 'sem-2026-2-derecho',
+      userId: 'profile-der',
+      name: 'Semestre 2026-2 (Derecho)',
+      startDate: '2026-08-03',
+      endDate: '2026-12-05',
+      totalWeeks: 16,
+      isActive: true,
+    },
+    subjects: [
+      { id: 'sub-der-const', semesterId: 'sem-2026-2-derecho', code: 'DER 03102', name: 'Derecho Constitucional Colombiano', credits: 4, professor: 'Dr. Rodrigo Uprimny', color: '#b91c1c', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-der-proc', semesterId: 'sem-2026-2-derecho', code: 'DER 03201', name: 'Teoría General del Proceso', credits: 4, professor: 'Dra. Claudia Morales', color: '#d97706', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-der-obliga', semesterId: 'sem-2026-2-derecho', code: 'DER 03215', name: 'Régimen General de Obligaciones I', credits: 4, professor: 'Dr. Hernando Valencia', color: '#1d4ed8', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-der-penal', semesterId: 'sem-2026-2-derecho', code: 'DER 03305', name: 'Derecho Penal General', credits: 3, professor: 'Dr. Alejandro Gómez', color: '#7e22ce', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-der-filo', semesterId: 'sem-2026-2-derecho', code: 'CSO 01210', name: 'Filosofía y Argumentación Jurídica', credits: 3, professor: 'Dra. Helena Alviar', color: '#047857', maxAbsences: 4, passingGrade: 3.0 },
+    ],
+    scheduleBlocks: [
+      { id: 'sb-der-const-1', subjectId: 'sub-der-const', dayOfWeek: 1, startTime: '07:00', endTime: '09:00', location: 'Edificio C Aula 101' },
+      { id: 'sb-der-const-2', subjectId: 'sub-der-const', dayOfWeek: 3, startTime: '07:00', endTime: '09:00', location: 'Edificio C Aula 101' },
+      { id: 'sb-der-proc-1', subjectId: 'sub-der-proc', dayOfWeek: 2, startTime: '09:00', endTime: '11:00', location: 'Sala de Audiencias / Sala de Juicios' },
+      { id: 'sb-der-proc-2', subjectId: 'sub-der-proc', dayOfWeek: 4, startTime: '09:00', endTime: '11:00', location: 'Sala de Audiencias / Sala de Juicios' },
+      { id: 'sb-der-ob-1', subjectId: 'sub-der-obliga', dayOfWeek: 1, startTime: '11:00', endTime: '13:00', location: 'Auditorio Banco de Bogotá' },
+      { id: 'sb-der-ob-2', subjectId: 'sub-der-obliga', dayOfWeek: 3, startTime: '11:00', endTime: '13:00', location: 'Auditorio Banco de Bogotá' },
+      { id: 'sb-der-pen-1', subjectId: 'sub-der-penal', dayOfWeek: 2, startTime: '14:00', endTime: '16:00', location: 'Edificio B Salón 104' },
+      { id: 'sb-der-fil-1', subjectId: 'sub-der-filo', dayOfWeek: 5, startTime: '08:00', endTime: '11:00', location: 'Edificio D Salón 202' },
+    ],
+    routines: [],
+    exams: [
+      { id: 'ex-der-const-1', subjectId: 'sub-der-const', title: 'Parcial Oral: Acción de Tutela y Bloque de Constitucionalidad', date: addDays(4), weight: 30 },
+      { id: 'ex-der-ob-1', subjectId: 'sub-der-obliga', title: 'Parcial Escrito: Fuentes de las Obligaciones y Negocio Jurídico', date: addDays(10), weight: 25 },
+    ],
+    assignments: [
+      { id: 'as-der-proc-1', subjectId: 'sub-der-proc', title: 'Memorial de Demanda: Excepciones Previas y Jurisdicción', dueDate: addDays(2), estimatedMinutes: 90, priority: 'high', status: 'pending' },
+    ],
+    attendance: [],
+  },
+
+  // 9. BIOLOGÍA CON CONCENTRACIÓN EN CONSERVACIÓN - SEMESTRE 3
+  {
+    id: 'template-biologia-3',
+    name: 'Biología · Semestre 3',
+    faculty: 'Facultad de Ciencias Naturales',
+    semesterNumber: 3,
+    badge: 'Biología',
+    description: 'Ecología de Poblaciones, Genética General, Botánica Sistemática y Bioestadística.',
+    profile: {
+      id: 'profile-bio',
+      name: 'Estudiante de Biología',
+      studentCode: 'A00465432',
+      documentId: '1103219876',
+      university: 'Universidad Icesi',
+      program: 'Biología con concentración en Conservación',
+      semesterNumber: 3,
+      cohort: '202520',
+      gpa: 4.4,
+      avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Biologia%20Icesi',
+    },
+    semester: {
+      id: 'sem-2026-2-biologia',
+      userId: 'profile-bio',
+      name: 'Semestre 2026-2 (Biología)',
+      startDate: '2026-08-03',
+      endDate: '2026-12-05',
+      totalWeeks: 16,
+      isActive: true,
+    },
+    subjects: [
+      { id: 'sub-bio-eco', semesterId: 'sem-2026-2-biologia', code: 'BIO 05102', name: 'Ecología de Poblaciones', credits: 4, professor: 'Dr. Gustavo Kattan', color: '#15803d', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-bio-gen', semesterId: 'sem-2026-2-biologia', code: 'BIO 05204', name: 'Genética General y Molecular', credits: 4, professor: 'Dra. Beatriz Salgado', color: '#0369a1', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-bio-bot', semesterId: 'sem-2026-2-biologia', code: 'BIO 05115', name: 'Botánica Sistemática', credits: 4, professor: 'Dr. Philip Silverstone', color: '#a16207', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-bio-campo', semesterId: 'sem-2026-2-biologia', code: 'BIO 05301', name: 'Métodos de Muestreo en Campo', credits: 3, professor: 'MSc. Camilo Peraza', color: '#0f766e', maxAbsences: 3, passingGrade: 3.0 },
+      { id: 'sub-bio-est', semesterId: 'sem-2026-2-biologia', code: 'CFT 11378', name: 'Bioestadística Aplicada', credits: 3, professor: 'Dr. Fernando Ayerbe', color: '#6d28d9', maxAbsences: 4, passingGrade: 3.0 },
+    ],
+    scheduleBlocks: [
+      { id: 'sb-bio-eco-1', subjectId: 'sub-bio-eco', dayOfWeek: 1, startTime: '08:00', endTime: '10:00', location: 'Edificio E Salón 204' },
+      { id: 'sb-bio-eco-2', subjectId: 'sub-bio-eco', dayOfWeek: 3, startTime: '08:00', endTime: '10:00', location: 'Edificio E Salón 204' },
+      { id: 'sb-bio-gen-1', subjectId: 'sub-bio-gen', dayOfWeek: 2, startTime: '10:00', endTime: '12:00', location: 'Laboratorio de Genética y Biología Molecular' },
+      { id: 'sb-bio-gen-2', subjectId: 'sub-bio-gen', dayOfWeek: 4, startTime: '10:00', endTime: '12:00', location: 'Laboratorio de Genética y Biología Molecular' },
+      { id: 'sb-bio-bot-1', subjectId: 'sub-bio-bot', dayOfWeek: 2, startTime: '14:00', endTime: '17:00', location: 'Herbario y Laboratorio de Botánica' },
+      { id: 'sb-bio-est-1', subjectId: 'sub-bio-est', dayOfWeek: 1, startTime: '11:00', endTime: '13:00', location: 'Sala de Cómputo 3' },
+      { id: 'sb-bio-campo-1', subjectId: 'sub-bio-campo', dayOfWeek: 5, startTime: '07:00', endTime: '12:00', location: 'Salida de Campo: Reserva Yotoco / Farallones' },
+    ],
+    routines: [],
+    exams: [
+      { id: 'ex-bio-eco-1', subjectId: 'sub-bio-eco', title: 'Parcial 1: Modelos de Crecimiento Logístico y Tablas de Vida', date: addDays(6), weight: 25 },
+      { id: 'ex-bio-gen-1', subjectId: 'sub-bio-gen', title: 'Parcial 1: Genética Mendeliana, Ligamiento y Recombinación', date: addDays(12), weight: 25 },
+    ],
+    assignments: [
+      { id: 'as-bio-campo-1', subjectId: 'sub-bio-campo', title: 'Informe de Campo: Estimación de Densidad y Transectos', dueDate: addDays(4), estimatedMinutes: 100, priority: 'high', status: 'pending' },
+    ],
+    attendance: [],
+  },
+
+  // 10. PSICOLOGÍA - SEMESTRE 3
+  {
+    id: 'template-psicologia-3',
+    name: 'Psicología · Semestre 3',
+    faculty: 'Facultad de Derecho y Ciencias Sociales',
+    semesterNumber: 3,
+    badge: 'Psicología',
+    description: 'Psicología Cognitiva, Procesos Biológicos II, Psicología Social y Psicometría.',
+    profile: {
+      id: 'profile-psi',
+      name: 'Estudiante de Psicología',
+      studentCode: 'A00456789',
+      documentId: '1102198765',
+      university: 'Universidad Icesi',
+      program: 'Psicología',
+      semesterNumber: 3,
+      cohort: '202520',
+      gpa: 4.5,
+      avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Psicologia%20Icesi',
+    },
+    semester: {
+      id: 'sem-2026-2-psicologia',
+      userId: 'profile-psi',
+      name: 'Semestre 2026-2 (Psicología)',
+      startDate: '2026-08-03',
+      endDate: '2026-12-05',
+      totalWeeks: 16,
+      isActive: true,
+    },
+    subjects: [
+      { id: 'sub-psi-cog', semesterId: 'sem-2026-2-psicologia', code: 'PSI 02105', name: 'Psicología Cognitiva', credits: 4, professor: 'Dra. Martha Peláez', color: '#4338ca', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-psi-bio', semesterId: 'sem-2026-2-psicologia', code: 'PSI 02201', name: 'Procesos Biológicos del Comportamiento II', credits: 4, professor: 'Dr. Jorge Eslava', color: '#be185d', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-psi-social', semesterId: 'sem-2026-2-psicologia', code: 'PSI 02310', name: 'Psicología Social', credits: 3, professor: 'Dra. Ángela María Estrada', color: '#0e7490', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-psi-met', semesterId: 'sem-2026-2-psicologia', code: 'PSI 02220', name: 'Psicometría y Evaluación', credits: 4, professor: 'Dr. César Carrión', color: '#c2410c', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-psi-inv', semesterId: 'sem-2026-2-psicologia', code: 'CSO 01305', name: 'Investigación Cualitativa', credits: 3, professor: 'Dra. Constanza Tobón', color: '#047857', maxAbsences: 4, passingGrade: 3.0 },
+    ],
+    scheduleBlocks: [
+      { id: 'sb-psi-cog-1', subjectId: 'sub-psi-cog', dayOfWeek: 1, startTime: '09:00', endTime: '11:00', location: 'Edificio B Salón 205' },
+      { id: 'sb-psi-cog-2', subjectId: 'sub-psi-cog', dayOfWeek: 3, startTime: '09:00', endTime: '11:00', location: 'Edificio B Salón 205' },
+      { id: 'sb-psi-bio-1', subjectId: 'sub-psi-bio', dayOfWeek: 2, startTime: '07:00', endTime: '09:00', location: 'Laboratorio de Neurociencias y Conducta' },
+      { id: 'sb-psi-bio-2', subjectId: 'sub-psi-bio', dayOfWeek: 4, startTime: '07:00', endTime: '09:00', location: 'Laboratorio de Neurociencias y Conducta' },
+      { id: 'sb-psi-soc-1', subjectId: 'sub-psi-social', dayOfWeek: 1, startTime: '14:00', endTime: '16:00', location: 'Edificio C Salón 301' },
+      { id: 'sb-psi-met-1', subjectId: 'sub-psi-met', dayOfWeek: 2, startTime: '11:00', endTime: '13:00', location: 'Sala Gesell / Cámara de Observación' },
+      { id: 'sb-psi-met-2', subjectId: 'sub-psi-met', dayOfWeek: 4, startTime: '11:00', endTime: '13:00', location: 'Sala Gesell / Cámara de Observación' },
+      { id: 'sb-psi-inv-1', subjectId: 'sub-psi-inv', dayOfWeek: 5, startTime: '09:00', endTime: '12:00', location: 'Edificio D Salón 104' },
+    ],
+    routines: [],
+    exams: [
+      { id: 'ex-psi-cog-1', subjectId: 'sub-psi-cog', title: 'Parcial 1: Memoria de Trabajo, Atención y Funciones Ejecutivas', date: addDays(5), weight: 30 },
+      { id: 'ex-psi-bio-1', subjectId: 'sub-psi-bio', title: 'Parcial 1: Neuroanatomía Funcional y Sinapsis', date: addDays(13), weight: 25 },
+    ],
+    assignments: [
+      { id: 'as-psi-met-1', subjectId: 'sub-psi-met', title: 'Estandarización de Instrumento: Validez de Contenido y Alfa de Cronbach', dueDate: addDays(3), estimatedMinutes: 80, priority: 'high', status: 'pending' },
+    ],
+    attendance: [],
+  },
 ];
+
+export function getTemplateForProgram(programName: string): AcademicTemplate {
+  const norm = (programName || '').toLowerCase().trim();
+  if (norm.includes('telemática') || norm.includes('telematica')) {
+    return ACADEMIC_TEMPLATES.find((t) => t.id === 'template-telematica-4') || ACADEMIC_TEMPLATES[0];
+  }
+  if (norm.includes('interactivo') || norm.includes('diseño') || norm.includes('diseno') || norm.includes('dmi')) {
+    return ACADEMIC_TEMPLATES.find((t) => t.id === 'template-diseno-medios-4') || ACADEMIC_TEMPLATES[0];
+  }
+  if (norm.includes('sistema')) {
+    return ACADEMIC_TEMPLATES.find((t) => t.id === 'template-sistemas-5') || ACADEMIC_TEMPLATES[0];
+  }
+  if (norm.includes('industrial')) {
+    return ACADEMIC_TEMPLATES.find((t) => t.id === 'template-industrial-4') || ACADEMIC_TEMPLATES[0];
+  }
+  if (norm.includes('economía') || norm.includes('economia')) {
+    return ACADEMIC_TEMPLATES.find((t) => t.id === 'template-economia-4') || ACADEMIC_TEMPLATES[0];
+  }
+  if (norm.includes('administra')) {
+    return ACADEMIC_TEMPLATES.find((t) => t.id === 'template-administracion-3') || ACADEMIC_TEMPLATES[0];
+  }
+  if (norm.includes('medicina') || norm.includes('salud')) {
+    return ACADEMIC_TEMPLATES.find((t) => t.id === 'template-medicina-2') || ACADEMIC_TEMPLATES[0];
+  }
+  if (norm.includes('derecho') || norm.includes('jurídic') || norm.includes('juridic')) {
+    return ACADEMIC_TEMPLATES.find((t) => t.id === 'template-derecho-3') || ACADEMIC_TEMPLATES[0];
+  }
+  if (norm.includes('biolog') || norm.includes('conservac')) {
+    return ACADEMIC_TEMPLATES.find((t) => t.id === 'template-biologia-3') || ACADEMIC_TEMPLATES[0];
+  }
+  if (norm.includes('psicolog')) {
+    return ACADEMIC_TEMPLATES.find((t) => t.id === 'template-psicologia-3') || ACADEMIC_TEMPLATES[0];
+  }
+  return ACADEMIC_TEMPLATES[0];
+}
