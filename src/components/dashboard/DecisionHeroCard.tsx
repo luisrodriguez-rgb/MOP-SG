@@ -171,7 +171,7 @@ export function DecisionHeroCard({
             </h2>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#ecfdf5] text-[#059669] dark:bg-[#064e3b]/40 dark:text-[#34d399] border border-[#a7f3d0] dark:border-[#059669]/40">
               <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-              <span>Jerarquía de Decisión Activa</span>
+              <span>Modo Inteligente · En Vivo</span>
             </span>
           </div>
         </div>
