@@ -280,7 +280,7 @@ export function ClassDetailModal({
                     </div>
                     <div className="text-[11px] text-[var(--muted)] font-mono mt-0.5 flex items-center gap-2 flex-wrap">
                       <span>{new Date(exam.date).toLocaleDateString('es-CO', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
-                      {exam.location && <span>· 📍 {exam.location}</span>}
+                      {exam.location && <span>· {exam.location}</span>}
                     </div>
                     {exam.notes && (
                       <div className="text-[11px] text-[var(--ink)] bg-[var(--surface)] p-1.5 rounded-lg border border-[var(--border)] mt-1.5">
@@ -321,7 +321,7 @@ export function ClassDetailModal({
                           <span>Entrega: {new Date(task.dueDate).toLocaleDateString('es-CO', { month: 'short', day: 'numeric' })}</span>
                           <span>·</span>
                           <span>~{formatMinutesHuman(task.estimatedMinutes)}</span>
-                          {task.location && <span>· 📍 {task.location}</span>}
+                          {task.location && <span>· {task.location}</span>}
                         </div>
                       </div>
 

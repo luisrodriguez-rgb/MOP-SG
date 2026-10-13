@@ -162,7 +162,7 @@ export function RiskRadarWidget({
                       </span>
                       {prioritySubjectId === item.id && (
                         <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 shrink-0">
-                          🎯 Tu Enfoque
+                          Tu Enfoque
                         </span>
                       )}
                     </div>

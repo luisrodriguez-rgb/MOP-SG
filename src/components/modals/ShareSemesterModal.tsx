@@ -59,7 +59,7 @@ export function ShareSemesterModal() {
   };
 
   const handleWhatsApp = () => {
-    const text = `🎓 ¡Hola! Te comparto mi horario de *${payload.c}* (${payload.s}° Semestre) para este periodo en *Mi Semestre | Icesi*.\n\nCárgalo con un solo clic aquí:\n${shareUrl}`;
+    const text = `¡Hola! Te comparto mi horario de *${payload.c}* (${payload.s}° Semestre) para este periodo en *Mi Semestre | Icesi*.\n\nCárgalo con un solo clic aquí:\n${shareUrl}`;
     const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     window.open(waUrl, '_blank', 'noopener,noreferrer');
   };

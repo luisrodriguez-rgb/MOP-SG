@@ -549,13 +549,13 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
               {/* Micro-pills de diferenciadores reales */}
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
                 <span className="text-[10px] font-medium px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/80">
-                  ⚡ -25m traslados calculados
+                  -25 min traslados calculados
                 </span>
                 <span className="text-[10px] font-medium px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/80">
-                  🟢 Bloques de hueco en verde
+                  Bloques de hueco calculados
                 </span>
                 <span className="text-[10px] font-medium px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/80">
-                  🛡️ Límite de inasistencias Icesi
+                  Margen de inasistencias Icesi
                 </span>
               </div>
             </div>
@@ -1041,7 +1041,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
               onClick={handleFinishAndEnter}
               className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#2828a8] via-[#3b3abf] to-[#5b5be8] hover:from-[#3232c4] hover:to-[#6f6ff5] text-white font-black text-sm flex items-center justify-center gap-2.5 shadow-[0_15px_40px_rgba(59,58,191,0.6)] transition-all cursor-pointer group active:scale-[0.98]"
             >
-              <span>{isFinishing ? 'Iniciando Semestre...' : '🚀 Entrar a mi Semestre'}</span>
+              <span>{isFinishing ? 'Iniciando Semestre...' : 'Entrar a mi Semestre'}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
             </button>
           </div>

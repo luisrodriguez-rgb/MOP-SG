@@ -177,7 +177,7 @@ export function InboxModal() {
                 <span>Escribe o pega como si fuera un chat de WhatsApp:</span>
               </label>
               <span className="text-[10px] font-mono font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-md">
-                ⚡ Detección automática en 0.05s
+                Detección automática en 0.05s
               </span>
             </div>
 
