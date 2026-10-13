@@ -128,6 +128,12 @@ export function RiskRadarWidget({
                     >
                       {item.status}
                     </span>
+                    {typeof window !== 'undefined' &&
+                      localStorage.getItem('mi_semestre_priority_subject_id') === item.id && (
+                        <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 shrink-0">
+                          🎯 Tu Enfoque
+                        </span>
+                      )}
                   </div>
                   <div className="text-[11px] text-[#626c96] dark:text-[#8b95c2] mt-0.5 truncate font-mono">
                     {item.detail}

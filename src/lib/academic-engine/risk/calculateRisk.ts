@@ -52,10 +52,20 @@ export function calculateSubjectRisk({
   const pendingTasks = assignments.filter(
     (a) => a.subjectId === subject.id && a.status !== 'completed'
   );
-  const totalEstimatedMinutes = pendingTasks.reduce(
+  const tasksEstimatedMinutes = pendingTasks.reduce(
     (acc, t) => acc + (t.estimatedMinutes || 45),
     0
   );
+
+  // Si hay un examen cercano (<= 7 días) y 0 tareas registradas,
+  // proyectar una carga base automática de estudio sugerido (240 min = 4 horas)
+  let examStudyBufferMinutes = 0;
+  if (nearestExam && nearestExam.diffDays <= 7 && tasksEstimatedMinutes === 0) {
+    examStudyBufferMinutes = 240;
+    reasons.push(`Estudio sugerido de ${Math.round(examStudyBufferMinutes / 60)}h para preparar ${nearestExam.exam.title}.`);
+  }
+
+  const totalEstimatedMinutes = tasksEstimatedMinutes + examStudyBufferMinutes;
 
   let workloadPressure = 0;
   if (pendingTasks.length >= 3) {
@@ -63,6 +73,8 @@ export function calculateSubjectRisk({
     reasons.push(`${pendingTasks.length} tareas pendientes acumuladas.`);
   } else if (pendingTasks.length > 0) {
     workloadPressure += pendingTasks.length * 8;
+  } else if (examStudyBufferMinutes > 0) {
+    workloadPressure += 15;
   }
 
   // Si el trabajo pendiente supera el tiempo de estudio disponible
