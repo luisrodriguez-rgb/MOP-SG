@@ -20,10 +20,42 @@ import {
 } from 'lucide-react';
 import { ingestAcademicEvidence } from '@/lib/importer/universal/pipeline';
 import { commitAcademicDataAtomically } from '@/lib/importer/universal/committer';
-import { IngestResult, ParsedAcademicData } from '@/lib/importer/universal/types';
+import { IngestResult, ParsedAcademicData, ParsedSubject, ParsedScheduleBlock } from '@/lib/importer/universal/types';
 import { getSharedSemesterFromLocation, SharedSemesterPayload } from '@/lib/share/semesterShare';
 import { lookupNRCCourse } from '@/lib/importer/nrcCatalog';
-import { officialCareerTemplates } from '@/lib/templates/academicTemplates';
+import { ACADEMIC_TEMPLATES } from '@/lib/templates/academicTemplates';
+
+function createSyntheticIngestResult(data: ParsedAcademicData, sourceLabel: string): IngestResult {
+  return {
+    data,
+    detections: [
+      {
+        container: 'text',
+        documentType: 'schedule',
+        confidence: 'high',
+        signals: [
+          {
+            id: 'SOURCE_SIGNAL',
+            description: sourceLabel,
+            weight: 1,
+          },
+        ],
+      },
+    ],
+    unresolved: [],
+    warnings: [],
+    confidence: 'high',
+    evidenceGraph: [],
+    summary: {
+      subjectsCount: data.subjects.length,
+      scheduleBlocksCount: data.scheduleBlocks.length,
+      examsCount: null,
+      assignmentsCount: null,
+      missingRoomsCount: 0,
+      hasStudentProfile: Boolean(data.student?.name),
+    },
+  };
+}
 
 interface OnboardingFlowProps {
   onComplete: () => void;
@@ -140,22 +172,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
     calculateMetricsFromBlocks(scheduleBlocks);
 
-    const syntheticResult: IngestResult = {
-      data: parsed,
-      detections: [
-        {
-          container: 'text',
-          documentType: 'schedule',
-          confidence: 1,
-          signals: ['SHARED_URL_LINK'],
-        },
-      ],
-      ambiguities: [],
-      evidenceGraph: { nodes: [], edges: [] },
-      missingFields: [],
-      warnings: [],
-      suggestedReview: [],
-    };
+    const syntheticResult = createSyntheticIngestResult(parsed, 'Semestre compartido por enlace');
 
     setIngestResult(syntheticResult);
     if (parsed.subjects.length > 0) {
@@ -278,9 +295,9 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
     if (program.includes('Economía')) templateKey = 'template-economia-4';
     if (program.includes('Sistemas') || program.includes('Telemática')) templateKey = 'template-sistemas-5';
 
-    const tmpl = officialCareerTemplates.find((t) => t.id === templateKey) || officialCareerTemplates[0];
+    const tmpl = ACADEMIC_TEMPLATES.find((t) => t.id === templateKey) || ACADEMIC_TEMPLATES[0];
 
-    const subjects = tmpl.subjects.map((s, idx) => ({
+    const subjects: ParsedSubject[] = tmpl.subjects.map((s) => ({
       id: s.id,
       code: s.code,
       name: s.name,
@@ -290,17 +307,14 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
       maxAbsences: s.maxAbsences || 4,
     }));
 
-    const scheduleBlocks: any[] = [];
-    tmpl.schedule.forEach((b, idx) => {
-      scheduleBlocks.push({
-        id: `sb-tmpl-${idx}`,
-        subjectId: b.subjectId,
-        dayOfWeek: b.dayOfWeek,
-        startTime: b.startTime,
-        endTime: b.endTime,
-        location: b.location,
-      });
-    });
+    const scheduleBlocks: ParsedScheduleBlock[] = tmpl.scheduleBlocks.map((b, idx) => ({
+      id: `sb-tmpl-${idx}`,
+      subjectId: b.subjectId,
+      dayOfWeek: b.dayOfWeek,
+      startTime: b.startTime,
+      endTime: b.endTime,
+      location: b.location,
+    }));
 
     const parsed: ParsedAcademicData = {
       student: {
@@ -321,22 +335,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
     calculateMetricsFromBlocks(scheduleBlocks);
 
-    const syntheticResult: IngestResult = {
-      data: parsed,
-      detections: [
-        {
-          container: 'text',
-          documentType: 'schedule',
-          confidence: 1,
-          signals: ['OFFICIAL_CAREER_TEMPLATE'],
-        },
-      ],
-      ambiguities: [],
-      evidenceGraph: { nodes: [], edges: [] },
-      missingFields: [],
-      warnings: [],
-      suggestedReview: [],
-    };
+    const syntheticResult = createSyntheticIngestResult(parsed, `Plantilla oficial ${program}`);
 
     setIngestResult(syntheticResult);
     if (subjects.length > 0) {
