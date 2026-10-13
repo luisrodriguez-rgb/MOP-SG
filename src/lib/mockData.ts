@@ -490,9 +490,12 @@ export const mockPendingCourses: PendingCourse[] = [
   { code: 'PDP 00134', name: 'Práctica profesional', semester: 9 },
 ];
 
-export async function seedDatabaseIfEmpty(): Promise<boolean> {
-  if (typeof window !== 'undefined' && localStorage.getItem('mi_semestre_user_configured_v1') === 'true') {
-    return false;
+export async function seedDatabaseIfEmpty(force = false): Promise<boolean> {
+  if (!force && typeof window !== 'undefined') {
+    const isDemo = localStorage.getItem('mi_semestre_demo_mode') === 'true';
+    if (!isDemo) {
+      return false;
+    }
   }
 
   const existingProfiles = await profileRepository.getAll();

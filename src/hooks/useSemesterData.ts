@@ -34,10 +34,11 @@ export function useSemesterData() {
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [routines, setRoutines] = useState<FixedRoutine[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
-      // Auto seed if empty
+      // Auto seed if empty (solo si demo mode está activo)
       await seedDatabaseIfEmpty();
 
       const [
@@ -71,12 +72,64 @@ export function useSemesterData() {
       setExams(allExams);
       setAttendance(allAttendance);
       setRoutines(allRoutines);
+
+      // Evaluar si requiere onboarding de primera vez
+      const hasOnboardedFlag =
+        typeof window !== 'undefined' &&
+        localStorage.getItem('mi_semestre_onboarded_v1') === 'true';
+      const hasDemoFlag =
+        typeof window !== 'undefined' &&
+        localStorage.getItem('mi_semestre_demo_mode') === 'true';
+
+      if (!hasOnboardedFlag && !hasDemoFlag && allSubjects.length === 0) {
+        setNeedsOnboarding(true);
+      } else {
+        setNeedsOnboarding(false);
+      }
     } catch (err) {
       console.error('Error loading semester data from Dexie:', err);
     } finally {
       setIsLoading(false);
     }
   }, []);
+
+  const loadDemoSemester = useCallback(async () => {
+    setIsLoading(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('mi_semestre_demo_mode', 'true');
+      localStorage.setItem('mi_semestre_user_configured_v1', 'true');
+    }
+    const { resetDatabaseToDemo } = await import('@/lib/mockData');
+    await resetDatabaseToDemo();
+    setNeedsOnboarding(false);
+    await loadData();
+    window.dispatchEvent(new CustomEvent('semester-data-updated'));
+  }, [loadData]);
+
+  const completeOnboarding = useCallback(async () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('mi_semestre_onboarded_v1', 'true');
+      localStorage.removeItem('mi_semestre_demo_mode');
+    }
+    setNeedsOnboarding(false);
+    await loadData();
+    window.dispatchEvent(new CustomEvent('semester-data-updated'));
+  }, [loadData]);
+
+  const resetToOnboarding = useCallback(async () => {
+    setIsLoading(true);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('mi_semestre_onboarded_v1');
+      localStorage.removeItem('mi_semestre_demo_mode');
+      localStorage.removeItem('mi_semestre_user_configured_v1');
+    }
+    const { db } = await import('@/lib/storage/database');
+    await db.delete();
+    await db.open();
+    setNeedsOnboarding(true);
+    await loadData();
+    window.dispatchEvent(new CustomEvent('semester-data-updated'));
+  }, [loadData]);
 
   const switchSemester = useCallback(async (semesterId: string) => {
     await semesterRepository.setActive(semesterId);
@@ -131,7 +184,11 @@ export function useSemesterData() {
     attendance,
     routines,
     isLoading,
+    needsOnboarding,
     refreshData: loadData,
+    loadDemoSemester,
+    completeOnboarding,
+    resetToOnboarding,
     switchSemester,
     createSemester,
   };
