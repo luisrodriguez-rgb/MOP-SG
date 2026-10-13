@@ -1,0 +1,47 @@
+<svg width='1024' height='1024' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'>
+    <defs>
+      <linearGradient id='bgGrad' x1='0%' y1='0%' x2='100%' y2='100%'>
+        <stop offset='0%' stop-color='#1c1216'/>
+        <stop offset='100%' stop-color='#0f0d11'/>
+      </linearGradient>
+      <linearGradient id='redAccent' x1='0%' y1='0%' x2='100%' y2='100%'>
+        <stop offset='0%' stop-color='#ff4d6d'/>
+        <stop offset='100%' stop-color='#dc2626'/>
+      </linearGradient>
+      <radialGradient id='halo' cx='50%' cy='50%' r='40%'>
+        <stop offset='0%' stop-color='#ef4444' stop-opacity='0.25'/>
+        <stop offset='100%' stop-color='#ef4444' stop-opacity='0'/>
+      </radialGradient>
+      <filter id='glow' x='-20%' y='-20%' width='140%' height='140%'>
+        <feDropShadow dx='0' dy='8' stdDeviation='18' flood-color='#ef4444' flood-opacity='0.4'/>
+      </filter>
+    </defs>
+    <!-- Squircle container -->
+    <rect x='32' y='32' width='960' height='960' rx='220' fill='url(#bgGrad)' stroke='#2f1c24' stroke-width='8'/>
+    <circle cx='512' cy='512' r='380' fill='url(#halo)'/>
+    <!-- Isometric Floating Top Panel -->
+    <polygon points='512,190 760,310 512,430 264,310' 
+             fill='#ffffff' stroke='#ffffff' stroke-width='12' stroke-linejoin='round'/>
+    <polygon points='512,210 730,310 512,410 294,310' fill='url(#redAccent)' opacity='0.9'/>
+    <!-- Isometric Cube Main Body -->
+    <!-- Left face -->
+    <polygon points='264,480 512,600 512,830 264,710' 
+             fill='#1a1a22' stroke='#ffffff' stroke-width='18' stroke-linejoin='round'/>
+    <!-- Right face -->
+    <polygon points='512,600 760,480 760,710 512,830' 
+             fill='#22222c' stroke='#ffffff' stroke-width='18' stroke-linejoin='round'/>
+    <!-- Module Grid Tiles on Left Face -->
+    <polygon points='294,520 380,560 380,620 294,580' fill='#ffffff' opacity='0.9'/>
+    <polygon points='396,568 482,608 482,668 396,628' fill='url(#redAccent)'/>
+    <polygon points='294,600 380,640 380,700 294,660' fill='url(#redAccent)'/>
+    <polygon points='396,648 482,688 482,748 396,708' fill='#ffffff' opacity='0.9'/>
+    <!-- Module Grid Tiles on Right Face -->
+    <polygon points='542,608 628,568 628,628 542,668' fill='#ffffff' opacity='0.9'/>
+    <polygon points='644,558 730,518 730,578 644,618' fill='url(#redAccent)'/>
+    <polygon points='542,688 628,648 628,708 542,748' fill='url(#redAccent)'/>
+    <!-- Signature Glowing Red Plus Badge -->
+    <g transform='translate(660, 580)' filter='url(#glow)'>
+      <rect x='0' y='45' width='160' height='60' rx='25' fill='url(#redAccent)' stroke='#ffffff' stroke-width='10'/>
+      <rect x='50' y='-5' width='60' height='160' rx='25' fill='url(#redAccent)' stroke='#ffffff' stroke-width='10'/>
+    </g>
+  </svg>

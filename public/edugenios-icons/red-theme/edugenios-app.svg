@@ -1,0 +1,45 @@
+<svg width='1024' height='1024' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'>
+    <defs>
+      <linearGradient id='bgGrad' x1='0%' y1='0%' x2='100%' y2='100%'>
+        <stop offset='0%' stop-color='#1c1216'/>
+        <stop offset='100%' stop-color='#0f090b'/>
+      </linearGradient>
+      <linearGradient id='redAccent' x1='0%' y1='0%' x2='100%' y2='100%'>
+        <stop offset='0%' stop-color='#ff4d6d'/>
+        <stop offset='50%' stop-color='#ef4444'/>
+        <stop offset='100%' stop-color='#b91c1c'/>
+      </linearGradient>
+      <radialGradient id='halo' cx='50%' cy='45%' r='45%'>
+        <stop offset='0%' stop-color='#ef4444' stop-opacity='0.28'/>
+        <stop offset='100%' stop-color='#ef4444' stop-opacity='0'/>
+      </radialGradient>
+      <filter id='glow' x='-20%' y='-20%' width='140%' height='140%'>
+        <feDropShadow dx='0' dy='8' stdDeviation='18' flood-color='#ef4444' flood-opacity='0.45'/>
+      </filter>
+    </defs>
+    <!-- Squircle container -->
+    <rect x='32' y='32' width='960' height='960' rx='220' fill='url(#bgGrad)' stroke='#2f1c24' stroke-width='8'/>
+    <circle cx='512' cy='480' r='380' fill='url(#halo)'/>
+    <!-- Graduation Cap Top (Faceted) -->
+    <polygon points='512,190 760,310 512,430 264,310' 
+             fill='#ffffff' stroke='#ffffff' stroke-width='12' stroke-linejoin='round'/>
+    <polyline points='512,190 512,430' stroke='#1c1216' stroke-width='10'/>
+    <polyline points='264,310 760,310' stroke='#1c1216' stroke-width='6' opacity='0.3'/>
+    <!-- Lightbulb & Brain Fusion Base -->
+    <path d='M340 370 C340 370 330 460 380 540 C410 588 424 640 424 700 L600 700 C600 640 614 588 644 540 C694 460 684 370 684 370 Z' 
+          fill='#ffffff' stroke='#ffffff' stroke-width='16' stroke-linejoin='round'/>
+    <!-- Bulb Screw Base -->
+    <rect x='444' y='730' width='136' height='30' rx='12' fill='url(#redAccent)' stroke='#ffffff' stroke-width='8'/>
+    <rect x='460' y='776' width='104' height='26' rx='10' fill='url(#redAccent)' stroke='#ffffff' stroke-width='6'/>
+    <!-- Central Brain Tree / Circuits (Red) -->
+    <path d='M512 430 L512 660' stroke='url(#redAccent)' stroke-width='22' stroke-linecap='round'/>
+    <path d='M512 490 L420 440' stroke='url(#redAccent)' stroke-width='18' stroke-linecap='round'/>
+    <path d='M512 490 L604 440' stroke='url(#redAccent)' stroke-width='18' stroke-linecap='round'/>
+    <path d='M512 560 L430 530' stroke='url(#redAccent)' stroke-width='18' stroke-linecap='round'/>
+    <path d='M512 560 L594 530' stroke='url(#redAccent)' stroke-width='18' stroke-linecap='round'/>
+    <!-- Signature Glowing Red Plus Badge -->
+    <g transform='translate(640, 520)' filter='url(#glow)'>
+      <rect x='0' y='50' width='180' height='70' rx='30' fill='url(#redAccent)' stroke='#ffffff' stroke-width='12'/>
+      <rect x='55' y='-5' width='70' height='180' rx='30' fill='url(#redAccent)' stroke='#ffffff' stroke-width='12'/>
+    </g>
+  </svg>
