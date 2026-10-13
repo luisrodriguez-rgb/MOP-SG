@@ -11,7 +11,7 @@ import { validateAndBuildIngestResult } from './validator';
 import { parseJasperAcademicBalance, parseScheduleFreeText } from '../smartAcademicIngester';
 import { parseIcsCalendar } from '../icsParser';
 import { titleCase } from './normalizer';
-import { lookupNRCCourse } from '../nrcCatalog';
+import { lookupNRCCourse, extractAllNRCsFromText } from '../nrcCatalog';
 import { findBestTemplateMatch } from '../templateMatcher';
 
 /**
@@ -221,17 +221,65 @@ export async function ingestAcademicEvidence(
       const maybeJasper = extractRealJasperData(rawText);
       if (maybeJasper && maybeJasper.subjects.length > 0) {
         extracted = maybeJasper;
-      } else if (rawText.trim().length > 0) {
-        const freeSchedule = parseScheduleFreeText(rawText);
-        extracted = {
-          student: freeSchedule.profile,
-          semester: freeSchedule.semester,
-          subjects: freeSchedule.subjects,
-          scheduleBlocks: freeSchedule.scheduleBlocks as ParsedAcademicData['scheduleBlocks'],
-          exams: undefined,
-          assignments: undefined,
-          rawEvidenceSnippet: rawText.slice(0, 250),
-        };
+      } else {
+        // Verificar si contiene NRCs oficiales de Icesi (ej: 05359, 11805, 42002)
+        const nrcCourses = extractAllNRCsFromText(rawText);
+        if (nrcCourses.length > 0) {
+          const subjects: ParsedAcademicData['subjects'] = [];
+          const scheduleBlocks: ParsedAcademicData['scheduleBlocks'] = [];
+
+          for (const c of nrcCourses) {
+            const subId = `sub-nrc-${c.nrc}`;
+            subjects.push({
+              id: subId,
+              code: c.code,
+              nrc: c.nrc,
+              name: c.name,
+              credits: c.credits,
+              color: '#3b3abf',
+              professor: c.professor,
+              maxAbsences: 4,
+            });
+
+            c.blocks.forEach((b, bIdx) => {
+              scheduleBlocks.push({
+                id: `sb-${subId}-${bIdx}`,
+                subjectId: subId,
+                dayOfWeek: b.dayOfWeek,
+                startTime: b.startTime,
+                endTime: b.endTime,
+                location: b.location,
+                evidence: [
+                  {
+                    id: `ev-nrc-${subId}-${bIdx}`,
+                    sourceContainer: 'text',
+                    field: 'scheduleBlocks',
+                    extractedValue: `${b.startTime}-${b.endTime} (${b.location})`,
+                    confidence: 'high',
+                    sourceText: `Resuelto por Catálogo Oficial de NRC: ${c.nrc}`,
+                  },
+                ],
+              });
+            });
+          }
+
+          extracted = {
+            subjects,
+            scheduleBlocks,
+            rawEvidenceSnippet: rawText.slice(0, 250),
+          };
+        } else if (rawText.trim().length > 0) {
+          const freeSchedule = parseScheduleFreeText(rawText);
+          extracted = {
+            student: freeSchedule.profile,
+            semester: freeSchedule.semester,
+            subjects: freeSchedule.subjects,
+            scheduleBlocks: freeSchedule.scheduleBlocks as ParsedAcademicData['scheduleBlocks'],
+            exams: undefined,
+            assignments: undefined,
+            rawEvidenceSnippet: rawText.slice(0, 250),
+          };
+        }
       }
     }
 

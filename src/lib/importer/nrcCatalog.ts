@@ -225,3 +225,24 @@ export function lookupNRCCourse(nrcOrCode?: string): NRCCourseInfo | null {
 
   return null;
 }
+
+/**
+ * Extrae todos los números de 5 dígitos o códigos encontrados en un texto que coincidan con NRCs oficiales
+ */
+export function extractAllNRCsFromText(text: string): NRCCourseInfo[] {
+  if (!text) return [];
+  const matches = text.match(/\b\d{4,5}\b/g) || [];
+  const unique = Array.from(new Set(matches));
+  const results: NRCCourseInfo[] = [];
+  const seenNrcs = new Set<string>();
+
+  for (const token of unique) {
+    const info = lookupNRCCourse(token);
+    if (info && !seenNrcs.has(info.nrc)) {
+      seenNrcs.add(info.nrc);
+      results.push(info);
+    }
+  }
+
+  return results;
+}
