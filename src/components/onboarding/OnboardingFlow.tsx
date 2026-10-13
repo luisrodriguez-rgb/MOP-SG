@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import confetti from 'canvas-confetti';
 import {
   Sparkles,
@@ -14,16 +15,24 @@ import {
   GraduationCap,
   School,
   AlertCircle,
-  HelpCircle,
   Coffee,
   Flame,
+  ShieldCheck,
+  Check,
+  ChevronRight,
+  BookOpen,
 } from 'lucide-react';
 import { ingestAcademicEvidence } from '@/lib/importer/universal/pipeline';
 import { commitAcademicDataAtomically } from '@/lib/importer/universal/committer';
-import { IngestResult, ParsedAcademicData, ParsedSubject, ParsedScheduleBlock } from '@/lib/importer/universal/types';
+import {
+  IngestResult,
+  ParsedAcademicData,
+  ParsedSubject,
+  ParsedScheduleBlock,
+} from '@/lib/importer/universal/types';
 import { getSharedSemesterFromLocation, SharedSemesterPayload } from '@/lib/share/semesterShare';
-import { lookupNRCCourse } from '@/lib/importer/nrcCatalog';
-import { ACADEMIC_TEMPLATES } from '@/lib/templates/academicTemplates';
+import { lookupNRCCourse, extractAllNRCsFromText } from '@/lib/importer/nrcCatalog';
+import { ACADEMIC_TEMPLATES, getTemplateForProgram } from '@/lib/templates/academicTemplates';
 
 function createSyntheticIngestResult(data: ParsedAcademicData, sourceLabel: string): IngestResult {
   return {
@@ -75,19 +84,28 @@ const ICESI_PROGRAMS = [
   'Psicología',
 ];
 
+const POPULAR_PROGRAM_CHIPS = [
+  'Ingeniería Industrial',
+  'Ingeniería de Sistemas',
+  'Economía y Negocios Internacionales',
+  'Diseño de Medios Interactivos',
+];
+
 export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps) {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
   // Paso 1: Identidad
   const [studentName, setStudentName] = useState('');
-  const [university, setUniversity] = useState('Universidad Icesi');
+  const [university] = useState('Universidad Icesi');
   const [program, setProgram] = useState('Ingeniería Industrial');
   const [semesterNumber, setSemesterNumber] = useState(4);
 
   // Paso 2: Magic Drop & Texto
+  const [magicTab, setMagicTab] = useState<'paste' | 'file' | 'template'>('paste');
   const [pastedText, setPastedText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStage, setProcessingStage] = useState('');
+  const [detectedNRCsCount, setDetectedNRCsCount] = useState(0);
   const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -103,6 +121,16 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
   const [urgentExamTimeline, setUrgentExamTimeline] = useState<'2_days' | '7_days' | '14_days'>('2_days');
   const [isFinishing, setIsFinishing] = useState(false);
 
+  // Detectar NRCs en tiempo real al escribir/pegar
+  useEffect(() => {
+    if (pastedText.trim()) {
+      const found = extractAllNRCsFromText(pastedText);
+      setDetectedNRCsCount(found.length);
+    } else {
+      setDetectedNRCsCount(0);
+    }
+  }, [pastedText]);
+
   // 1. Detectar si viene de un enlace compartido (?share=...)
   useEffect(() => {
     const shared = getSharedSemesterFromLocation();
@@ -114,16 +142,14 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
   const handleLoadSharedSemester = (shared: SharedSemesterPayload) => {
     setIsProcessing(true);
     setProcessingStage('Reconstruyendo semestre compartido desde enlace...');
-    setUniversity(shared.u || 'Universidad Icesi');
     setProgram(shared.c || 'Ingeniería Industrial');
     setSemesterNumber(shared.s || 4);
     if (shared.author) {
       setSharedAuthor(shared.author);
     }
 
-    // Reconstruir asignaturas y bloques mediante NRC Catalog
-    const subjectsMap = new Map<string, any>();
-    const scheduleBlocks: any[] = [];
+    const subjectsMap = new Map<string, ParsedSubject>();
+    const scheduleBlocks: ParsedScheduleBlock[] = [];
 
     shared.nrcs.forEach((nrc) => {
       const info = lookupNRCCourse(nrc);
@@ -179,10 +205,9 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
       setSelectedUrgentSubjectId(parsed.subjects[0].id);
     }
     setIsProcessing(false);
-    setCurrentStep(3); // Saltar directo a la Revelación de Valor
+    setCurrentStep(3);
   };
 
-  // Calcular métricas psicológicas basadas en bloques de horario
   const calculateMetricsFromBlocks = (blocks: Array<{ dayOfWeek: number; startTime: string; endTime: string }>) => {
     if (!blocks || blocks.length === 0) {
       setFreeGapHours(24);
@@ -221,7 +246,6 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
       }
     });
 
-    // Estimación de huecos libres universitarios (jornada 7am - 6pm = 11h diarias x 5 días = 55h campus)
     const estimatedCampusHours = 50;
     const computedFreeHours = Math.max(12, Math.round(estimatedCampusHours - totalClassHours));
 
@@ -233,7 +257,6 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
     });
   };
 
-  // Procesar evidencia ingresada en Paso 2
   const processEvidence = async (text?: string, file?: File) => {
     setIsProcessing(true);
     setErrorMsg(null);
@@ -259,7 +282,6 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
         return;
       }
 
-      // Enriquecer perfil del estudiante si fue capturado en el Paso 1
       result.data.student = {
         name: studentName.trim() || result.data.student?.name || 'Estudiante',
         university,
@@ -277,8 +299,8 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
       setProcessingStage('Calculando tus huecos libres y margen de inasistencias...');
       setTimeout(() => {
         setIsProcessing(false);
-        setCurrentStep(3); // Revelación de valor
-      }, 600);
+        setCurrentStep(3);
+      }, 500);
     } catch (err: any) {
       console.error('Error al procesar horario:', err);
       setErrorMsg('Ocurrió un error al analizar la evidencia. Intenta con la plantilla en 1 clic.');
@@ -286,16 +308,10 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
     }
   };
 
-  // Atajo de 1 clic para cargar la plantilla de la carrera
-  const handleUseOfficialTemplate = async () => {
+  const handleUseOfficialTemplate = async (overrideTmpl?: typeof ACADEMIC_TEMPLATES[0]) => {
     setIsProcessing(true);
-    setProcessingStage(`Cargando plantilla oficial de ${program}...`);
-
-    let templateKey = 'template-industrial-4';
-    if (program.includes('Economía')) templateKey = 'template-economia-4';
-    if (program.includes('Sistemas') || program.includes('Telemática')) templateKey = 'template-sistemas-5';
-
-    const tmpl = ACADEMIC_TEMPLATES.find((t) => t.id === templateKey) || ACADEMIC_TEMPLATES[0];
+    const tmpl = overrideTmpl || getTemplateForProgram(program);
+    setProcessingStage(`Cargando plantilla oficial de ${tmpl.name}...`);
 
     const subjects: ParsedSubject[] = tmpl.subjects.map((s) => ({
       id: s.id,
@@ -318,13 +334,13 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
     const parsed: ParsedAcademicData = {
       student: {
-        name: studentName.trim() || 'Estudiante',
+        name: studentName.trim() || tmpl.profile.name || 'Estudiante',
         university,
-        program,
-        semesterNumber,
+        program: tmpl.profile.program || program,
+        semesterNumber: tmpl.semesterNumber || semesterNumber,
       },
       semester: {
-        name: `${semesterNumber}° Semestre · ${program}`,
+        name: `${tmpl.semesterNumber || semesterNumber}° Semestre · ${tmpl.profile.program || program}`,
         startDate: '2026-08-01',
         endDate: '2026-12-05',
         totalWeeks: 16,
@@ -335,7 +351,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
     calculateMetricsFromBlocks(scheduleBlocks);
 
-    const syntheticResult = createSyntheticIngestResult(parsed, `Plantilla oficial ${program}`);
+    const syntheticResult = createSyntheticIngestResult(parsed, `Plantilla oficial ${tmpl.name}`);
 
     setIngestResult(syntheticResult);
     if (subjects.length > 0) {
@@ -345,10 +361,9 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
     setTimeout(() => {
       setIsProcessing(false);
       setCurrentStep(3);
-    }, 500);
+    }, 450);
   };
 
-  // Finalizar onboarding y guardar en Dexie
   const handleFinishAndEnter = async () => {
     if (!ingestResult) return;
     setIsFinishing(true);
@@ -356,7 +371,6 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
     try {
       const dataToCommit = { ...ingestResult.data };
 
-      // Si el usuario configuró su parcial más urgente en el Paso 3, instanciarlo
       if (selectedUrgentSubjectId) {
         const targetSubject = dataToCommit.subjects.find((s) => s.id === selectedUrgentSubjectId);
         const addDays = (d: number) => {
@@ -384,7 +398,6 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
         dataToCommit.exams = [urgentExam];
 
-        // Guardar la materia prioritaria en localStorage para resaltarla en el Dashboard
         if (typeof window !== 'undefined') {
           localStorage.setItem('mi_semestre_priority_subject_id', selectedUrgentSubjectId);
         }
@@ -392,10 +405,9 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
       await commitAcademicDataAtomically(dataToCommit);
 
-      // Explosión de confeti de celebración
       confetti({
-        particleCount: 80,
-        spread: 70,
+        particleCount: 90,
+        spread: 80,
         origin: { y: 0.6 },
       });
 
@@ -409,92 +421,165 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-gradient-to-br from-[#0c102b] via-[#101438] to-[#070919] text-white flex flex-col justify-between p-4 sm:p-6 md:p-8">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#07091a] text-white flex flex-col justify-between selection:bg-[#5b5be8] selection:text-white">
       {/* ─────────────────────────────────────────────────────────────
-          BARRA SUPERIOR DE BRANDING Y SALVAVIDAS DEMO
+          FONDO INMERSIVO: CAMPUS ICESI + AMBIENT LIGHT BLOOM
          ───────────────────────────────────────────────────────────── */}
-      <header className="flex items-center justify-between max-w-4xl w-full mx-auto pb-4 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#3b3abf] to-[#6366f1] flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <GraduationCap className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-base font-bold tracking-tight text-white flex items-center gap-2">
-              Mi Semestre
-              <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                Universidad Icesi
-              </span>
-            </h1>
-            <p className="text-xs text-white/50">Centro de Control y Optimización Académica</p>
-          </div>
-        </div>
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <Image
+          src="/campus_icesi.webp"
+          alt="Campus Universidad Icesi"
+          fill
+          priority
+          className="object-cover object-center opacity-15 scale-105 filter blur-[1px]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#07091a]/80 via-[#07091a]/95 to-[#07091a]" />
+        
+        {/* Luces atmosféricas Icesi */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[750px] h-[450px] bg-gradient-to-b from-[#3b3abf]/30 via-[#5b5be8]/15 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[350px] bg-emerald-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -left-32 w-[400px] h-[400px] bg-[#6366f1]/10 rounded-full blur-3xl" />
+      </div>
 
-        {/* Salvavidas elegante para reclutadores o profesores */}
-        <button
-          onClick={onSelectDemo}
-          className="text-xs font-semibold text-indigo-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer group"
-          title="Ver cómo funciona con datos de muestra de 4to semestre"
-        >
-          <Zap className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
-          <span className="hidden sm:inline">¿Solo explorando?</span> Entrar con Semestre Demo
-        </button>
+      {/* ─────────────────────────────────────────────────────────────
+          BARRA SUPERIOR OFICIAL: LOGO MI SEMESTRE | ICESI + SALVAVIDAS DEMO
+         ───────────────────────────────────────────────────────────── */}
+      <header className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-5 pb-3">
+        <div className="flex items-center justify-between backdrop-blur-xl bg-[#0c102a]/60 border border-[#232a58]/60 rounded-2xl px-4 py-3 shadow-xl shadow-black/40">
+          {/* Logo Oficial Mi Semestre | Icesi */}
+          <div className="flex items-center gap-3.5">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#3b3abf] to-[#656cf5] rounded-xl blur-xs opacity-70 group-hover:opacity-100 transition duration-300" />
+              <div className="relative w-10 h-10 rounded-xl bg-[#0b0e26] border border-[#2b31a8] flex items-center justify-center p-1.5 shadow-md">
+                <img
+                  src="/icon.png"
+                  alt="MI SEMESTRE | ICESI"
+                  className="w-full h-full object-contain drop-shadow"
+                />
+              </div>
+            </div>
+            <div>
+              <div className="font-black text-sm tracking-wider text-white flex items-center gap-1.5">
+                MI SEMESTRE
+                <span className="text-[#656cf5] font-black text-base">|</span>
+                <span className="text-[10px] font-mono tracking-widest text-[#a0a8ff] uppercase bg-[#181d48] px-2 py-0.5 rounded-md border border-[#2c336b] font-bold">
+                  ICESI
+                </span>
+              </div>
+              <p className="text-[11px] text-[#7a85b8] font-medium tracking-tight">
+                Sistema Operativo Personal del Semestre
+              </p>
+            </div>
+          </div>
+
+          {/* Salvavidas de Demostración para Reclutadores o Curiosos */}
+          <button
+            onClick={onSelectDemo}
+            className="group relative overflow-hidden rounded-xl p-[1px] cursor-pointer transition-transform active:scale-95"
+            title="Explorar el proyecto con el 4to semestre de Ingeniería Industrial"
+          >
+            <span className="absolute inset-0 bg-gradient-to-r from-amber-500/40 via-indigo-500/40 to-amber-500/40 rounded-xl animate-pulse" />
+            <span className="relative flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-xl bg-[#0d112e] text-xs font-bold text-amber-300 group-hover:text-white transition-colors border border-amber-500/30">
+              <Zap className="w-3.5 h-3.5 text-amber-400 group-hover:rotate-12 transition-transform" />
+              <span className="hidden md:inline text-white/60 font-normal">¿Solo explorando?</span>
+              <span>Entrar con Semestre Demo</span>
+            </span>
+          </button>
+        </div>
       </header>
 
       {/* ─────────────────────────────────────────────────────────────
-          CUERPO PRINCIPAL DEL ONBOARDING SEGÚN EL PASO
+          CUERPO PRINCIPAL DEL ONBOARDING
          ───────────────────────────────────────────────────────────── */}
-      <main className="max-w-xl w-full mx-auto my-auto py-8">
-        {/* Indicador de pasos minimalista */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          {[1, 2, 3].map((step) => (
-            <div
-              key={step}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                currentStep === step
-                  ? 'w-10 bg-indigo-500'
-                  : currentStep > step
-                  ? 'w-4 bg-emerald-500'
-                  : 'w-4 bg-white/20'
-              }`}
-            />
+      <main className="relative z-10 w-full max-w-2xl mx-auto my-auto px-4 py-6 sm:py-8">
+        {/* Timeline de Pasos Conectado y Elegante */}
+        <div className="flex items-center justify-center gap-2 sm:gap-3 mb-7 select-none">
+          {[
+            { step: 1, label: '1. Tu Carrera' },
+            { step: 2, label: '2. Tu Horario' },
+            { step: 3, label: '3. Tus Métricas' },
+          ].map((item, idx) => (
+            <React.Fragment key={item.step}>
+              {idx > 0 && (
+                <div
+                  className={`h-0.5 w-6 sm:w-10 rounded-full transition-colors duration-500 ${
+                    currentStep >= item.step ? 'bg-[#5b5be8]' : 'bg-white/10'
+                  }`}
+                />
+              )}
+              <div
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full text-xs font-mono transition-all duration-300 ${
+                  currentStep === item.step
+                    ? 'bg-[#2b31a8] text-white border border-[#5b5be8] shadow-[0_0_20px_rgba(91,91,232,0.45)] font-bold scale-105'
+                    : currentStep > item.step
+                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold'
+                    : 'bg-white/5 text-white/30 border border-white/5'
+                }`}
+              >
+                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] bg-black/40 font-bold">
+                  {currentStep > item.step ? '✓' : item.step}
+                </span>
+                <span>{item.label}</span>
+              </div>
+            </React.Fragment>
           ))}
         </div>
 
         {/* ═════════════════════════════════════════════════════════════
-            PASO 1: EL GANCHO DE IDENTIDAD (5 Segundos)
+            PASO 1: EL GANCHO DE IDENTIDAD
            ═════════════════════════════════════════════════════════════ */}
         {currentStep === 1 && (
-          <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="text-center space-y-2">
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/25">
-                <Sparkles className="w-3.5 h-3.5" />
-                Configuración Rápida en 45 Segundos
+          <div className="space-y-6 animate-in fade-in zoom-in-95 duration-400">
+            {/* Título de Impacto con Gradiente de Texto */}
+            <div className="text-center space-y-2.5">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase font-bold tracking-wider px-3.5 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 shadow-xs">
+                <Sparkles className="w-3 h-3 text-indigo-400" />
+                Configuración en 45 Segundos · Cero Formularios Pesados
               </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                Deja de adivinar qué estudiar en tus huecos libres.
+              <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
+                Deja de adivinar qué estudiar en tus{' '}
+                <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-indigo-300 bg-clip-text text-transparent">
+                  huecos libres.
+                </span>
               </h2>
-              <p className="text-sm text-white/60 max-w-md mx-auto">
-                Transforma tu horario universitario en un sistema que prioriza tu tiempo útil real.
+              <p className="text-xs sm:text-sm text-[#94a3b8] max-w-lg mx-auto leading-relaxed">
+                El centro de control académico que descuenta traslados en el campus, visualiza tu tiempo libre y te dice exactamente qué hacer ahora.
               </p>
+
+              {/* Micro-pills de diferenciadores reales */}
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                <span className="text-[10px] font-medium px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/80">
+                  ⚡ -25m traslados calculados
+                </span>
+                <span className="text-[10px] font-medium px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/80">
+                  🟢 Bloques de hueco en verde
+                </span>
+                <span className="text-[10px] font-medium px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/80">
+                  🛡️ Límite de inasistencias Icesi
+                </span>
+              </div>
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 shadow-xl backdrop-blur-md">
+            {/* Tarjeta de Entrada de Datos Estilo Glassmorphism */}
+            <div className="bg-[#0c102a]/85 backdrop-blur-2xl border border-[#232a58] rounded-3xl p-6 sm:p-7 space-y-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)]">
+              {/* Campo Nombre */}
               <div>
-                <label className="block text-xs font-bold text-white/70 uppercase tracking-wider mb-1.5">
+                <label className="block text-[11px] font-mono font-bold text-[#8b95c2] uppercase tracking-wider mb-1.5">
                   ¿Cómo te llamas?
                 </label>
                 <input
                   type="text"
-                  placeholder="Tu nombre (opcional)"
+                  placeholder="Tu nombre (ej: Luis, Isabella, David...)"
                   value={studentName}
                   onChange={(e) => setStudentName(e.target.value)}
-                  className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-[#080b20]/90 border border-[#232a58] rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[#5b5be8] focus:ring-2 focus:ring-[#5b5be8]/20 transition-all font-medium"
                 />
               </div>
 
+              {/* Universidad + Semestre */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-white/70 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[11px] font-mono font-bold text-[#8b95c2] uppercase tracking-wider mb-1.5">
                     Universidad
                   </label>
                   <div className="relative">
@@ -502,23 +587,23 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                       type="text"
                       disabled
                       value={university}
-                      className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white/90 font-medium cursor-not-allowed"
+                      className="w-full bg-[#080b20]/50 border border-[#232a58]/80 rounded-xl px-4 py-2.5 text-xs text-white/80 font-semibold cursor-not-allowed"
                     />
                     <School className="w-4 h-4 text-indigo-400 absolute right-3.5 top-3" />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-white/70 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[11px] font-mono font-bold text-[#8b95c2] uppercase tracking-wider mb-1.5">
                     Semestre Activo
                   </label>
                   <select
                     value={semesterNumber}
                     onChange={(e) => setSemesterNumber(Number(e.target.value))}
-                    className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer"
+                    className="w-full bg-[#080b20]/90 border border-[#232a58] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#5b5be8] focus:ring-2 focus:ring-[#5b5be8]/20 transition-all font-semibold cursor-pointer"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                      <option key={num} value={num} className="bg-[#121633] text-white">
+                      <option key={num} value={num} className="bg-[#0c102a] text-white">
                         {num}° Semestre
                       </option>
                     ))}
@@ -526,26 +611,50 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                 </div>
               </div>
 
+              {/* Carrera / Programa Académico */}
               <div>
-                <label className="block text-xs font-bold text-white/70 uppercase tracking-wider mb-1.5">
-                  Carrera / Programa Académico
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] font-mono font-bold text-[#8b95c2] uppercase tracking-wider">
+                    Carrera / Programa
+                  </label>
+                  <span className="text-[10px] text-white/40">Selecciona o pulsa abajo</span>
+                </div>
+
                 <select
                   value={program}
                   onChange={(e) => setProgram(e.target.value)}
-                  className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer"
+                  className="w-full bg-[#080b20]/90 border border-[#232a58] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#5b5be8] focus:ring-2 focus:ring-[#5b5be8]/20 transition-all font-semibold cursor-pointer mb-2.5"
                 >
                   {ICESI_PROGRAMS.map((prog) => (
-                    <option key={prog} value={prog} className="bg-[#121633] text-white">
+                    <option key={prog} value={prog} className="bg-[#0c102a] text-white">
                       {prog}
                     </option>
                   ))}
                 </select>
+
+                {/* Chips rápidos de carreras comunes */}
+                <div className="flex flex-wrap gap-1.5">
+                  {POPULAR_PROGRAM_CHIPS.map((chip: string) => (
+                    <button
+                      key={chip}
+                      type="button"
+                      onClick={() => setProgram(chip)}
+                      className={`text-[11px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                        program === chip
+                          ? 'bg-[#2b31a8] border-[#5b5be8] text-white font-bold shadow-xs'
+                          : 'bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {chip}
+                    </button>
+                  ))}
+                </div>
               </div>
 
+              {/* Botón Principal Siguiente Paso */}
               <button
                 onClick={() => setCurrentStep(2)}
-                className="w-full mt-2 py-3 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-sm text-white flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer group"
+                className="w-full mt-2 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#2828a8] via-[#3b3abf] to-[#5b5be8] hover:from-[#3232c4] hover:to-[#6f6ff5] text-white font-black text-sm flex items-center justify-center gap-2.5 shadow-[0_10px_30px_rgba(59,58,191,0.5)] transition-all cursor-pointer group active:scale-[0.98]"
               >
                 <span>Continuar a Cargar Horario</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -555,157 +664,300 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
         )}
 
         {/* ═════════════════════════════════════════════════════════════
-            PASO 2: EL "MAGIC DROP" CONTEXTUAL (20 Segundos)
+            PASO 2: EL "MAGIC DROP" CONTEXTUAL
            ═════════════════════════════════════════════════════════════ */}
         {currentStep === 2 && (
-          <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="space-y-5 animate-in fade-in zoom-in-95 duration-400">
             <div className="text-center space-y-1.5">
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                Elige la forma más rápida de entrar
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                Carga tu horario en{' '}
+                <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
+                  segundos
+                </span>
               </h2>
-              <p className="text-sm text-white/60">
-                El motor contextual de Icesi extrae códigos, profesores y salones al instante.
+              <p className="text-xs sm:text-sm text-[#94a3b8]">
+                El motor local de Icesi cruza códigos, profesores y salones instantáneamente sin inventar datos.
               </p>
             </div>
 
             {errorMsg && (
-              <div className="p-3.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5">
+              <div className="p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5 animate-in fade-in">
                 <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
                 <span>{errorMsg}</span>
               </div>
             )}
 
             {isProcessing ? (
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-10 text-center space-y-5 shadow-xl backdrop-blur-md">
-                <div className="w-14 h-14 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                <div className="space-y-1.5">
-                  <h3 className="text-base font-bold text-white">Analizando tu horario universitario...</h3>
-                  <p className="text-xs font-mono text-indigo-300 animate-pulse">{processingStage}</p>
+              <div className="bg-[#0c102a]/90 backdrop-blur-2xl border border-[#232a58] rounded-3xl p-10 text-center space-y-5 shadow-2xl">
+                <div className="relative w-16 h-16 mx-auto">
+                  <div className="absolute inset-0 rounded-full border-4 border-indigo-500/20" />
+                  <div className="absolute inset-0 rounded-full border-4 border-t-[#6366f1] border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                  <Sparkles className="w-6 h-6 text-indigo-400 absolute inset-0 m-auto animate-pulse" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-base font-bold text-white tracking-tight">
+                    Analizando horario universitario...
+                  </h3>
+                  <p className="text-xs font-mono text-indigo-300 bg-[#161c48] py-1.5 px-3 rounded-full border border-indigo-500/30 inline-block animate-pulse">
+                    {processingStage}
+                  </p>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
-                {/* 1. Prioridad Máxima: Pegar texto de Banner (Ctrl + V) */}
-                <div className="bg-white/5 border border-indigo-500/40 rounded-2xl p-5 space-y-3 shadow-lg relative overflow-hidden group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-indigo-400" />
-                      Opción Recomendada (100% Precisa)
-                    </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/10 text-white/70">
-                      Ctrl + V
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-white/70">
-                    Copia la tabla o balance de Banner y pégala aquí. El catálogo reconoce los NRCs de 5 dígitos al instante.
-                  </p>
-
-                  <textarea
-                    rows={3}
-                    placeholder="Pega aquí el texto de tu horario (ej: 05359 Optimización Lunes 7-9 am, 42002 Datos...)"
-                    value={pastedText}
-                    onChange={(e) => setPastedText(e.target.value)}
-                    className="w-full bg-black/40 border border-white/15 rounded-xl p-3 text-xs text-white font-mono placeholder-white/30 focus:outline-none focus:border-indigo-400"
-                  />
+                {/* Selector de Pestañas del Magic Drop */}
+                <div className="flex bg-[#080b20] p-1 rounded-2xl border border-[#232a58]">
+                  <button
+                    type="button"
+                    onClick={() => setMagicTab('paste')}
+                    className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                      magicTab === 'paste'
+                        ? 'bg-[#2b31a8] text-white shadow-md'
+                        : 'text-[#8b95c2] hover:text-white'
+                    }`}
+                  >
+                    <Zap className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Pegar Banner (Ctrl + V)</span>
+                  </button>
 
                   <button
-                    disabled={!pastedText.trim()}
-                    onClick={() => processEvidence(pastedText)}
-                    className="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:pointer-events-none font-bold text-xs text-white flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    type="button"
+                    onClick={() => setMagicTab('file')}
+                    className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                      magicTab === 'file'
+                        ? 'bg-[#2b31a8] text-white shadow-md'
+                        : 'text-[#8b95c2] hover:text-white'
+                    }`}
                   >
-                    <span>Analizar Texto Copiado</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <UploadCloud className="w-3.5 h-3.5 text-indigo-300" />
+                    <span>Subir Archivo / Captura</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setMagicTab('template')}
+                    className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                      magicTab === 'template'
+                        ? 'bg-[#2b31a8] text-white shadow-md'
+                        : 'text-[#8b95c2] hover:text-white'
+                    }`}
+                  >
+                    <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Plantilla 1 Clic</span>
                   </button>
                 </div>
 
-                {/* 2. Drag & Drop de Archivos (Captura o PDF de Banner) */}
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-white/20 hover:border-indigo-400/60 rounded-2xl p-5 text-center transition-all bg-white/[0.02] hover:bg-white/[0.05] cursor-pointer group"
-                >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".pdf,.ics,.txt,.png,.jpg,.jpeg"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) processEvidence(undefined, file);
-                    }}
-                  />
-                  <UploadCloud className="w-7 h-7 text-white/50 group-hover:text-indigo-300 mx-auto mb-2 transition-colors" />
-                  <p className="text-xs font-semibold text-white group-hover:text-indigo-200">
-                    O arrastra tu captura de pantalla, PDF o archivo .ICS
-                  </p>
-                  <p className="text-[10px] text-white/40 mt-0.5">
-                    Soporta imágenes de horario, PDF de matrícula y calendarios
-                  </p>
-                </div>
+                {/* 1. PESTAÑA: PEGAR TEXTO (PRIORIDAD #1) */}
+                {magicTab === 'paste' && (
+                  <div className="bg-[#0c102a]/85 backdrop-blur-2xl border border-[#2b31a8]/80 rounded-3xl p-6 space-y-4 shadow-xl">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <Zap className="w-4 h-4 text-amber-400" />
+                        Texto Plano de Banner o Matrícula
+                      </span>
+                      {detectedNRCsCount > 0 ? (
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 animate-pulse">
+                          ✓ {detectedNRCsCount} NRCs Detectados
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/10 text-white/60">
+                          Reconoce códigos de 5 dígitos
+                        </span>
+                      )}
+                    </div>
 
-                {/* 3. Atajo salvavidas para perezosos: 1 clic con plantilla oficial */}
-                <div className="pt-2 text-center">
-                  <div className="flex items-center gap-3 my-2 text-white/30 text-xs">
-                    <div className="h-px bg-white/10 flex-1" />
-                    <span>O si tienes prisa</span>
-                    <div className="h-px bg-white/10 flex-1" />
+                    <p className="text-xs text-[#94a3b8] leading-relaxed">
+                      Selecciona la tabla en Banner de Icesi o el balance de notas, cópiala con <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-[10px]">Ctrl + C</kbd> y pégala aquí:
+                    </p>
+
+                    <textarea
+                      rows={4}
+                      placeholder="Ej: 05359 Optimización Lunes y Miércoles 7:00 a 9:00 am Aula 204E... o pega el balance académico oficial..."
+                      value={pastedText}
+                      onChange={(e) => setPastedText(e.target.value)}
+                      className="w-full bg-[#080b20] border border-[#232a58] rounded-2xl p-3.5 text-xs text-white font-mono placeholder-white/20 focus:outline-none focus:border-[#5b5be8] focus:ring-2 focus:ring-[#5b5be8]/20 transition-all"
+                    />
+
+                    <button
+                      disabled={!pastedText.trim()}
+                      onClick={() => processEvidence(pastedText)}
+                      className="w-full py-3 px-5 rounded-2xl bg-gradient-to-r from-[#2828a8] via-[#3b3abf] to-[#5b5be8] hover:from-[#3232c4] hover:to-[#6f6ff5] disabled:opacity-40 disabled:pointer-events-none font-bold text-xs text-white flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer"
+                    >
+                      <Sparkles className="w-4 h-4 text-amber-300" />
+                      <span>Procesar Horario con Motor Contextual</span>
+                    </button>
                   </div>
+                )}
 
-                  <button
-                    onClick={handleUseOfficialTemplate}
-                    className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-semibold text-white/90 flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                  >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <span>Usar horario oficial de {program} (Semestre {semesterNumber}) en 1 clic</span>
-                  </button>
-                </div>
+                {/* 2. PESTAÑA: SUBIR ARCHIVO O IMAGEN */}
+                {magicTab === 'file' && (
+                  <div className="bg-[#0c102a]/85 backdrop-blur-2xl border border-[#232a58] rounded-3xl p-6 space-y-4 shadow-xl">
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className="border-2 border-dashed border-[#232a58] hover:border-[#5b5be8] rounded-2xl p-8 text-center transition-all bg-[#080b20]/60 hover:bg-[#080b20] cursor-pointer group"
+                    >
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".pdf,.ics,.txt,.png,.jpg,.jpeg"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) processEvidence(undefined, file);
+                        }}
+                      />
+                      <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                        <UploadCloud className="w-6 h-6 text-indigo-400" />
+                      </div>
+                      <p className="text-xs font-bold text-white group-hover:text-indigo-200">
+                        Arrastra tu archivo o haz clic para seleccionar
+                      </p>
+                      <p className="text-[11px] text-[#7a85b8] mt-1">
+                        Soporta capturas de pantalla (.PNG, .JPG), PDF de matrícula Banner o calendarios .ICS
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. PESTAÑA: PLANTILLA OFICIAL 1 CLIC */}
+                {magicTab === 'template' && (() => {
+                  const currentTemplate = getTemplateForProgram(program);
+                  return (
+                    <div className="bg-[#0c102a]/85 backdrop-blur-2xl border border-emerald-500/30 rounded-3xl p-6 space-y-4 shadow-xl">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-sm font-bold text-white">
+                                {currentTemplate.name}
+                              </h4>
+                              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                {currentTemplate.badge}
+                              </span>
+                            </div>
+                            <p className="text-xs text-[#8b95c2] mt-0.5">
+                              {currentTemplate.faculty}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="text-right shrink-0 hidden sm:block">
+                          <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                            {currentTemplate.subjects.length} materias
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-[#94a3b8] leading-relaxed">
+                        {currentTemplate.description}
+                      </p>
+
+                      {/* Lista dinámica de materias oficiales de ESTA carrera */}
+                      <div className="space-y-1.5 pt-1">
+                        <div className="text-[11px] font-mono text-[#8b95c2] uppercase font-bold tracking-wider flex items-center justify-between">
+                          <span>Materias oficiales que se cargarán:</span>
+                          <span className="text-[10px] text-white/50">{currentTemplate.scheduleBlocks.length} bloques con salón Icesi</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto pr-1">
+                          {currentTemplate.subjects.map((sub) => (
+                            <div
+                              key={sub.id}
+                              className="p-2.5 rounded-xl bg-[#080b20] border border-[#232a58] flex items-center justify-between text-left"
+                            >
+                              <div className="min-w-0 pr-2">
+                                <div className="text-xs font-bold text-white truncate">
+                                  {sub.name}
+                                </div>
+                                <div className="text-[10px] text-[#7a85b8] font-mono truncate">
+                                  {sub.code} · {sub.professor || 'Docente Titular'}
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-white/10 text-white shrink-0">
+                                {sub.credits} cr
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Selector rápido para explorar otras carreras si el usuario lo desea */}
+                      <div className="pt-2 border-t border-[#1e2552] flex items-center justify-between text-xs">
+                        <span className="text-[#8b95c2] text-[11px]">¿Quieres ver otra carrera?</span>
+                        <select
+                          value={program}
+                          onChange={(e) => setProgram(e.target.value)}
+                          className="bg-[#080b20] border border-[#232a58] rounded-xl px-2.5 py-1 text-xs text-white focus:outline-none focus:border-[#5b5be8] font-medium cursor-pointer"
+                        >
+                          {ICESI_PROGRAMS.map((prog) => (
+                            <option key={prog} value={prog} className="bg-[#0c102a] text-white">
+                              {prog}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <button
+                        onClick={() => handleUseOfficialTemplate(currentTemplate)}
+                        className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 font-bold text-xs text-white flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer active:scale-98"
+                      >
+                        <Sparkles className="w-4 h-4 text-emerald-200" />
+                        <span>Cargar Plan de {currentTemplate.name} ({currentTemplate.subjects.length} materias)</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  );
+                })()}
               </div>
             )}
           </div>
         )}
 
         {/* ═════════════════════════════════════════════════════════════
-            PASO 3: LA REVELACIÓN DE VALOR ("Aha! Moment" - 15 Segundos)
+            PASO 3: LA REVELACIÓN DE VALOR ("Aha! Moment")
            ═════════════════════════════════════════════════════════════ */}
         {currentStep === 3 && ingestResult && (
-          <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="text-center space-y-1.5">
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">
-                <CheckCircle2 className="w-3.5 h-3.5" />
+          <div className="space-y-6 animate-in fade-in zoom-in-95 duration-400">
+            <div className="text-center space-y-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold px-3.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                 {sharedAuthor
                   ? `Semestre Compartido por ${sharedAuthor}`
                   : `¡Semestre Configurado con Éxito!`}
               </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                Analizamos tu semestre en Icesi
+              <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
+                Analizamos tu semestre en{' '}
+                <span className="text-[#a0a8ff]">Universidad Icesi</span>
               </h2>
-              <p className="text-sm text-white/60">
-                Detectamos {ingestResult.data.subjects.length} materias y organizamos tus huecos libres.
+              <p className="text-xs sm:text-sm text-[#94a3b8]">
+                Cruzamos tus {ingestResult.data.subjects.length} materias con tu disponibilidad real en campus:
               </p>
             </div>
 
-            {/* Tarjeta de Impacto Psicológico Inmediato */}
-            <div className="bg-gradient-to-br from-[#181d45] to-[#121638] border border-indigo-500/30 rounded-2xl p-6 shadow-xl space-y-4">
+            {/* Tarjetas de Métricas de Alto Impacto Psicológico */}
+            <div className="bg-[#0c102a]/85 backdrop-blur-2xl border border-[#232a58] rounded-3xl p-6 sm:p-7 space-y-5 shadow-2xl">
               <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="bg-black/30 p-3 rounded-xl border border-white/5">
-                  <Clock className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
-                  <span className="text-lg font-black text-emerald-400 font-mono block">
+                <div className="bg-[#07091a]/80 p-3.5 rounded-2xl border border-emerald-500/30 shadow-xs">
+                  <Clock className="w-5 h-5 text-emerald-400 mx-auto mb-1" />
+                  <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono block">
                     {freeGapHours}h
                   </span>
                   <span className="text-[10px] text-white/60 font-medium">Huecos Libres / Sem.</span>
                 </div>
 
-                <div className="bg-black/30 p-3 rounded-xl border border-white/5">
-                  <Flame className="w-4 h-4 text-rose-400 mx-auto mb-1" />
-                  <span className="text-xs font-black text-white font-mono block truncate mt-1">
+                <div className="bg-[#07091a]/80 p-3.5 rounded-2xl border border-rose-500/30 shadow-xs">
+                  <Flame className="w-5 h-5 text-rose-400 mx-auto mb-1" />
+                  <span className="text-xs sm:text-sm font-black text-white font-mono block truncate mt-1">
                     {busiestDay}
                   </span>
                   <span className="text-[10px] text-white/60 font-medium">Día Más Pesado</span>
                 </div>
 
-                <div className="bg-black/30 p-3 rounded-xl border border-white/5">
-                  <Coffee className="w-4 h-4 text-indigo-400 mx-auto mb-1" />
-                  <span className="text-lg font-black text-indigo-300 font-mono block">
+                <div className="bg-[#07091a]/80 p-3.5 rounded-2xl border border-indigo-500/30 shadow-xs">
+                  <Coffee className="w-5 h-5 text-indigo-400 mx-auto mb-1" />
+                  <span className="text-xl sm:text-2xl font-black text-indigo-300 font-mono block">
                     {longestGap.hours}h
                   </span>
                   <span className="text-[10px] text-white/60 font-medium">Bloque en {longestGap.day}</span>
@@ -714,15 +966,16 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
               {/* Materias Detectadas */}
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/50 block mb-2">
-                  Tus Asignaturas Matriculadas
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#7a85b8] block mb-2">
+                  Tus Materias Matriculadas
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {ingestResult.data.subjects.map((s) => (
                     <span
                       key={s.id}
-                      className="text-xs px-2.5 py-1 rounded-lg bg-white/10 border border-white/10 text-white/90 font-medium"
+                      className="text-xs px-2.5 py-1 rounded-xl bg-white/5 border border-white/10 text-white/90 font-medium flex items-center gap-1.5"
                     >
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
                       {s.name}
                     </span>
                   ))}
@@ -730,16 +983,18 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
               </div>
             </div>
 
-            {/* UNA SOLA PREGUNTA PARA ACTIVAR EL RADAR DE RIESGO */}
-            <div className="bg-white/5 border border-amber-500/30 rounded-2xl p-5 space-y-3.5 shadow-lg">
-              <div className="flex items-start gap-2.5">
-                <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            {/* PREGUNTA CLAVE PARA ACTIVAR EL RADAR DE RIESGO */}
+            <div className="bg-[#0c102a]/85 backdrop-blur-2xl border border-amber-500/40 rounded-3xl p-6 space-y-4 shadow-xl">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
+                  <AlertCircle className="w-5 h-5 text-amber-400" />
+                </div>
                 <div>
                   <h3 className="text-sm font-bold text-white">
-                    ¿Cuál es el examen o entrega que más te preocupa?
+                    ¿Cuál es el parcial o entrega que más te preocupa?
                   </h3>
-                  <p className="text-xs text-white/60">
-                    Activará el Radar de Riesgo en tiempo real para recomendarte sesiones de estudio.
+                  <p className="text-xs text-[#8b95c2]">
+                    Activará el Radar de Riesgo con 4h de estudio sugerido y guiará tu centro de decisiones.
                   </p>
                 </div>
               </div>
@@ -748,10 +1003,10 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                 <select
                   value={selectedUrgentSubjectId}
                   onChange={(e) => setSelectedUrgentSubjectId(e.target.value)}
-                  className="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400 cursor-pointer"
+                  className="w-full bg-[#080b20] border border-[#232a58] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400 cursor-pointer font-semibold"
                 >
                   {ingestResult.data.subjects.map((s) => (
-                    <option key={s.id} value={s.id} className="bg-[#121633] text-white">
+                    <option key={s.id} value={s.id} className="bg-[#0c102a] text-white">
                       {s.name} ({s.code || 'Icesi'})
                     </option>
                   ))}
@@ -759,7 +1014,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { id: '2_days', label: 'En 2-3 días', color: 'border-rose-500/40 text-rose-300' },
+                    { id: '2_days', label: 'En 2-3 días (Crítico)', color: 'border-rose-500/40 text-rose-300' },
                     { id: '7_days', label: 'Próx. Semana', color: 'border-amber-500/40 text-amber-300' },
                     { id: '14_days', label: 'En 2 Semanas', color: 'border-emerald-500/40 text-emerald-300' },
                   ].map((option) => (
@@ -784,20 +1039,20 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
             <button
               disabled={isFinishing}
               onClick={handleFinishAndEnter}
-              className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-600 hover:opacity-95 font-bold text-sm text-white flex items-center justify-center gap-2 shadow-xl shadow-indigo-600/40 transition-all cursor-pointer group"
+              className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#2828a8] via-[#3b3abf] to-[#5b5be8] hover:from-[#3232c4] hover:to-[#6f6ff5] text-white font-black text-sm flex items-center justify-center gap-2.5 shadow-[0_15px_40px_rgba(59,58,191,0.6)] transition-all cursor-pointer group active:scale-[0.98]"
             >
               <span>{isFinishing ? 'Iniciando Semestre...' : '🚀 Entrar a mi Semestre'}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
             </button>
           </div>
         )}
       </main>
 
       {/* ─────────────────────────────────────────────────────────────
-          PIE DE PÁGINA MINIMALISTA
+          PIE DE PÁGINA OFICIAL
          ───────────────────────────────────────────────────────────── */}
-      <footer className="text-center py-2 text-xs text-white/30">
-        Mi Semestre · Diseñado para la psicología académica de la Universidad Icesi
+      <footer className="relative z-10 text-center py-4 text-xs text-[#636f9e] font-mono">
+        Mi Semestre | ICESI · Diseñado para la psicología académica universitaria
       </footer>
     </div>
   );
