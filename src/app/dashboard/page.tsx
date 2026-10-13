@@ -13,6 +13,7 @@ import { RiskRadarWidget } from '@/components/dashboard/RiskRadarWidget';
 import { UpcomingEventsWidget } from '@/components/dashboard/UpcomingEventsWidget';
 import { RecentTasksWidget } from '@/components/dashboard/RecentTasksWidget';
 import { DashboardFooterQuote } from '@/components/dashboard/DashboardFooterQuote';
+import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
 
 export default function DashboardPage() {
   const {
@@ -27,6 +28,9 @@ export default function DashboardPage() {
     attendance,
     refreshData,
     isLoading,
+    needsOnboarding,
+    completeOnboarding,
+    loadDemoSemester,
   } = useSemesterData();
 
   const handleToggleTask = async (id: string) => {
@@ -51,6 +55,10 @@ export default function DashboardPage() {
         </div>
       </div>
     );
+  }
+
+  if (needsOnboarding) {
+    return <OnboardingFlow onComplete={completeOnboarding} onSelectDemo={loadDemoSemester} />;
   }
 
   return (
