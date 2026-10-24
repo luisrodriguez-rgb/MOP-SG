@@ -1,33 +1,20 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
 import {
   Clock,
-  MapPin,
-  User,
-  ChevronRight,
   Play,
+  Pause,
   Compass,
-  Bookmark,
-  Coffee,
-  CheckCircle,
   Flame,
+  CheckCircle,
 } from 'lucide-react';
 import { Subject, ScheduleBlock, Assignment, Exam, FixedRoutine, DayOfWeek } from '@/types';
 import { getCurrentBlock } from '@/lib/academic-engine/schedule/getCurrentBlock';
 import { formatMinutesHuman } from '@/lib/academic-engine/utils/timeHelpers';
+import { calculateSubjectRisk } from '@/lib/academic-engine';
 import { useUIStore } from '@/stores/uiStore';
-import { CustomSelect, CustomSelectOption } from '@/components/ui/CustomSelect';
-
-const SIMULATED_TIME_OPTIONS: CustomSelectOption[] = [
-  { value: '08:15', label: '08:15', sublabel: 'Clase de mañana' },
-  { value: '10:00', label: '10:00', sublabel: 'Hueco libre 2h 10m' },
-  { value: '12:45', label: '12:45', sublabel: 'Hora de Almuerzo' },
-  { value: '14:00', label: '14:00', sublabel: 'Clase tarde' },
-  { value: '16:00', label: '16:00', sublabel: 'Hueco libre 1h 40m' },
-  { value: '18:24', label: '18:24', sublabel: 'Estructuras de Datos' },
-  { value: '20:15', label: '20:15', sublabel: 'Noche libre' },
-];
 
 interface DecisionHeroCardProps {
   classes: ScheduleBlock[];
@@ -44,11 +31,8 @@ export function DecisionHeroCard({
   assignments,
   exams,
 }: DecisionHeroCardProps) {
-  const { startFocusSession, focusSession, openAttendanceModal } = useUIStore();
+  const { startFocusSession, stopFocusSession, focusSession } = useUIStore();
 
-  const [simulatedTime, setSimulatedTime] = useState<string>('18:24');
-  const [useRealTime, setUseRealTime] = useState<boolean>(true);
-  const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
   const [nowTimestamp] = useState<number>(() => Date.now());
 
   // Día de hoy
@@ -58,12 +42,9 @@ export function DecisionHeroCard({
   }, []);
 
   const effectiveTime = useMemo(() => {
-    if (useRealTime) {
-      const now = new Date();
-      return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-    }
-    return simulatedTime;
-  }, [useRealTime, simulatedTime]);
+    const now = new Date();
+    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+  }, []);
 
   const dayFormatted = useMemo(() => {
     const now = new Date();
@@ -71,7 +52,6 @@ export function DecisionHeroCard({
     return dayNames[now.getDay()];
   }, []);
 
-  // Formato para mostrar: "MIÉRCOLES · 6:24 p.m."
   const formattedTimeDisplay = useMemo(() => {
     const [hStr, mStr] = effectiveTime.split(':');
     const h = parseInt(hStr, 10);
@@ -81,7 +61,7 @@ export function DecisionHeroCard({
     return `${dayFormatted} · ${h12}:${m.toString().padStart(2, '0')} ${period}`;
   }, [dayFormatted, effectiveTime]);
 
-  // 1. HARD CONSTRAINTS: Ejecución del motor académico en tiempo real
+  // Ejecución del motor de horario en tiempo real
   const currentBlockResult = useMemo(() => {
     return getCurrentBlock({
       dayOfWeek: todayDayOfWeek,
@@ -94,10 +74,10 @@ export function DecisionHeroCard({
     });
   }, [todayDayOfWeek, effectiveTime, classes, subjectsMap, routines]);
 
-  // 2. CANDIDATE ELIGIBILITY & SCORING: Selección inteligente de la siguiente mejor acción
-  const recommendedTask = useMemo(() => {
+  // Selección inteligente de la siguiente mejor acción (y segunda en cola)
+  const { recommendedTask, nextCandidate } = useMemo(() => {
     const pending = assignments.filter((a) => a.status !== 'completed');
-    if (pending.length === 0) return null;
+    if (pending.length === 0) return { recommendedTask: null, nextCandidate: null };
 
     const sorted = [...pending].sort((a, b) => {
       const examA = exams.find((e) => e.subjectId === a.subjectId);
@@ -112,390 +92,182 @@ export function DecisionHeroCard({
     });
 
     const top = sorted[0];
+    const second = sorted[1] || null;
     const subject = subjectsMap[top.subjectId];
-    const relatedExam = exams.find((e) => e.subjectId === top.subjectId);
-
-    const reasonCodes: string[] = [];
-    let reason = 'Entrega pendiente que requiere avance prioritario.';
-    if (relatedExam) {
-      const diffDays = Math.max(0, (new Date(relatedExam.date).getTime() - nowTimestamp) / (1000 * 60 * 60 * 24));
-      if (diffDays <= 3) reasonCodes.push('EXAM_SOON');
-      if (relatedExam.weight >= 20) reasonCodes.push('HIGH_WEIGHT');
-      reason = `Parcial próximo de ${subject?.name || 'la materia'} (${relatedExam.weight}%). Requiere avance de preparación.`;
-    }
-
-    const dueDiffDays = Math.max(0, (new Date(top.dueDate).getTime() - nowTimestamp) / (1000 * 60 * 60 * 24));
-    if (dueDiffDays <= 2.0) reasonCodes.push('APPROACHING_DEADLINE');
-    if (top.priority === 'high') reasonCodes.push('HIGH_WEIGHT');
-    if (top.estimatedMinutes && top.estimatedMinutes > 45) reasonCodes.push('STUDY_DEFICIT');
 
     return {
-      task: top,
-      subject,
-      reason,
-      reasonCodes,
+      recommendedTask: {
+        task: top,
+        subject,
+      },
+      nextCandidate: second,
     };
-  }, [assignments, exams, subjectsMap, nowTimestamp]);
+  }, [assignments, exams, subjectsMap]);
+
+  // Conteo de áreas críticas para el resumen del radar
+  const criticalAreasCount = useMemo(() => {
+    const subjects = Object.values(subjectsMap);
+    return subjects.filter((sub) => {
+      const risk = calculateSubjectRisk({
+        subject: sub,
+        exams,
+        assignments,
+        filterMemberId: 'all',
+      });
+      return risk.level === 'CRÍTICO';
+    }).length;
+  }, [subjectsMap, exams, assignments]);
+
+  // Cuenta regresiva al Playtest (Mitad de Noviembre 2026)
+  const daysToPlaytest = useMemo(() => {
+    const playtestDate = new Date('2026-11-18T00:00:00');
+    const diffMs = playtestDate.getTime() - nowTimestamp;
+    return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+  }, [nowTimestamp]);
 
   const handleStartFocus = () => {
     if (recommendedTask) {
       startFocusSession(
         recommendedTask.task.title,
-        recommendedTask.subject?.name || 'Materia',
+        recommendedTask.subject?.name || 'Operación SG',
         recommendedTask.task.estimatedMinutes || 45,
         recommendedTask.task.id
       );
     } else {
-      startFocusSession('Sesión de Enfoque Académico', 'Auto-estudio', 45);
+      startFocusSession('Bloque de Operación Libre', 'Seamos Genios', 45);
     }
   };
 
-  // Cálculos de fricción temporal para el hueco de tiempo disponible
-  const freeMinutesGross = currentBlockResult.currentFreeSlot?.remainingMinutes || 90;
-  const transitMinutes = 15;
-  const prepMinutes = 10;
-  const usableMinutes = Math.max(0, freeMinutesGross - transitMinutes - prepMinutes);
+  const freeMinutesGross = currentBlockResult.currentFreeSlot?.remainingMinutes || 120;
+  const usableMinutes = Math.max(30, freeMinutesGross - 15);
 
   return (
-    <div className="rounded-2xl bg-white dark:bg-[#0f1330] border border-[#e2e6f2] dark:border-[#1c224b] p-6 shadow-xs transition-colors">
+    <div className="rounded-3xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 shadow-xs transition-colors">
       {/* Cabecera contextual */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#f0f3fa] dark:border-[#181d42]">
-        <div>
-          <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider uppercase text-[#626c96] dark:text-[#8b95c2]">
-            <Clock className="w-3.5 h-3.5 text-[#3b43a8] dark:text-[#8e98ec]" />
-            <span>{formattedTimeDisplay}</span>
+      <div className="flex items-center justify-between pb-3.5 border-b border-[var(--border)] text-xs">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#10b981]" />
+          <span className="font-mono text-[11px] font-bold text-[var(--muted)] uppercase">
+            {formattedTimeDisplay}
+          </span>
+        </div>
+        <div className="text-[11px] font-mono text-[var(--muted)]">
+          {currentBlockResult.currentClass
+            ? `En compromiso: ${currentBlockResult.currentClass.name}`
+            : `${usableMinutes} min útiles disponibles`}
+        </div>
+      </div>
+
+      {/* ═════════════════════════════════════════════════════════════
+          RESPUESTA ÚNICA: AHORA
+         ═════════════════════════════════════════════════════════════ */}
+      <div className="py-6 sm:py-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="max-w-2xl space-y-2">
+          <div className="text-xs font-mono font-bold tracking-widest uppercase text-[#BB271A]">
+            {focusSession.isActive ? 'EN EJECUCIÓN' : '¿QUÉ HAGO AHORA?'}
           </div>
-          <div className="flex items-center gap-3 mt-1">
-            <h2 className="text-xl sm:text-2xl font-black text-[#0f1330] dark:text-white tracking-tight">
-              ¿Qué hago ahora?
-            </h2>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#ecfdf5] text-[#059669] dark:bg-[#064e3b]/40 dark:text-[#34d399] border border-[#a7f3d0] dark:border-[#059669]/40">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-              <span>Modo Inteligente · En Vivo</span>
-            </span>
-          </div>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[var(--ink)] tracking-tight uppercase leading-tight font-sans">
+            {focusSession.isActive
+              ? `ENFOQUE: ${focusSession.taskTitle}`
+              : recommendedTask
+              ? `AHORA: ${recommendedTask.task.title}`
+              : 'AHORA: TODO AL DÍA'}
+          </h1>
+          <p className="text-xs sm:text-sm text-[var(--ink-secondary)] leading-relaxed font-medium">
+            {recommendedTask ? (
+              <>
+                Tienes <strong className="text-[var(--ink)] font-bold">{formatMinutesHuman(usableMinutes)}</strong> libres
+                {recommendedTask.task.dueDate && (
+                  <> · Entrega prevista: <span className="font-bold text-[var(--ink)]">{new Date(recommendedTask.task.dueDate).toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' })}</span></>
+                )}
+                {recommendedTask.task.assigneeName && (
+                  <> · Responsable: <span className="font-bold text-[var(--ink)]">{recommendedTask.task.assigneeName}</span></>
+                )}
+              </>
+            ) : (
+              'No tienes entregables urgentes pendientes en este momento. Tienes tiempo libre para avanzar estratégicamente o descansar.'
+            )}
+          </p>
         </div>
 
-        {/* Ajuste discreto de hora para pruebas de decisión */}
-        <div className="flex items-center gap-2 text-xs">
-          <button
-            onClick={() => setShowTimePicker(!showTimePicker)}
-            className="text-[11px] font-mono text-[#7b85b2] hover:text-[#3b43a8] dark:hover:text-[#a0aaff] underline cursor-pointer"
-          >
-            {showTimePicker ? 'Cerrar selector' : 'Simular reloj'}
-          </button>
-          {showTimePicker && (
-            <div className="flex items-center gap-1.5 bg-[#f0f3fa] dark:bg-[#161c42] p-1 rounded-xl border border-[#dce2f2] dark:border-[#22295a]">
-              <CustomSelect
-                value={effectiveTime}
-                onChange={(val) => {
-                  setUseRealTime(false);
-                  setSimulatedTime(val);
-                }}
-                options={SIMULATED_TIME_OPTIONS}
-                align="right"
-                buttonClassName="py-0.5 px-2.5 font-mono text-xs"
-              />
-              <button
-                onClick={() => setUseRealTime(!useRealTime)}
-                className={`px-2 py-1 rounded-xl text-[10px] font-mono font-bold transition-all cursor-pointer ${
-                  useRealTime
-                    ? 'bg-[#252ab8] text-white shadow-2xs'
-                    : 'bg-white dark:bg-[#0f1330] text-[#6b75a6] border border-[#dce2f2] dark:border-[#22295a]'
-                }`}
-              >
-                {useRealTime ? 'Real ON' : 'Fijar'}
-              </button>
-            </div>
+        {/* ÚNICO BOTÓN ROJO EN TODA LA PANTALLA: EMPEZAR */}
+        <div className="shrink-0">
+          {focusSession.isActive ? (
+            <button
+              onClick={stopFocusSession}
+              className="px-7 py-3.5 rounded-full bg-[#0A0A0A] hover:bg-[#1A1A1A] text-white dark:bg-[#F4F4F5] dark:text-[#0A0A0A] font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer flex items-center gap-2"
+            >
+              <Pause className="w-4 h-4" />
+              <span>Finalizar Sesión</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleStartFocus}
+              className="px-8 py-3.5 rounded-full bg-[#BB271A] hover:bg-[#991B1B] text-white font-black text-xs sm:text-sm tracking-wide shadow-lg shadow-[#BB271A]/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center gap-2"
+            >
+              <Play className="w-4 h-4 fill-white" />
+              <span>Empezar</span>
+            </button>
           )}
         </div>
       </div>
 
-      {/* Grid de 3 tarjetas: ESTADO ACTUAL · RECURSO TEMPORAL · ACCIÓN PRIORITARIA */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
-        {/* 1. TARJETA AHORA (Restricciones duras en vivo) */}
-        <div className="p-4 rounded-xl bg-[#f8faff] dark:bg-[#141838] border border-[#e2e8f5] dark:border-[#1e2452] flex flex-col justify-between min-h-[185px]">
-          <div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs text-[#5a6491] dark:text-[#8e98c7] font-semibold">
-                <Clock className="w-3.5 h-3.5 text-[#3b43a8] dark:text-[#8e98ec]" />
-                <span>
-                  {focusSession.isActive
-                    ? 'Sesión de Foco Activa'
-                    : currentBlockResult.currentClass
-                    ? `${currentBlockResult.currentClass.startTime} - ${currentBlockResult.currentClass.endTime}`
-                    : currentBlockResult.currentRoutine
-                    ? `${currentBlockResult.currentRoutine.startTime} - ${currentBlockResult.currentRoutine.endTime}`
-                    : 'Franja Libre'}
-                </span>
-              </div>
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  focusSession.isActive
-                    ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
-                    : currentBlockResult.status === 'in_class'
-                    ? 'bg-[#e0e7ff] text-[#3730a3] dark:bg-[#1e235e] dark:text-[#a5b4fc]'
-                    : currentBlockResult.status === 'in_routine'
-                    ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-                    : 'bg-blue-500/15 text-blue-700 dark:text-blue-300'
-                }`}
-              >
-                {focusSession.isActive
-                  ? 'Pomodoro en curso'
-                  : currentBlockResult.status === 'in_class'
-                  ? 'En clase'
-                  : currentBlockResult.status === 'in_routine'
-                  ? 'Rutina / Almuerzo'
-                  : 'Tiempo libre'}
-              </span>
-            </div>
-
-            <div className="mt-3">
-              {focusSession.isActive ? (
-                <div>
-                  <h3 className="font-black text-sm sm:text-base text-[#0f1330] dark:text-white tracking-tight leading-snug">
-                    {focusSession.taskTitle}
-                  </h3>
-                  <div className="mt-2 text-xs font-mono text-amber-700 dark:text-amber-400 font-bold flex items-center gap-1">
-                    <Flame className="w-3.5 h-3.5 text-amber-500" />
-                    <span>{Math.floor(focusSession.secondsRemaining / 60)} min restantes de foco</span>
-                  </div>
-                </div>
-              ) : currentBlockResult.currentClass ? (
-                <div>
-                  <h3 className="font-black text-sm sm:text-base text-[#0f1330] dark:text-white tracking-tight leading-snug">
-                    {currentBlockResult.currentClass.name}
-                  </h3>
-                  <div className="mt-2 space-y-1 text-xs text-[#5a6491] dark:text-[#8e98c7]">
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-[#3b43a8] dark:text-[#8e98ec] shrink-0" />
-                      <span>{currentBlockResult.currentClass.location || 'Campus Universitario'}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5 text-[#3b43a8] dark:text-[#8e98ec] shrink-0" />
-                      <span>{subjectsMap[currentBlockResult.currentClass.subjectId]?.professor || 'Docente'}</span>
-                    </div>
-                  </div>
-                </div>
-              ) : currentBlockResult.currentRoutine ? (
-                <div>
-                  <h3 className="font-black text-sm sm:text-base text-[#0f1330] dark:text-white tracking-tight leading-snug flex items-center gap-2">
-                    <Coffee className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                    <span>{currentBlockResult.currentRoutine.title}</span>
-                  </h3>
-                  <p className="mt-2 text-xs text-[#5a6491] dark:text-[#8e98c7]">
-                    Pausa fija programada en tu horario para recargar energía.
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <h3 className="font-black text-sm sm:text-base text-[#0f1330] dark:text-white tracking-tight leading-snug">
-                    Ventana Disponible
-                  </h3>
-                  <p className="mt-2 text-xs text-[#5a6491] dark:text-[#8e98c7]">
-                    {currentBlockResult.nextBlock
-                      ? `Próximo compromiso: ${currentBlockResult.nextBlock.title} a las ${currentBlockResult.nextBlock.startTime}`
-                      : 'Sin más clases programadas para el resto del día.'}
-                  </p>
-                </div>
-              )}
-            </div>
+      {/* ═════════════════════════════════════════════════════════════
+          SUB-TIRA DISCRETA: SIGUIENTE · PLAYTEST · RADAR
+         ═════════════════════════════════════════════════════════════ */}
+      <div className="pt-5 border-t border-[var(--border)] grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
+        {/* 1. Siguiente en cola */}
+        <div className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] space-y-1">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] font-bold flex items-center gap-1.5">
+            <Clock className="w-3 h-3 text-[var(--muted)]" />
+            <span>Siguiente en Cola</span>
           </div>
-
-          <div className="mt-3 pt-2.5 border-t border-[#e8edf7] dark:border-[#1e2452] flex items-center justify-between text-[11px] font-mono text-[#6b75a6]">
-            <span>Estado</span>
-            <span className="font-bold text-[#14193d] dark:text-white">
-              {focusSession.isActive
-                ? 'Concentración activa'
-                : currentBlockResult.currentClass
-                ? `Termina en ${formatMinutesHuman(currentBlockResult.currentClass.remainingMinutes)}`
-                : currentBlockResult.currentRoutine
-                ? `Restan ${formatMinutesHuman(currentBlockResult.currentRoutine.remainingMinutes)}`
-                : 'Disponible'}
-            </span>
+          <div className="font-bold text-[var(--ink)] truncate">
+            {nextCandidate ? nextCandidate.title : 'Sin pendientes inmediatos'}
+          </div>
+          <div className="text-[11px] text-[var(--muted)] truncate font-mono">
+            {nextCandidate?.assigneeName ? `Asignado a ${nextCandidate.assigneeName}` : 'Todo el equipo'}
           </div>
         </div>
 
-        {/* 2. TARJETA DESPUÉS / RECURSO (Disponibilidad y Fricción) */}
-        <div className="p-4 rounded-xl bg-[#f0fdf4] dark:bg-[#072515] border border-[#86efac]/80 dark:border-[#15803d]/40 flex flex-col justify-between min-h-[185px]">
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-[#16a34a] dark:text-[#4ade80]">
-                {currentBlockResult.status === 'in_routine' ? 'TIEMPO PROTEGIDO' : 'RECURSO DE TIEMPO'}
-              </span>
-              <ChevronRight className="w-4 h-4 text-[#16a34a] dark:text-[#4ade80]" />
-            </div>
+        {/* 2. Cuenta regresiva al Playtest */}
+        <div className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] space-y-1">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] font-bold flex items-center gap-1.5">
+            <Flame className="w-3 h-3 text-[#BB271A]" />
+            <span>Lanzamiento Playtest</span>
+          </div>
+          <div className="font-bold text-[var(--ink)]">
+            Faltan <span className="text-[#BB271A] font-black">{daysToPlaytest} días</span> (Nov. 2026)
+          </div>
+          <div className="text-[11px] text-[var(--muted)] truncate">
+            Hito clave de Seamos Genios
+          </div>
+        </div>
 
-            {currentBlockResult.status === 'in_routine' ? (
-              <div className="mt-3 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-black text-[#15803d] dark:text-[#4ade80] uppercase">
-                  <Coffee className="w-4 h-4 shrink-0" />
-                  <span>ALMUERZO / DESCANSO ACTIVO</span>
-                </div>
-                <p className="text-xs text-[#4b5563] dark:text-[#9ca3af] leading-relaxed">
-                  El sistema no programa sesiones de estudio durante tus horas de almuerzo para proteger tu salud cognitiva.
-                </p>
-              </div>
+        {/* 3. Radar resumido */}
+        <div className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] space-y-1">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] font-bold flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Compass className="w-3 h-3" />
+              <span>Radar de Atrasos</span>
+            </span>
+            <Link href="/radar" className="text-[#BB271A] hover:underline font-bold text-[10px]">
+              Ver detalle →
+            </Link>
+          </div>
+          <div className="font-bold text-[var(--ink)] truncate">
+            {criticalAreasCount > 0 ? (
+              <span className="text-[#BB271A] font-black">{criticalAreasCount} área(s) en atención</span>
             ) : (
-              <div>
-                <div className="mt-2 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#16a34a] dark:text-[#4ade80] shrink-0" />
-                  <div className="text-xs font-black text-[#15803d] dark:text-[#4ade80] tracking-tight uppercase">
-                    TIENES {formatMinutesHuman(freeMinutesGross)} LIBRES
-                  </div>
-                </div>
-
-                {/* Desglose de fricción temporal */}
-                <div className="mt-2.5 p-2.5 rounded-lg bg-white/70 dark:bg-[#051c10]/60 border border-[#bbf7d0] dark:border-[#14532d] text-[11px] font-mono space-y-1">
-                  <div className="flex justify-between text-[#4b5563] dark:text-[#9ca3af]">
-                    <span>Tiempo bruto</span>
-                    <span>{freeMinutesGross} min</span>
-                  </div>
-                  <div className="flex justify-between text-amber-700 dark:text-amber-400">
-                    <span>Traslados</span>
-                    <span>-{transitMinutes} min</span>
-                  </div>
-                  <div className="flex justify-between text-amber-700 dark:text-amber-400">
-                    <span>Preparación</span>
-                    <span>-{prepMinutes} min</span>
-                  </div>
-                  <div className="pt-1 border-t border-[#bbf7d0] dark:border-[#14532d] flex justify-between font-black text-[#15803d] dark:text-[#4ade80] text-xs">
-                    <span>Tiempo útil</span>
-                    <span>{usableMinutes} min</span>
-                  </div>
-                </div>
-              </div>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                <CheckCircle className="w-3.5 h-3.5" />
+                <span>Todas las áreas al día</span>
+              </span>
             )}
           </div>
-
-          <div className="mt-2 text-[10px] text-[#166534] dark:text-[#86efac] font-mono text-center">
-            {currentBlockResult.status === 'in_routine'
-              ? 'Protección contra agotamiento mental'
-              : `${usableMinutes} min utilizables sin saturación`}
+          <div className="text-[11px] text-[var(--muted)] truncate">
+            Métricas ejecutables sin bloqueos
           </div>
-        </div>
-
-        {/* 3. TARJETA RECOMENDACIÓN / DECISIÓN (Pipeline de Acción) */}
-        <div className="p-4 rounded-xl bg-[#f8faff] dark:bg-[#141838] border border-[#e2e8f5] dark:border-[#1e2452] flex flex-col justify-between min-h-[185px]">
-          <div>
-            <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase text-[#3b43a8] dark:text-[#8e98ec]">
-              <Compass className="w-3.5 h-3.5 text-[#3b43a8] dark:text-[#8e98ec]" />
-              <span>
-                {focusSession.isActive
-                  ? 'OBJETIVO EN EJECUCIÓN'
-                  : currentBlockResult.status === 'in_class'
-                  ? 'ATENCIÓN EN AULA'
-                  : currentBlockResult.status === 'in_routine'
-                  ? 'PAUSA PROTEGIDA'
-                  : 'SIGUIENTE ACCIÓN'}
-              </span>
-            </div>
-
-            <div className="mt-2">
-              {focusSession.isActive ? (
-                <div>
-                  <h3 className="font-bold text-xs sm:text-sm text-[#0f1330] dark:text-white leading-tight">
-                    {focusSession.taskTitle}
-                  </h3>
-                  <div className="flex items-center gap-1.5 mt-1.5 text-xs text-amber-600 dark:text-amber-400 font-semibold">
-                    <Flame className="w-3 h-3" />
-                    <span>{focusSession.subjectName || 'Enfoque'}</span>
-                  </div>
-                  <p className="text-[11px] text-[#475569] dark:text-[#94a3b8] mt-2 leading-relaxed">
-                    Mantén la inmersión en tu objetivo actual sin cambiar de foco hasta sonar el temporizador.
-                  </p>
-                </div>
-              ) : currentBlockResult.status === 'in_class' ? (
-                <div>
-                  <h3 className="font-bold text-xs sm:text-sm text-[#0f1330] dark:text-white leading-tight">
-                    Atención al Profesor y Toma de Notas
-                  </h3>
-                  <div className="flex items-center gap-1.5 mt-1.5 text-xs text-[#3b43a8] dark:text-[#a0aaff] font-semibold">
-                    <Bookmark className="w-3 h-3 text-[#3b43a8] dark:text-[#8e98ec]" />
-                    <span>{currentBlockResult.currentClass?.name}</span>
-                  </div>
-                  <p className="text-[11px] text-[#475569] dark:text-[#94a3b8] mt-2 leading-relaxed italic">
-                    &ldquo;Tu prioridad ahora es el aula. Las recomendaciones de estudio se habilitarán al finalizar la clase.&rdquo;
-                  </p>
-                </div>
-              ) : currentBlockResult.status === 'in_routine' ? (
-                <div>
-                  <h3 className="font-bold text-xs sm:text-sm text-[#0f1330] dark:text-white leading-tight">
-                    Disfruta tu tiempo de desconexión
-                  </h3>
-                  <p className="text-[11px] text-[#475569] dark:text-[#94a3b8] mt-2 leading-relaxed italic">
-                    &ldquo;El descanso planificado forma parte del rendimiento académico. No recomendamos estudiar con la comida.&rdquo;
-                  </p>
-                </div>
-              ) : recommendedTask ? (
-                <div>
-                  <h3 className="font-bold text-xs sm:text-sm text-[#0f1330] dark:text-white leading-tight">
-                    {recommendedTask.task.title}
-                  </h3>
-
-                  <div className="flex items-center gap-1.5 mt-1.5 text-xs text-[#3b43a8] dark:text-[#a0aaff] font-semibold">
-                    <Bookmark className="w-3 h-3 text-[#3b43a8] dark:text-[#8e98ec]" />
-                    <span>{recommendedTask.subject?.name || 'Materia'}</span>
-                  </div>
-
-                  {/* Etiquetas auditables reasonCodes */}
-                  {recommendedTask.reasonCodes.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-1.5">
-                      {recommendedTask.reasonCodes.map((rc) => (
-                        <span
-                          key={rc}
-                          className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-[#e0e7ff] text-[#3730a3] dark:bg-[#1e235e] dark:text-[#a5b4fc]"
-                        >
-                          {rc}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <p className="text-[11px] text-[#475569] dark:text-[#94a3b8] mt-1.5 leading-relaxed italic">
-                    &ldquo;{recommendedTask.reason}&rdquo;
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <h3 className="font-bold text-xs sm:text-sm text-[#0f1330] dark:text-white leading-tight">
-                    ¡Todo al día!
-                  </h3>
-                  <p className="text-[11px] text-[#475569] dark:text-[#94a3b8] mt-2 leading-relaxed">
-                    No tienes tareas urgentes pendientes. Puedes adelantar lecturas o tomar un descanso libre.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {focusSession.isActive ? (
-            <div className="w-full mt-3 py-2 px-3.5 rounded-xl bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-500/20 text-xs font-bold flex items-center justify-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-              <span>Foco en Progreso</span>
-            </div>
-          ) : currentBlockResult.status === 'in_class' ? (
-            <button
-              onClick={() => openAttendanceModal()}
-              className="w-full mt-3 py-2 px-3.5 rounded-xl bg-[#3039d9] hover:bg-[#252ab8] active:scale-[0.98] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
-            >
-              <CheckCircle className="w-3.5 h-3.5" />
-              <span>Registrar Asistencia de Hoy</span>
-            </button>
-          ) : currentBlockResult.status === 'in_routine' ? (
-            <div className="w-full mt-3 py-2 px-3.5 rounded-xl bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 text-xs font-bold flex items-center justify-center gap-2">
-              <Coffee className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Hora de Desconexión</span>
-            </div>
-          ) : (
-            <button
-              onClick={handleStartFocus}
-              className="w-full mt-3 py-2 px-3.5 rounded-xl bg-[#0c102a] hover:bg-[#181f4a] active:scale-[0.98] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
-            >
-              <Play className="w-3 h-3 fill-white" />
-              <span>Comenzar Enfoque</span>
-            </button>
-          )}
         </div>
       </div>
     </div>
