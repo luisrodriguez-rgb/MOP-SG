@@ -145,13 +145,13 @@ export function InboxModal() {
         {/* Header */}
         <div className="p-5 border-b border-[var(--border)] flex items-center justify-between bg-[var(--paper)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-2xl bg-[var(--surface-raised)] text-[var(--ink)] border border-[var(--border)] flex items-center justify-center">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-black text-[var(--ink)]">Buzón Inteligente</h2>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--surface-raised)] text-[var(--muted)] border border-[var(--border)] font-bold">
                   Auditable & Zod
                 </span>
               </div>
@@ -193,12 +193,12 @@ export function InboxModal() {
                 }}
                 placeholder="Ej: 'Parcial de Anatomía el próximo jueves a las 7am vale 30%' o 'Taller de Vías Metabólicas para mañana a las 11pm'..."
                 rows={2}
-                className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-2xl p-3.5 pr-24 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-indigo-500 transition-colors resize-none font-sans leading-relaxed"
+                className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-2xl p-3.5 pr-24 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] transition-colors resize-none font-sans leading-relaxed"
               />
               <button
                 onClick={handleProcess}
                 disabled={isProcessing || !rawText.trim()}
-                className="absolute right-2.5 bottom-3 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+                className="absolute right-2.5 bottom-3 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[var(--ink)] hover:opacity-90 disabled:opacity-40 text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
               >
                 {isProcessing ? (
                   <>
@@ -234,7 +234,7 @@ export function InboxModal() {
                       setSourceEngine('preprocessor');
                     }, 50);
                   }}
-                  className="text-[10px] px-2.5 py-1 rounded-lg bg-[var(--paper)] border border-[var(--border)] text-[var(--ink-secondary)] hover:text-indigo-500 hover:border-indigo-500/40 transition-colors cursor-pointer"
+                  className="text-[10px] px-2.5 py-1 rounded-lg bg-[var(--paper)] border border-[var(--border)] text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:border-[var(--line)] transition-colors cursor-pointer"
                 >
                   + &quot;{chip}&quot;
                 </button>
@@ -272,7 +272,7 @@ export function InboxModal() {
                             className={`text-[10px] font-mono font-black uppercase px-2 py-0.5 rounded-md ${
                               item.type === 'exam'
                                 ? 'bg-red-500/10 text-red-600 dark:text-red-400'
-                                : 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                                : 'bg-[var(--surface)] text-[var(--ink)] border border-[var(--border)]'
                             }`}
                           >
                             {item.type === 'exam' ? 'Parcial' : 'Tarea'}
@@ -374,13 +374,13 @@ export function InboxModal() {
                             )}
                             {item.date && (
                               <div className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3 text-indigo-500" />
+                                <Calendar className="w-3 h-3 text-[var(--muted)]" />
                                 <span>{item.date}</span>
                               </div>
                             )}
                             {item.startTime && (
                               <div className="flex items-center gap-1">
-                                <Clock className="w-3 h-3 text-indigo-500" />
+                                <Clock className="w-3 h-3 text-[var(--muted)]" />
                                 <span>{item.startTime}</span>
                               </div>
                             )}
@@ -414,7 +414,7 @@ export function InboxModal() {
                                     });
                                   }
                                 }}
-                                className="px-2.5 py-1 rounded-lg bg-[var(--surface)] hover:bg-indigo-600 hover:text-white border border-[var(--border)] text-[11px] font-medium transition-colors cursor-pointer"
+                                className="px-2.5 py-1 rounded-lg bg-[var(--surface)] hover:bg-[var(--ink)] hover:text-[var(--paper)] border border-[var(--border)] text-[11px] font-medium transition-colors cursor-pointer"
                               >
                                 {opt}
                               </button>

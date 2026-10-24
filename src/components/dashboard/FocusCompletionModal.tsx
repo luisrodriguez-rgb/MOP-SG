@@ -67,7 +67,7 @@ export function FocusCompletionModal() {
       <div className="relative w-full max-w-lg rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xl p-6 sm:p-7 overflow-hidden">
         {/* Top Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
-          <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider uppercase text-[#3b3abf] dark:text-[#a0a0ff]">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider uppercase text-[var(--ink)]">
             <Award className="w-4 h-4 text-emerald-500" />
             <span>Cierre de Bloque · Registrar Resultado</span>
           </div>
@@ -181,13 +181,13 @@ export function FocusCompletionModal() {
               onClick={() => setSelectedOutcome('free')}
               className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${
                 selectedOutcome === 'free'
-                  ? 'bg-[#f0f0ff] dark:bg-[#181a38] border-[#3b3abf] text-[var(--ink)] ring-2 ring-[#3b3abf]/20'
+                  ? 'bg-[var(--surface-raised)] border-[var(--ink)] text-[var(--ink)] ring-2 ring-[var(--ink)]/10'
                   : 'bg-[var(--surface)] border-[var(--border)] hover:bg-[var(--paper)] text-[var(--ink)]'
               }`}
             >
               <Award
                 className={`w-5 h-5 mt-0.5 shrink-0 ${
-                  selectedOutcome === 'free' ? 'text-[#3b3abf] dark:text-[#a0a0ff]' : 'text-[var(--muted)]'
+                  selectedOutcome === 'free' ? 'text-[var(--ink)]' : 'text-[var(--muted)]'
                 }`}
               />
               <div className="flex-1 text-xs">
@@ -213,7 +213,7 @@ export function FocusCompletionModal() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-extrabold shadow-md shadow-[#3b3abf]/30 transition-all cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-extrabold shadow-md transition-all cursor-pointer disabled:opacity-50"
           >
             <span>{saving ? 'Guardando...' : 'Confirmar y Actualizar'}</span>
             <ArrowRight className="w-3.5 h-3.5" />

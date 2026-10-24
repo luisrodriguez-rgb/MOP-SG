@@ -115,7 +115,7 @@ export function ClassDetailModal({
         <div
           className="p-6 text-white relative overflow-hidden"
           style={{
-            background: `linear-gradient(135deg, ${subject.color || '#3b3abf'} 0%, #0c102a 100%)`,
+            background: `linear-gradient(135deg, ${subject.color || '#111729'} 0%, #0c102a 100%)`,
           }}
         >
           {/* Botón cerrar */}
@@ -256,7 +256,7 @@ export function ClassDetailModal({
           <div>
             <div className="flex items-center justify-between mb-2.5">
               <span className="text-xs font-bold uppercase tracking-wider text-[var(--ink)] flex items-center gap-1.5">
-                <GraduationCap className="w-4 h-4 text-[#3b3abf] dark:text-[#a0a0ff]" />
+                <GraduationCap className="w-4 h-4 text-[var(--ink)]" />
                 Próximas Evaluaciones ({subjectExams.length})
               </span>
             </div>
@@ -327,7 +327,7 @@ export function ClassDetailModal({
 
                       <button
                         onClick={() => handleStartTaskFocus(task)}
-                        className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold transition-all cursor-pointer"
+                        className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold transition-all cursor-pointer"
                         title="Iniciar Pomodoro para esta tarea"
                       >
                         <Play className="w-3 h-3 fill-white" />

@@ -23,7 +23,7 @@ export function EditClassModal() {
   const [subjectCode, setSubjectCode] = useState('');
   const [subjectNrc, setSubjectNrc] = useState('');
   const [subjectProfessor, setSubjectProfessor] = useState('');
-  const [subjectColor, setSubjectColor] = useState('#3b3abf');
+  const [subjectColor, setSubjectColor] = useState('#111729');
   const [subjectMaxAbsences, setSubjectMaxAbsences] = useState(4);
 
   useEffect(() => {
@@ -41,14 +41,14 @@ export function EditClassModal() {
         setSubjectCode(sub.code || '');
         setSubjectNrc(sub.nrc || '');
         setSubjectProfessor(sub.professor || '');
-        setSubjectColor(sub.color || '#3b3abf');
+        setSubjectColor(sub.color || '#111729');
         setSubjectMaxAbsences(sub.maxAbsences ?? 4);
       } else {
         setSubjectName('');
         setSubjectCode('');
         setSubjectNrc('');
         setSubjectProfessor('');
-        setSubjectColor('#3b3abf');
+        setSubjectColor('#111729');
         setSubjectMaxAbsences(4);
       }
     } else {
@@ -72,7 +72,7 @@ export function EditClassModal() {
         setSubjectCode('');
         setSubjectNrc('');
         setSubjectProfessor('');
-        setSubjectColor('#3b3abf');
+        setSubjectColor('#111729');
         setSubjectMaxAbsences(4);
       }
     }
@@ -166,13 +166,13 @@ export function EditClassModal() {
   ];
 
   const colorPalette = [
-    '#3b3abf',
+    '#111729',
     '#7c3aed',
     '#059669',
     '#d97706',
     '#dc2626',
     '#0284c7',
-    '#4f46e5',
+    '#3F3F46',
     '#e11d48',
     '#0891b2',
     '#475569',
@@ -183,7 +183,7 @@ export function EditClassModal() {
       <div className="w-full max-w-lg rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xl p-6 relative transition-colors max-h-[92vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+            <Calendar className="w-5 h-5 text-[var(--ink)]" />
             <h3 className="text-base font-bold text-[var(--ink)]">
               {editingScheduleBlock ? 'Editar Clase y Materia' : 'Añadir Nueva Clase'}
             </h3>
@@ -220,7 +220,7 @@ export function EditClassModal() {
           {/* Sección de Datos de la Materia (Siempre editables directamente) */}
           <div className="p-4 rounded-xl bg-[var(--paper)] border border-[var(--border)] space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#3b3abf] dark:text-[#a0a0ff] flex items-center gap-1.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--ink)] flex items-center gap-1.5">
                 <BookOpen className="w-3.5 h-3.5" />
                 Datos de la Asignatura
               </span>
@@ -237,7 +237,7 @@ export function EditClassModal() {
                   value={subjectName}
                   onChange={(e) => setSubjectName(e.target.value)}
                   placeholder="Ej: Optimización"
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs font-semibold text-[var(--ink)] focus:outline-none focus:border-[#3b3abf]"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs font-semibold text-[var(--ink)] focus:outline-none focus:border-[var(--ink)]"
                 />
               </div>
 
@@ -251,7 +251,7 @@ export function EditClassModal() {
                   value={subjectCode}
                   onChange={(e) => setSubjectCode(e.target.value)}
                   placeholder="Ej: IND 05359"
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs font-mono text-[var(--ink)] focus:outline-none focus:border-[#3b3abf]"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs font-mono text-[var(--ink)] focus:outline-none focus:border-[var(--ink)]"
                 />
               </div>
             </div>
@@ -266,7 +266,7 @@ export function EditClassModal() {
                   value={subjectNrc}
                   onChange={(e) => setSubjectNrc(e.target.value)}
                   placeholder="Ej: 11830"
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs font-mono text-[var(--ink)] focus:outline-none focus:border-[#3b3abf]"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs font-mono text-[var(--ink)] focus:outline-none focus:border-[var(--ink)]"
                 />
               </div>
 
@@ -279,7 +279,7 @@ export function EditClassModal() {
                   value={subjectProfessor}
                   onChange={(e) => setSubjectProfessor(e.target.value)}
                   placeholder="Ej: Carlos Gómez"
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[#3b3abf]"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)]"
                 />
               </div>
             </div>
@@ -323,7 +323,7 @@ export function EditClassModal() {
                     max={20}
                     value={subjectMaxAbsences}
                     onChange={(e) => setSubjectMaxAbsences(Number(e.target.value))}
-                    className="w-20 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-xs font-mono font-bold text-[var(--ink)] text-center focus:outline-none focus:border-[#3b3abf]"
+                    className="w-20 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-xs font-mono font-bold text-[var(--ink)] text-center focus:outline-none focus:border-[var(--ink)]"
                   />
                   <span className="text-[11px] text-[var(--muted)]">fallas</span>
                 </div>
@@ -344,7 +344,7 @@ export function EditClassModal() {
                   onClick={() => setDayOfWeek(d.value as DayOfWeek)}
                   className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center ${
                     dayOfWeek === d.value
-                      ? 'bg-[#3b3abf] text-white border-[#3b3abf] shadow-xs'
+                      ? 'bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)] shadow-xs'
                       : 'bg-[var(--paper)] text-[var(--muted)] border-[var(--border)] hover:text-[var(--ink)]'
                   }`}
                 >
@@ -363,7 +363,7 @@ export function EditClassModal() {
                 required
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-mono font-bold text-[var(--ink)] focus:outline-none focus:border-[#3b3abf]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-mono font-bold text-[var(--ink)] focus:outline-none focus:border-[var(--ink)]"
               />
             </div>
 
@@ -374,7 +374,7 @@ export function EditClassModal() {
                 required
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-mono font-bold text-[var(--ink)] focus:outline-none focus:border-[#3b3abf]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-mono font-bold text-[var(--ink)] focus:outline-none focus:border-[var(--ink)]"
               />
             </div>
           </div>
@@ -389,7 +389,7 @@ export function EditClassModal() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="Ej: Edificio C, Salón 201"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] pl-9 pr-3 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[#3b3abf]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] pl-9 pr-3 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)]"
               />
             </div>
           </div>
@@ -432,7 +432,7 @@ export function EditClassModal() {
               </button>
               <button
                 type="submit"
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold shadow-md shadow-[#3b3abf]/20 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold shadow-md transition-all cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>Guardar Cambios</span>

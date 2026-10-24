@@ -32,8 +32,8 @@ function runTests() {
 
   // Test 2: Detect Conflicts
   const subjectsMap: Record<string, Subject> = {
-    s1: { id: 's1', semesterId: 'sem1', name: 'Cálculo', code: 'MAT101', credits: 4, color: '#6366f1', maxAbsences: 4, passingGrade: 3.0 },
-    s2: { id: 's2', semesterId: 'sem1', name: 'Física', code: 'FIS101', credits: 4, color: '#3b82f6', maxAbsences: 4, passingGrade: 3.0 },
+    s1: { id: 's1', semesterId: 'sem1', name: 'Cálculo', code: 'MAT101', credits: 4, color: '#3F3F46', maxAbsences: 4, passingGrade: 3.0 },
+    s2: { id: 's2', semesterId: 'sem1', name: 'Física', code: 'FIS101', credits: 4, color: '#71717A', maxAbsences: 4, passingGrade: 3.0 },
   };
 
   const conflictingClasses: ScheduleBlock[] = [

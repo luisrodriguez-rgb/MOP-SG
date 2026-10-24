@@ -19,7 +19,7 @@ export default function SchedulePage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-[#3b3abf] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--ink)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -28,7 +28,7 @@ export default function SchedulePage() {
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#3b3abf] dark:text-[#a0a0ff]">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[var(--ink)]">
             <Calendar className="w-3.5 h-3.5" />
             <span>Planificación Dinámica</span>
           </div>

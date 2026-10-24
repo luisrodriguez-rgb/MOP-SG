@@ -61,7 +61,7 @@ export const ACADEMIC_TEMPLATES: AcademicTemplate[] = [
         name: 'Optimización',
         credits: 3,
         professor: 'Ing. Carlos A. Gómez',
-        color: '#3b3abf',
+        color: '#3F3F46',
         maxAbsences: 4,
         passingGrade: 3.0,
       },
@@ -175,7 +175,7 @@ export const ACADEMIC_TEMPLATES: AcademicTemplate[] = [
       isActive: true,
     },
     subjects: [
-      { id: 'sub-calc', semesterId: 'sem-2026-2-sistemas', code: 'MAT-301', name: 'Cálculo Multivariado', credits: 4, professor: 'Dr. Álvaro Perea', color: '#3b3abf', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-calc', semesterId: 'sem-2026-2-sistemas', code: 'MAT-301', name: 'Cálculo Multivariado', credits: 4, professor: 'Dr. Álvaro Perea', color: '#3F3F46', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-fis', semesterId: 'sem-2026-2-sistemas', code: 'FIS-201', name: 'Física Mecánica', credits: 4, professor: 'Dra. Sandra Miller', color: '#0284c7', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-ed', semesterId: 'sem-2026-2-sistemas', code: 'SIS-302', name: 'Estructuras de Datos', credits: 3, professor: 'MSc. Rodrigo Henao', color: '#16a34a', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-alg', semesterId: 'sem-2026-2-sistemas', code: 'MAT-202', name: 'Álgebra Lineal', credits: 3, professor: 'Dr. Hernando Ortiz', color: '#7c3aed', maxAbsences: 4, passingGrade: 3.0 },
@@ -238,7 +238,7 @@ export const ACADEMIC_TEMPLATES: AcademicTemplate[] = [
     },
     subjects: [
       { id: 'sub-conta', semesterId: 'sem-2026-2-admon', code: 'ADM-201', name: 'Contabilidad Financiera', credits: 3, professor: 'Dr. Germán Nieto', color: '#0d9488', maxAbsences: 4, passingGrade: 3.0 },
-      { id: 'sub-micro', semesterId: 'sem-2026-2-admon', code: 'ECO-102', name: 'Microeconomía I', credits: 3, professor: 'Dra. Liliana Valdés', color: '#3b3abf', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-micro', semesterId: 'sem-2026-2-admon', code: 'ECO-102', name: 'Microeconomía I', credits: 3, professor: 'Dra. Liliana Valdés', color: '#3F3F46', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-mkt', semesterId: 'sem-2026-2-admon', code: 'MER-201', name: 'Fundamentos de Mercadeo', credits: 3, professor: 'MSc. Camilo Paz', color: '#db2777', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-estrat', semesterId: 'sem-2026-2-admon', code: 'ADM-305', name: 'Pensamiento Estratégico', credits: 3, professor: 'Dr. Víctor Botero', color: '#d97706', maxAbsences: 4, passingGrade: 3.0 },
     ],
@@ -348,7 +348,7 @@ export const ACADEMIC_TEMPLATES: AcademicTemplate[] = [
         name: 'Economía Matemática',
         credits: 4,
         professor: 'Docente Titular',
-        color: '#3b3abf',
+        color: '#3F3F46',
         maxAbsences: 4,
         passingGrade: 3.0,
       },
@@ -481,7 +481,7 @@ export const ACADEMIC_TEMPLATES: AcademicTemplate[] = [
     },
     subjects: [
       { id: 'sub-tel-redes', semesterId: 'sem-2026-2-telematica', code: 'TEL 08201', name: 'Redes de Comunicación I', credits: 4, professor: 'Ing. Álvaro Rendón', color: '#0284c7', maxAbsences: 4, passingGrade: 3.0 },
-      { id: 'sub-tel-dist', semesterId: 'sem-2026-2-telematica', code: 'SIS 08310', name: 'Sistemas Distribuidos', credits: 4, professor: 'Dr. Andrés Delgado', color: '#3b3abf', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-tel-dist', semesterId: 'sem-2026-2-telematica', code: 'SIS 08310', name: 'Sistemas Distribuidos', credits: 4, professor: 'Dr. Andrés Delgado', color: '#3F3F46', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-tel-arqui', semesterId: 'sem-2026-2-telematica', code: 'TEL 08205', name: 'Arquitectura de Computadores', credits: 3, professor: 'MSc. Julián Moreno', color: '#7c3aed', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-tel-prob', semesterId: 'sem-2026-2-telematica', code: 'CFT 11375', name: 'Probabilidad y Estadística', credits: 3, professor: 'Dra. María Elena Restrepo', color: '#ea580c', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-tel-mat', semesterId: 'sem-2026-2-telematica', code: 'MAT 08320', name: 'Matemáticas Especiales', credits: 4, professor: 'Dr. Diego Fernando Cruz', color: '#0d9488', maxAbsences: 5, passingGrade: 3.0 },
@@ -704,7 +704,7 @@ export const ACADEMIC_TEMPLATES: AcademicTemplate[] = [
       isActive: true,
     },
     subjects: [
-      { id: 'sub-psi-cog', semesterId: 'sem-2026-2-psicologia', code: 'PSI 02105', name: 'Psicología Cognitiva', credits: 4, professor: 'Dra. Martha Peláez', color: '#4338ca', maxAbsences: 4, passingGrade: 3.0 },
+      { id: 'sub-psi-cog', semesterId: 'sem-2026-2-psicologia', code: 'PSI 02105', name: 'Psicología Cognitiva', credits: 4, professor: 'Dra. Martha Peláez', color: '#52525B', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-psi-bio', semesterId: 'sem-2026-2-psicologia', code: 'PSI 02201', name: 'Procesos Biológicos del Comportamiento II', credits: 4, professor: 'Dr. Jorge Eslava', color: '#be185d', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-psi-social', semesterId: 'sem-2026-2-psicologia', code: 'PSI 02310', name: 'Psicología Social', credits: 3, professor: 'Dra. Ángela María Estrada', color: '#0e7490', maxAbsences: 4, passingGrade: 3.0 },
       { id: 'sub-psi-met', semesterId: 'sem-2026-2-psicologia', code: 'PSI 02220', name: 'Psicometría y Evaluación', credits: 4, professor: 'Dr. César Carrión', color: '#c2410c', maxAbsences: 4, passingGrade: 3.0 },

@@ -92,15 +92,15 @@ export function CustomSelect({
         onClick={() => setIsOpen(!isOpen)}
         className={`${
           isFullWidth ? 'flex w-full' : 'inline-flex'
-        } items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-[var(--paper)] hover:bg-[var(--surface-raised)] border border-[var(--border)] hover:border-[#3b3abf]/60 text-xs font-semibold text-[var(--ink)] shadow-2xs transition-all cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-[#3b3abf]/20 ${
-          isOpen ? 'border-[#3b3abf] ring-2 ring-[#3b3abf]/20' : ''
+        } items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-[var(--paper)] hover:bg-[var(--surface-raised)] border border-[var(--border)] hover:border-[var(--ink)]/40 text-xs font-semibold text-[var(--ink)] shadow-2xs transition-all cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-[var(--ink)]/10 ${
+          isOpen ? 'border-[var(--ink)] ring-2 ring-[var(--ink)]/10' : ''
         } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${buttonClassName}`}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
         <div className="flex items-center gap-2 min-w-0 truncate">
           {LeadingIcon && (
-            <LeadingIcon className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff] shrink-0" />
+            <LeadingIcon className="w-3.5 h-3.5 text-[var(--ink)] shrink-0" />
           )}
           {selectedOption?.color && (
             <span
@@ -121,7 +121,7 @@ export function CustomSelect({
 
         <ChevronDown
           className={`w-3.5 h-3.5 text-[var(--muted)] shrink-0 transition-transform duration-200 ml-1 ${
-            isOpen ? 'rotate-180 text-[#3b3abf]' : ''
+            isOpen ? 'rotate-180 text-[var(--ink)]' : ''
           }`}
         />
       </button>
@@ -131,7 +131,7 @@ export function CustomSelect({
         <div
           className={`absolute z-50 mt-1.5 ${
             isFullWidth ? 'w-full min-w-full' : 'min-w-[230px] w-max max-w-md'
-          } rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xl shadow-[#10103e]/10 dark:shadow-black/50 p-1.5 text-xs text-[var(--ink)] animate-in fade-in zoom-in-95 duration-150 backdrop-blur-md ${
+          } rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xl shadow-black/10 dark:shadow-black/50 p-1.5 text-xs text-[var(--ink)] animate-in fade-in zoom-in-95 duration-150 backdrop-blur-md ${
             align === 'right' ? 'right-0' : 'left-0'
           } ${menuClassName}`}
           role="listbox"
@@ -149,8 +149,8 @@ export function CustomSelect({
                   onClick={() => handleSelect(option.value)}
                   className={`w-full flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-left font-medium transition-all cursor-pointer select-none ${
                     isSelected
-                      ? 'bg-[#3b3abf]/10 text-[#3b3abf] dark:text-[#a0a0ff] font-bold shadow-2xs'
-                      : 'hover:bg-[var(--paper)] text-[var(--ink)] hover:text-[#3b3abf] dark:hover:text-[#a0a0ff]'
+                      ? 'bg-[var(--surface-raised)] text-[var(--ink)] font-bold shadow-2xs'
+                      : 'hover:bg-[var(--paper)] text-[var(--ink)]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 truncate">
@@ -178,7 +178,7 @@ export function CustomSelect({
                       </span>
                     )}
                     {isSelected && (
-                      <Check className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff] stroke-[2.5]" />
+                      <Check className="w-3.5 h-3.5 text-[var(--ink)] stroke-[2.5]" />
                     )}
                   </div>
                 </div>

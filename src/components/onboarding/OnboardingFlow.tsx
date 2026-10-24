@@ -162,7 +162,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
           nrc: info.nrc,
           name: info.name,
           credits: info.credits,
-          color: '#3b3abf',
+          color: '#3F3F46',
           professor: info.professor,
           maxAbsences: 4,
         });
@@ -319,7 +319,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
       code: s.code,
       name: s.name,
       credits: s.credits,
-      color: s.color || '#3b3abf',
+      color: s.color || '#3F3F46',
       professor: s.professor || 'Docente Titular',
       maxAbsences: s.maxAbsences || 4,
     }));
@@ -436,10 +436,10 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#07091a]/80 via-[#07091a]/95 to-[#07091a]" />
         
-        {/* Luces atmosféricas Icesi */}
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[750px] h-[450px] bg-gradient-to-b from-[#3b3abf]/30 via-[#5b5be8]/15 to-transparent rounded-full blur-3xl" />
+        {/* Luces atmosféricas */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[750px] h-[450px] bg-gradient-to-b from-[var(--ink)]/30 to-transparent rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-0 w-[500px] h-[350px] bg-emerald-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -left-32 w-[400px] h-[400px] bg-[#6366f1]/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -left-32 w-[400px] h-[400px] bg-[var(--surface-raised)]/20 rounded-full blur-3xl" />
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
@@ -450,7 +450,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
           {/* Logo Oficial Mi Semestre | Icesi */}
           <div className="flex items-center gap-3.5">
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-[#3b3abf] to-[#656cf5] rounded-xl blur-xs opacity-70 group-hover:opacity-100 transition duration-300" />
+              <div className="absolute -inset-1 bg-[var(--ink)] rounded-xl blur-xs opacity-70 group-hover:opacity-100 transition duration-300" />
               <div className="relative w-10 h-10 rounded-xl bg-[#0b0e26] border border-[#2b31a8] flex items-center justify-center p-1.5 shadow-md">
                 <img
                   src="/icon.png"
@@ -479,7 +479,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
             className="group relative overflow-hidden rounded-xl p-[1px] cursor-pointer transition-transform active:scale-95"
             title="Explorar el proyecto con el 4to semestre de Ingeniería Industrial"
           >
-            <span className="absolute inset-0 bg-gradient-to-r from-amber-500/40 via-indigo-500/40 to-amber-500/40 rounded-xl animate-pulse" />
+            <span className="absolute inset-0 bg-gradient-to-r from-amber-500/40 via-amber-500/20 to-amber-500/40 rounded-xl animate-pulse" />
             <span className="relative flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-xl bg-[#0d112e] text-xs font-bold text-amber-300 group-hover:text-white transition-colors border border-amber-500/30">
               <Zap className="w-3.5 h-3.5 text-amber-400 group-hover:rotate-12 transition-transform" />
               <span className="hidden md:inline text-white/60 font-normal">¿Solo explorando?</span>
@@ -533,13 +533,13 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
           <div className="space-y-6 animate-in fade-in zoom-in-95 duration-400">
             {/* Título de Impacto con Gradiente de Texto */}
             <div className="text-center space-y-2.5">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase font-bold tracking-wider px-3.5 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 shadow-xs">
-                <Sparkles className="w-3 h-3 text-indigo-400" />
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase font-bold tracking-wider px-3.5 py-1 rounded-full bg-[var(--surface-raised)] text-[var(--muted)] border border-[var(--border)] shadow-xs">
+                <Sparkles className="w-3 h-3 text-[var(--muted)]" />
                 Configuración en 45 Segundos · Cero Formularios Pesados
               </span>
               <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
                 Deja de adivinar qué estudiar en tus{' '}
-                <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-indigo-300 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
                   huecos libres.
                 </span>
               </h2>
@@ -590,7 +590,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                       value={university}
                       className="w-full bg-[#080b20]/50 border border-[#232a58]/80 rounded-xl px-4 py-2.5 text-xs text-white/80 font-semibold cursor-not-allowed"
                     />
-                    <School className="w-4 h-4 text-indigo-400 absolute right-3.5 top-3" />
+                    <School className="w-4 h-4 text-[var(--muted)] absolute right-3.5 top-3" />
                   </div>
                 </div>
 
@@ -655,7 +655,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
               {/* Botón Principal Siguiente Paso */}
               <button
                 onClick={() => setCurrentStep(2)}
-                className="w-full mt-2 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#2828a8] via-[#3b3abf] to-[#5b5be8] hover:from-[#3232c4] hover:to-[#6f6ff5] text-white font-black text-sm flex items-center justify-center gap-2.5 shadow-[0_10px_30px_rgba(59,58,191,0.5)] transition-all cursor-pointer group active:scale-[0.98]"
+                className="w-full mt-2 py-3.5 px-6 rounded-2xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] font-black text-sm flex items-center justify-center gap-2.5 shadow-xs transition-all cursor-pointer group active:scale-[0.98]"
               >
                 <span>Continuar a Cargar Horario</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -691,15 +691,15 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
             {isProcessing ? (
               <div className="bg-[#0c102a]/90 backdrop-blur-2xl border border-[#232a58] rounded-3xl p-10 text-center space-y-5 shadow-2xl">
                 <div className="relative w-16 h-16 mx-auto">
-                  <div className="absolute inset-0 rounded-full border-4 border-indigo-500/20" />
-                  <div className="absolute inset-0 rounded-full border-4 border-t-[#6366f1] border-r-transparent border-b-transparent border-l-transparent animate-spin" />
-                  <Sparkles className="w-6 h-6 text-indigo-400 absolute inset-0 m-auto animate-pulse" />
+                  <div className="absolute inset-0 rounded-full border-4 border-white/20" />
+                  <div className="absolute inset-0 rounded-full border-4 border-t-white border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                  <Sparkles className="w-6 h-6 text-white absolute inset-0 m-auto animate-pulse" />
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-base font-bold text-white tracking-tight">
                     Analizando horario universitario...
                   </h3>
-                  <p className="text-xs font-mono text-indigo-300 bg-[#161c48] py-1.5 px-3 rounded-full border border-indigo-500/30 inline-block animate-pulse">
+                  <p className="text-xs font-mono text-zinc-300 bg-[#161c48] py-1.5 px-3 rounded-full border border-white/20 inline-block animate-pulse">
                     {processingStage}
                   </p>
                 </div>
@@ -730,7 +730,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                         : 'text-[#8b95c2] hover:text-white'
                     }`}
                   >
-                    <UploadCloud className="w-3.5 h-3.5 text-indigo-300" />
+                    <UploadCloud className="w-3.5 h-3.5 text-zinc-300" />
                     <span>Subir Archivo / Captura</span>
                   </button>
 
@@ -752,7 +752,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                 {magicTab === 'paste' && (
                   <div className="bg-[#0c102a]/85 backdrop-blur-2xl border border-[#2b31a8]/80 rounded-3xl p-6 space-y-4 shadow-xl">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
                         <Zap className="w-4 h-4 text-amber-400" />
                         Texto Plano de Banner o Matrícula
                       </span>
@@ -782,7 +782,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                     <button
                       disabled={!pastedText.trim()}
                       onClick={() => processEvidence(pastedText)}
-                      className="w-full py-3 px-5 rounded-2xl bg-gradient-to-r from-[#2828a8] via-[#3b3abf] to-[#5b5be8] hover:from-[#3232c4] hover:to-[#6f6ff5] disabled:opacity-40 disabled:pointer-events-none font-bold text-xs text-white flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer"
+                      className="w-full py-3 px-5 rounded-2xl bg-[var(--ink)] hover:opacity-90 disabled:opacity-40 disabled:pointer-events-none font-bold text-xs text-white flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
                     >
                       <Sparkles className="w-4 h-4 text-amber-300" />
                       <span>Procesar Horario con Motor Contextual</span>
@@ -807,10 +807,10 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                           if (file) processEvidence(undefined, file);
                         }}
                       />
-                      <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                        <UploadCloud className="w-6 h-6 text-indigo-400" />
+                      <div className="w-12 h-12 rounded-2xl bg-zinc-800/40 border border-white/10 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                        <UploadCloud className="w-6 h-6 text-zinc-300" />
                       </div>
-                      <p className="text-xs font-bold text-white group-hover:text-indigo-200">
+                      <p className="text-xs font-bold text-white group-hover:text-zinc-200">
                         Arrastra tu archivo o haz clic para seleccionar
                       </p>
                       <p className="text-[11px] text-[#7a85b8] mt-1">
@@ -956,9 +956,9 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                   <span className="text-[10px] text-white/60 font-medium">Día Más Pesado</span>
                 </div>
 
-                <div className="bg-[#07091a]/80 p-3.5 rounded-2xl border border-indigo-500/30 shadow-xs">
-                  <Coffee className="w-5 h-5 text-indigo-400 mx-auto mb-1" />
-                  <span className="text-xl sm:text-2xl font-black text-indigo-300 font-mono block">
+                <div className="bg-[#07091a]/80 p-3.5 rounded-2xl border border-[var(--border)] shadow-xs">
+                  <Coffee className="w-5 h-5 text-zinc-300 mx-auto mb-1" />
+                  <span className="text-xl sm:text-2xl font-black text-white font-mono block">
                     {longestGap.hours}h
                   </span>
                   <span className="text-[10px] text-white/60 font-medium">Bloque en {longestGap.day}</span>
@@ -976,7 +976,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                       key={s.id}
                       className="text-xs px-2.5 py-1 rounded-xl bg-white/5 border border-white/10 text-white/90 font-medium flex items-center gap-1.5"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
                       {s.name}
                     </span>
                   ))}
@@ -1040,7 +1040,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
             <button
               disabled={isFinishing}
               onClick={handleFinishAndEnter}
-              className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#2828a8] via-[#3b3abf] to-[#5b5be8] hover:from-[#3232c4] hover:to-[#6f6ff5] text-white font-black text-sm flex items-center justify-center gap-2.5 shadow-[0_15px_40px_rgba(59,58,191,0.6)] transition-all cursor-pointer group active:scale-[0.98]"
+              className="w-full py-4 px-6 rounded-2xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] font-black text-sm flex items-center justify-center gap-2.5 shadow-md transition-all cursor-pointer group active:scale-[0.98]"
             >
               <span>{isFinishing ? 'Iniciando Semestre...' : 'Entrar a mi Semestre'}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />

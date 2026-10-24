@@ -30,7 +30,7 @@ function runBoundaryTests() {
       name: 'Cálculo Multivariado',
       code: 'MAT-301',
       credits: 4,
-      color: '#3b3abf',
+      color: '#3F3F46',
       maxAbsences: 6,
       passingGrade: 3.0,
     },

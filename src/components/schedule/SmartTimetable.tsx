@@ -80,11 +80,11 @@ function getRoutineStyle(type?: RoutineType) {
     case 'commute':
       return {
         Icon: Car,
-        bg: 'bg-sky-50/90 dark:bg-sky-950/30',
-        border: 'border-sky-300/70 dark:border-sky-700/50',
-        text: 'text-sky-900 dark:text-sky-200',
-        iconColor: 'text-sky-600 dark:text-sky-400',
-        hover: 'hover:bg-sky-100/80',
+        bg: 'bg-[var(--surface)]',
+        border: 'border-[var(--border)]',
+        text: 'text-[var(--ink)]',
+        iconColor: 'text-[var(--muted)]',
+        hover: 'hover:bg-[var(--surface-raised)]',
       };
     case 'gym':
       return {
@@ -98,20 +98,20 @@ function getRoutineStyle(type?: RoutineType) {
     case 'work':
       return {
         Icon: Briefcase,
-        bg: 'bg-indigo-50/90 dark:bg-indigo-950/30',
-        border: 'border-indigo-300/70 dark:border-indigo-700/50',
-        text: 'text-indigo-900 dark:text-indigo-200',
-        iconColor: 'text-indigo-600 dark:text-indigo-400',
-        hover: 'hover:bg-indigo-100/80',
+        bg: 'bg-[var(--surface)]',
+        border: 'border-[var(--border)]',
+        text: 'text-[var(--ink)]',
+        iconColor: 'text-[var(--ink)]',
+        hover: 'hover:bg-[var(--surface-raised)]',
       };
     case 'rest':
       return {
         Icon: Moon,
-        bg: 'bg-purple-50/90 dark:bg-purple-950/30',
-        border: 'border-purple-300/70 dark:border-purple-700/50',
-        text: 'text-purple-900 dark:text-purple-200',
-        iconColor: 'text-purple-600 dark:text-purple-400',
-        hover: 'hover:bg-purple-100/80',
+        bg: 'bg-[var(--surface)]',
+        border: 'border-[var(--border)]',
+        text: 'text-[var(--ink)]',
+        iconColor: 'text-[var(--muted)]',
+        hover: 'hover:bg-[var(--surface-raised)]',
       };
     case 'meal':
     default:
@@ -337,7 +337,7 @@ export function SmartTimetable({
               onClick={() => setViewMode('week')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'week'
-                  ? 'bg-[#3b3abf] text-white shadow-xs'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] shadow-xs'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
@@ -350,7 +350,7 @@ export function SmartTimetable({
               }}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'day'
-                  ? 'bg-[#3b3abf] text-white shadow-xs'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] shadow-xs'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
@@ -360,7 +360,7 @@ export function SmartTimetable({
               onClick={() => setViewMode('agenda')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'agenda'
-                  ? 'bg-[#3b3abf] text-white shadow-xs'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] shadow-xs'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
@@ -376,7 +376,7 @@ export function SmartTimetable({
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--paper)] hover:bg-[var(--surface-raised)] text-[var(--ink)] border border-[var(--border)] text-xs font-bold transition-all cursor-pointer shadow-2xs"
             title="Centrar en el día de hoy"
           >
-            <Calendar className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+            <Calendar className="w-3.5 h-3.5 text-[var(--ink)]" />
             <span>Hoy</span>
           </button>
         </div>
@@ -389,7 +389,7 @@ export function SmartTimetable({
               onClick={() => setTypeFilter('all')}
               className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
                 typeFilter === 'all'
-                  ? 'bg-[#3b3abf]/10 text-[#3b3abf] dark:text-[#a0a0ff] font-bold'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] font-bold'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
@@ -399,7 +399,7 @@ export function SmartTimetable({
               onClick={() => setTypeFilter('classes')}
               className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
                 typeFilter === 'classes'
-                  ? 'bg-[#3b3abf]/10 text-[#3b3abf] dark:text-[#a0a0ff] font-bold'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] font-bold'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
@@ -443,7 +443,7 @@ export function SmartTimetable({
               type="checkbox"
               checked={showSaturday}
               onChange={(e) => setShowSaturday(e.target.checked)}
-              className="rounded bg-[var(--paper)] border-[var(--border)] text-[#3b3abf] focus:ring-0"
+              className="rounded bg-[var(--paper)] border-[var(--border)] text-[var(--ink)] focus:ring-0"
             />
             <span>Sáb</span>
           </label>
@@ -453,7 +453,7 @@ export function SmartTimetable({
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <button
             onClick={() => openEditClass()}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] font-bold transition-all shadow-xs cursor-pointer active:scale-95"
             title="Añadir clase al horario"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -483,7 +483,7 @@ export function SmartTimetable({
             className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[var(--paper)] hover:bg-[var(--surface-raised)] text-[var(--ink)] border border-[var(--border)] font-bold transition-all cursor-pointer shadow-2xs"
             title="Sincronizar o importar calendario (.ICS / Google / Outlook)"
           >
-            <Calendar className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+            <Calendar className="w-3.5 h-3.5 text-[var(--ink)]" />
             <span className="hidden sm:inline">Calendario</span>
           </button>
         </div>
@@ -512,14 +512,14 @@ export function SmartTimetable({
                     <div
                       key={day}
                       className={`p-3 border-r border-[var(--border)] last:border-r-0 font-mono font-bold transition-colors ${
-                        isToday ? 'bg-[#3b3abf]/[0.08] text-[#3b3abf] dark:text-[#a0a0ff]' : 'text-[var(--ink)]'
+                        isToday ? 'bg-[var(--surface-raised)] text-[var(--ink)]' : 'text-[var(--ink)]'
                       }`}
                     >
                       <div className="flex items-center justify-center gap-1.5">
                         <span className="hidden sm:inline">{name}</span>
                         <span className="sm:hidden">{short}</span>
                         {isToday && (
-                          <span className="px-1.5 py-0.2 rounded bg-[#3b3abf] text-white text-[9px] font-black uppercase tracking-wider shadow-2xs animate-pulse">
+                          <span className="px-1.5 py-0.2 rounded bg-[var(--ink)] text-[var(--paper)] text-[9px] font-black uppercase tracking-wider shadow-2xs">
                             HOY
                           </span>
                         )}
@@ -568,7 +568,7 @@ export function SmartTimetable({
                     <div
                       key={day}
                       className={`relative border-r border-[var(--border)] last:border-r-0 transition-colors ${
-                        isToday ? 'bg-[#3b3abf]/[0.02] dark:bg-[#3b3abf]/[0.05]' : 'bg-[var(--surface)]'
+                        isToday ? 'bg-[var(--surface-raised)]/30' : 'bg-[var(--surface)]'
                       }`}
                     >
                       {/* Sub-líneas de cuadrícula: Hora en punto sólida + Media hora (:30) punteada sutil */}
@@ -724,7 +724,7 @@ export function SmartTimetable({
                                 top,
                                 height,
                                 borderLeftWidth: '4px',
-                                borderLeftColor: subject?.color || '#3b3abf',
+                                borderLeftColor: subject?.color || 'var(--ink)',
                               }}
                               title="Clic para ver ficha académica, tareas y asistencia"
                             >
@@ -733,7 +733,7 @@ export function SmartTimetable({
                                 <>
                                   <div>
                                     <div className="flex items-center justify-between">
-                                      <span className="font-mono text-[9px] font-bold text-[#3b3abf] dark:text-[#a0a0ff] uppercase tracking-wide">
+                                      <span className="font-mono text-[9px] font-bold text-[var(--ink)] uppercase tracking-wide">
                                         {subject?.code || 'CLASE'}
                                       </span>
                                       <span className="font-mono text-[10px] text-[var(--muted)] font-semibold">
@@ -831,7 +831,7 @@ export function SmartTimetable({
                     onClick={() => setActiveDay(day)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                       isSelected
-                        ? 'bg-[#3b3abf] text-white shadow-xs'
+                        ? 'bg-[var(--ink)] text-[var(--paper)] shadow-xs'
                         : 'bg-[var(--paper)] text-[var(--muted)] hover:text-[var(--ink)]'
                     }`}
                   >
@@ -839,7 +839,7 @@ export function SmartTimetable({
                     {isToday && (
                       <span
                         className={`text-[9px] font-mono px-1 py-0.2 rounded ${
-                          isSelected ? 'bg-white/20 text-white' : 'bg-[#3b3abf] text-white'
+                          isSelected ? 'bg-white/20 text-white' : 'bg-[var(--ink)] text-[var(--paper)]'
                         }`}
                       >
                         HOY
@@ -1028,12 +1028,12 @@ export function SmartTimetable({
                             top,
                             height,
                             borderLeftWidth: '5px',
-                            borderLeftColor: subject?.color || '#3b3abf',
+                            borderLeftColor: subject?.color || 'var(--ink)',
                           }}
                         >
                           <div>
                             <div className="flex items-center justify-between">
-                              <span className="font-mono text-xs font-bold text-[#3b3abf] dark:text-[#a0a0ff] uppercase tracking-wide">
+                              <span className="font-mono text-xs font-bold text-[var(--ink)] uppercase tracking-wide">
                                 {subject?.code || 'CLASE'}
                               </span>
                               <span className="font-mono text-xs text-[var(--muted)] font-semibold">
@@ -1115,7 +1115,7 @@ export function SmartTimetable({
                 key={`agenda-day-${day}`}
                 className={`p-4 rounded-2xl border transition-colors ${
                   isToday
-                    ? 'bg-[var(--surface)] border-[#3b3abf]/50 shadow-sm'
+                    ? 'bg-[var(--surface)] border-[var(--ink)]/40 shadow-sm'
                     : 'bg-[var(--surface)] border-[var(--border)]'
                 }`}
               >
@@ -1125,7 +1125,7 @@ export function SmartTimetable({
                       {name}
                     </h3>
                     {isToday && (
-                      <span className="px-2 py-0.5 rounded-full bg-[#3b3abf] text-white text-[10px] font-mono font-bold uppercase tracking-wider">
+                      <span className="px-2 py-0.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[10px] font-mono font-bold uppercase tracking-wider">
                         HOY
                       </span>
                     )}
@@ -1155,12 +1155,12 @@ export function SmartTimetable({
                             className="p-3 rounded-xl border border-[var(--border)] bg-[var(--paper)] hover:bg-[var(--surface-raised)] transition-all flex items-center justify-between gap-3 cursor-pointer group"
                             style={{
                               borderLeftWidth: '4px',
-                              borderLeftColor: subject?.color || '#3b3abf',
+                              borderLeftColor: subject?.color || 'var(--ink)',
                             }}
                           >
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-mono text-[10px] font-bold text-[#3b3abf] dark:text-[#a0a0ff]">
+                                <span className="font-mono text-[10px] font-bold text-[var(--ink)]">
                                   {c.startTime} — {c.endTime}
                                 </span>
                                 <span className="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)]">
@@ -1172,7 +1172,7 @@ export function SmartTimetable({
                               </h4>
                               {c.location && (
                                 <div className="flex items-center gap-1 text-[11px] text-[var(--muted)] mt-1">
-                                  <MapPin className="w-3 h-3 text-[#7b7bff]" />
+                                  <MapPin className="w-3 h-3 text-[var(--muted)]" />
                                   <span>{c.location}</span>
                                 </div>
                               )}

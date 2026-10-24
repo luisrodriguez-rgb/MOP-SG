@@ -150,7 +150,7 @@ export function SlotDecisionModal({
                     className={`p-3.5 rounded-xl border transition-all text-left flex flex-col justify-between gap-2.5 ${
                       idx === 0
                         ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800'
-                        : 'bg-[var(--paper)] border-[var(--border)] hover:border-[#3b3abf]/50'
+                        : 'bg-[var(--paper)] border-[var(--border)] hover:border-[var(--ink)]/50'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">

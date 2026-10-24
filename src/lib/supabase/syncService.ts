@@ -123,7 +123,7 @@ export const syncService = {
           code: s.code,
           professor: s.professor || '',
           credits: s.credits || 3,
-          color: s.color || '#3b3abf',
+          color: s.color || '#3F3F46',
           max_absences: s.maxAbsences || 4,
           passing_grade: s.passingGrade || 3.0,
           current_grade: s.currentGrade || null,

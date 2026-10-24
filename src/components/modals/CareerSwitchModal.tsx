@@ -57,23 +57,23 @@ export function CareerSwitchModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
       <div
-        className="w-full max-w-2xl bg-[#0c102a] border border-[#232a58] rounded-3xl p-6 sm:p-7 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] text-white space-y-5 animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col"
+        className="w-full max-w-2xl bg-[var(--paper)] border border-[var(--border)] rounded-3xl p-6 sm:p-7 shadow-2xl text-[var(--ink)] space-y-5 animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Cabecera del Modal */}
         <div className="flex items-start justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-xs">
+            <div className="w-11 h-11 rounded-2xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center text-[var(--ink)] shadow-xs">
               <GraduationCap className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
+              <h3 className="text-base sm:text-lg font-black tracking-tight text-[var(--ink)] flex items-center gap-2">
                 <span>Plantillas Oficiales de Carreras</span>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[var(--surface-raised)] text-[var(--muted)] border border-[var(--border)]">
                   10 Carreras Icesi
                 </span>
               </h3>
-              <p className="text-xs text-[#8b95c2] mt-0.5">
+              <p className="text-xs text-[var(--muted)] mt-0.5">
                 Cambia instantáneamente de carrera para ver materias, profesores y horarios oficiales.
               </p>
             </div>
@@ -81,26 +81,26 @@ export function CareerSwitchModal() {
 
           <button
             onClick={closeCareerSwitchModal}
-            className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
+            className="w-8 h-8 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-raised)] text-[var(--muted)] hover:text-[var(--ink)] flex items-center justify-center transition-colors cursor-pointer shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Botón Destacado: Reiniciar Onboarding Completo */}
-        <div className="shrink-0 p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-emerald-500/10 border border-amber-500/20 flex items-center justify-between gap-3">
+        <div className="shrink-0 p-3.5 rounded-2xl bg-[var(--surface)] border border-amber-500/20 flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+            <div className="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
               <RotateCcw className="w-3.5 h-3.5" />
               <span>¿Quieres probar el Onboarding desde cero?</span>
             </div>
-            <p className="text-[11px] text-[#94a3b8] mt-0.5">
+            <p className="text-[11px] text-[var(--muted)] mt-0.5">
               Reinicia el asistente para probar el Magic Drop (Ctrl+V) y la tarjeta de revelación.
             </p>
           </div>
           <button
             onClick={handleResetToOnboarding}
-            className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 text-xs font-bold transition-all cursor-pointer shrink-0"
+            className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-700 dark:text-amber-200 border border-amber-500/40 text-xs font-bold transition-all cursor-pointer shrink-0"
           >
             Reiniciar Onboarding
           </button>
@@ -108,7 +108,7 @@ export function CareerSwitchModal() {
 
         {/* Selector de Carreras (Grid) */}
         <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-          <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#7a85b8]">
+          <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--muted)]">
             Selecciona una carrera para cargar:
           </div>
 
@@ -123,34 +123,34 @@ export function CareerSwitchModal() {
                   onClick={() => setSelectedTemplateId(tmpl.id)}
                   className={`p-3.5 rounded-2xl border transition-all cursor-pointer text-left ${
                     isSelected
-                      ? 'bg-[#181d48] border-[#5b5be8] shadow-md shadow-indigo-900/30 ring-1 ring-[#5b5be8]'
-                      : 'bg-[#080b20] border-[#1e2552] hover:border-[#38418f] hover:bg-[#0c102c]'
+                      ? 'bg-[var(--surface-raised)] border-[var(--ink)] shadow-md ring-1 ring-[var(--ink)]'
+                      : 'bg-[var(--surface)] border-[var(--border)] hover:border-[var(--line)]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="text-xs font-black text-white truncate">
+                      <div className="text-xs font-black text-[var(--ink)] truncate">
                         {tmpl.name}
                       </div>
-                      <div className="text-[10px] text-[#7a85b8] font-mono truncate mt-0.5">
+                      <div className="text-[10px] text-[var(--muted)] font-mono truncate mt-0.5">
                         {tmpl.faculty}
                       </div>
                     </div>
                     {isCurrentActive && (
-                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30 shrink-0">
                         Activa
                       </span>
                     )}
                   </div>
 
-                  <div className="mt-2.5 flex items-center gap-2 text-[10px] text-[#94a3b8]">
-                    <span className="px-2 py-0.5 rounded-md bg-white/5 font-mono">
+                  <div className="mt-2.5 flex items-center gap-2 text-[10px] text-[var(--muted)]">
+                    <span className="px-2 py-0.5 rounded-md bg-[var(--paper)] font-mono">
                       {tmpl.subjects.length} materias
                     </span>
-                    <span className="px-2 py-0.5 rounded-md bg-white/5 font-mono">
+                    <span className="px-2 py-0.5 rounded-md bg-[var(--paper)] font-mono">
                       {tmpl.scheduleBlocks.length} bloques
                     </span>
-                    <span className="text-indigo-400 font-semibold">{tmpl.badge}</span>
+                    <span className="text-[var(--muted)] font-semibold">{tmpl.badge}</span>
                   </div>
                 </div>
               );
@@ -159,11 +159,11 @@ export function CareerSwitchModal() {
         </div>
 
         {/* Detalle y Botón de Aplicación de la Carrera Seleccionada */}
-        <div className="shrink-0 pt-3 border-t border-[#1e2552] space-y-3">
-          <div className="p-3 rounded-2xl bg-[#080b20] border border-[#1e2552] space-y-2">
+        <div className="shrink-0 pt-3 border-t border-[var(--border)] space-y-3">
+          <div className="p-3 rounded-2xl bg-[var(--surface)] border border-[var(--border)] space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-white">{currentTemplate.name}</span>
-              <span className="text-[11px] font-mono text-indigo-400 font-bold">
+              <span className="font-bold text-[var(--ink)]">{currentTemplate.name}</span>
+              <span className="text-[11px] font-mono text-[var(--ink)] font-bold">
                 {currentTemplate.subjects.length} materias oficiales
               </span>
             </div>
@@ -171,7 +171,7 @@ export function CareerSwitchModal() {
               {currentTemplate.subjects.map((s) => (
                 <span
                   key={s.id}
-                  className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-white/80"
+                  className="text-[10px] px-2 py-0.5 rounded-md bg-[var(--paper)] border border-[var(--border)] text-[var(--ink)]"
                 >
                   {s.name} ({s.credits} cr)
                 </span>
@@ -182,7 +182,7 @@ export function CareerSwitchModal() {
           <button
             disabled={isApplying}
             onClick={() => handleApplyTemplate(currentTemplate)}
-            className="w-full py-3 px-5 rounded-2xl bg-gradient-to-r from-[#2828a8] via-[#3b3abf] to-[#5b5be8] hover:from-[#3232c4] hover:to-[#6f6ff5] disabled:opacity-40 font-bold text-xs text-white flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer"
+            className="w-full py-3 px-5 rounded-2xl bg-[var(--ink)] hover:opacity-90 disabled:opacity-40 font-bold text-xs text-[var(--paper)] flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-amber-300" />
             <span>

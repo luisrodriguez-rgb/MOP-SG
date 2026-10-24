@@ -101,7 +101,7 @@ export function WeeklyScheduleWidget({
       const startOffset = timeToGridOffset(c.startTime);
       const duration = getDurationHours(c.startTime, c.endTime);
 
-      const color = sub?.color || '#3b3abf';
+      const color = sub?.color || '#3F3F46';
 
       result.push({
         id: `class-${c.id}`,
@@ -202,7 +202,7 @@ export function WeeklyScheduleWidget({
           {/* Botón rápido para añadir clase */}
           <button
             onClick={() => openEditClass()}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold transition-all shadow-2xs cursor-pointer"
             title="Añadir clase al horario"
           >
             <Plus className="w-3.5 h-3.5" />

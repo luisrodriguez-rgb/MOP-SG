@@ -196,7 +196,7 @@ export function NowActionCard({
             <div className="flex items-center justify-between text-[11px] font-mono font-bold tracking-wider uppercase text-[var(--muted)] pb-3 border-b border-[var(--border)]">
               <span>1. AHORA</span>
               {currentBlockResult.status === 'in_class' && (
-                <span className="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/20 text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-[var(--surface-raised)] text-[var(--ink)] border border-[var(--border)] text-[10px] font-bold">
                   EN CLASE
                 </span>
               )}

@@ -52,7 +52,7 @@ export async function commitAcademicDataAtomically(data: ParsedAcademicData): Pr
     name: s.name,
     code: s.code || 'MAT-100',
     credits: s.credits || 3,
-    color: s.color || '#3b3abf',
+    color: s.color || '#3F3F46',
     professor: s.professor || 'Docente Titular',
     maxAbsences: s.maxAbsences || 4,
     passingGrade: 3.0,

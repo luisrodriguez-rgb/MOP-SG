@@ -2,7 +2,7 @@ import { ParsedAcademicData } from './types';
 import { DayOfWeek } from '@/types';
 
 export const UNIVERSAL_PALETTE = [
-  '#3b3abf', // Azul Mi Semestre
+  '#3F3F46', // Neutral grafito
   '#0284c7', // Celeste
   '#0d9488', // Teal
   '#16a34a', // Verde

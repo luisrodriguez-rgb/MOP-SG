@@ -167,7 +167,7 @@ export function AddExamModal() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ej: Parcial 2: Teorema de Stokes y Divergencia"
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[#3b3abf] focus:ring-2 focus:ring-[#3b3abf]/15 transition-all"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] focus:ring-2 focus:ring-[var(--ink)]/15 transition-all"
             />
           </div>
 
@@ -225,7 +225,7 @@ export function AddExamModal() {
                   required
                   value={weight}
                   onChange={(e) => setWeight(Number(e.target.value))}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[#3b3abf] focus:ring-2 focus:ring-[#3b3abf]/15 transition-all font-mono"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] focus:ring-2 focus:ring-[var(--ink)]/15 transition-all font-mono"
                 />
                 <span className="absolute right-3 top-2 text-xs font-mono font-bold text-[var(--muted)]">%</span>
               </div>
@@ -233,7 +233,7 @@ export function AddExamModal() {
 
             <div>
               <label className="block text-xs font-bold text-[var(--ink)] mb-1 flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+                <MapPin className="w-3.5 h-3.5 text-[var(--ink)]" />
                 <span>Salón / Aula / Lugar</span>
               </label>
               <input
@@ -241,7 +241,7 @@ export function AddExamModal() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="Ej: Edificio C · Salón 201 o Lab 3"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[#3b3abf] focus:ring-2 focus:ring-[#3b3abf]/15 transition-all"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] focus:ring-2 focus:ring-[var(--ink)]/15 transition-all"
               />
             </div>
           </div>
@@ -326,7 +326,7 @@ export function AddExamModal() {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Ej: Llevar calculadora programable TI, carné estudiantil, lápiz 2B y hojas cuadriculadas..."
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[#3b3abf] focus:ring-2 focus:ring-[#3b3abf]/15 transition-all resize-none"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] focus:ring-2 focus:ring-[var(--ink)]/15 transition-all resize-none"
             />
           </div>
 
@@ -341,7 +341,7 @@ export function AddExamModal() {
               value={topicsStr}
               onChange={(e) => setTopicsStr(e.target.value)}
               placeholder="Ej: Transformada de Laplace, Convolución, Ecuaciones homogéneas"
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[#3b3abf] focus:ring-2 focus:ring-[#3b3abf]/15 transition-all"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] focus:ring-2 focus:ring-[var(--ink)]/15 transition-all"
             />
           </div>
 
@@ -349,7 +349,7 @@ export function AddExamModal() {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-2.5 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold shadow-md shadow-[#3b3abf]/20 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
+              className="w-full py-2.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
               <span>{editingExam ? 'Guardar Cambios de la Evaluación' : 'Registrar Parcial en Radar'}</span>

@@ -54,7 +54,7 @@ export function CommandPalette() {
       title: 'Abrir Buzón Inteligente',
       subtitle: 'Pega mensajes de WhatsApp, apuntes de notas o avisos',
       icon: Sparkles,
-      color: 'text-indigo-500 bg-indigo-500/10',
+      color: 'text-[var(--ink)] bg-[var(--surface-raised)] border border-[var(--border)]',
       action: () => { closeCommandPalette(); openInbox(); },
     },
     {
@@ -62,7 +62,7 @@ export function CommandPalette() {
       title: 'Sincronizar Calendario (.ICS, Google, Outlook)',
       subtitle: 'Importa tus clases desde calendarios externos o descarga .ics',
       icon: Calendar,
-      color: 'text-[#3b3abf] bg-[#3b3abf]/10',
+      color: 'text-[var(--ink)] bg-[var(--surface-raised)] border border-[var(--border)]',
       action: () => { closeCommandPalette(); openCalendarModal(); },
     },
     {
@@ -70,7 +70,7 @@ export function CommandPalette() {
       title: 'Nueva Tarea o Entrega',
       subtitle: 'Registra un taller, entregable o proyecto',
       icon: Plus,
-      color: 'text-blue-500 bg-blue-500/10',
+      color: 'text-[var(--ink)] bg-[var(--surface-raised)] border border-[var(--border)]',
       action: () => { closeCommandPalette(); openAddTask(); },
     },
     {
@@ -94,7 +94,7 @@ export function CommandPalette() {
       title: 'Mi Perfil y Configuración',
       subtitle: 'Edita tus datos académicos o sincroniza con Supabase',
       icon: User,
-      color: 'text-purple-500 bg-purple-500/10',
+      color: 'text-[var(--ink)] bg-[var(--surface-raised)] border border-[var(--border)]',
       action: () => { closeCommandPalette(); openProfile(); },
     },
     {
@@ -102,7 +102,7 @@ export function CommandPalette() {
       title: 'Ir a Horario Semanal',
       subtitle: 'Ver la cuadrícula de clases y huecos libres',
       icon: BookOpen,
-      color: 'text-cyan-500 bg-cyan-500/10',
+      color: 'text-[var(--ink)] bg-[var(--surface-raised)] border border-[var(--border)]',
       action: () => { closeCommandPalette(); router.push('/schedule'); },
     },
   ];
@@ -151,7 +151,7 @@ export function CommandPalette() {
                       <Icon className="w-4 h-4" />
                     </div>
                     <div>
-                      <span className="text-xs font-bold text-[var(--ink)] block group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                      <span className="text-xs font-bold text-[var(--ink)] block group-hover:text-[var(--accent)] transition-colors">
                         {item.title}
                       </span>
                       <span className="text-[11px] text-[var(--muted)] block">

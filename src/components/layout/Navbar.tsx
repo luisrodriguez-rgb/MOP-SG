@@ -101,14 +101,14 @@ export function Navbar() {
     <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">
       {/* Barra de Sesión de Enfoque Activa */}
       {focusSession.isActive && (
-        <div className="bg-gradient-to-r from-indigo-900/90 via-purple-900/90 to-indigo-950/90 border-b border-indigo-500/30 px-4 py-2 flex items-center justify-between text-xs font-medium text-indigo-100 animate-pulse-subtle">
+        <div className="bg-[var(--surface-raised)] border-b border-[var(--border)] px-4 py-2 flex items-center justify-between text-xs font-medium text-[var(--ink)]">
           <div className="flex items-center gap-3">
             <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping" />
-            <span className="font-semibold text-white tracking-wide uppercase">Sesión de Enfoque Activa:</span>
-            <span className="text-indigo-200 font-mono text-sm font-bold bg-black/40 px-2 py-0.5 rounded border border-indigo-500/30">
+            <span className="font-semibold text-[var(--ink)] tracking-wide uppercase">Sesión de Enfoque Activa:</span>
+            <span className="text-[var(--ink)] font-mono text-sm font-bold bg-[var(--paper)] px-2 py-0.5 rounded border border-[var(--border)]">
               {formatTimer(focusSession.secondsRemaining)}
             </span>
-            <span className="truncate max-w-xs text-white/90">
+            <span className="truncate max-w-xs text-[var(--muted)]">
               {focusSession.taskTitle} {focusSession.subjectName && `· ${focusSession.subjectName}`}
             </span>
           </div>
@@ -116,7 +116,7 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <button
               onClick={togglePauseFocus}
-              className="flex items-center gap-1 px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-white transition-all text-xs"
+              className="flex items-center gap-1 px-2.5 py-1 rounded bg-[var(--surface)] hover:bg-[var(--paper)] text-[var(--ink)] transition-all text-xs"
             >
               {focusSession.isPaused ? <Play className="w-3 h-3 text-emerald-400" /> : <Pause className="w-3 h-3 text-amber-300" />}
               {focusSession.isPaused ? 'Reanudar' : 'Pausar'}
@@ -137,13 +137,13 @@ export function Navbar() {
         {/* Brand & Semester Badge */}
         <div className="flex items-center gap-4">
           <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-xl bg-[var(--ink)] flex items-center justify-center shadow-md group-hover:scale-105 transition-transform text-white">
+              <Sparkles className="w-5 h-5" />
             </div>
             <div>
               <div className="font-extrabold text-base tracking-tight text-white flex items-center gap-1.5">
                 Mi Semestre
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold uppercase">
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-raised)] text-[var(--muted)] border border-[var(--border)] font-semibold uppercase">
                   OS Estudiantil
                 </span>
               </div>
@@ -170,7 +170,7 @@ export function Navbar() {
                 href={link.href}
                 className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25'
+                    ? 'bg-[var(--ink)] text-white shadow-xs'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
                 }`}
               >
@@ -184,7 +184,7 @@ export function Navbar() {
         {/* Action Controls */}
         <div className="flex items-center gap-2">
           <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 border border-white/5 text-slate-300 font-mono text-xs">
-            <Clock className="w-3.5 h-3.5 text-indigo-400" />
+            <Clock className="w-3.5 h-3.5 text-[var(--muted)]" />
             <span>{currentTimeStr || '16:00:00'}</span>
           </div>
 
@@ -193,7 +193,7 @@ export function Navbar() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 text-xs font-semibold transition-all"
             title="Añadir Tarea Pendiente"
           >
-            <PlusCircle className="w-3.5 h-3.5 text-indigo-400" />
+            <PlusCircle className="w-3.5 h-3.5 text-[var(--muted)]" />
             <span className="hidden sm:inline">Tarea</span>
           </button>
 
@@ -202,13 +202,13 @@ export function Navbar() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 text-xs font-semibold transition-all"
             title="Añadir Parcial o Examen"
           >
-            <Calendar className="w-3.5 h-3.5 text-violet-400" />
+            <Calendar className="w-3.5 h-3.5 text-[var(--muted)]" />
             <span className="hidden sm:inline">Parcial</span>
           </button>
 
           <button
             onClick={openImporter}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-500/20 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--ink)] hover:opacity-90 text-white text-xs font-semibold shadow-xs transition-all"
             title="Importar horario de universidad"
           >
             <Upload className="w-3.5 h-3.5" />

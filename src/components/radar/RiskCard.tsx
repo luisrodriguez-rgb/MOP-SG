@@ -92,7 +92,7 @@ export function RiskCard({ risk, onPlanStudy }: RiskCardProps) {
           <div className="bg-[var(--paper)] p-2.5 rounded-xl border border-[var(--border)]">
             <span className="text-[var(--muted)] block text-[10px] uppercase font-bold">Pendientes</span>
             <span className="font-black text-[var(--ink)] mt-0.5 block flex items-center gap-1">
-              <FileText className="w-3 h-3 text-[#3b3abf] dark:text-[#a0a0ff]" />
+              <FileText className="w-3 h-3 text-[var(--ink)]" />
               {risk.signals.pendingTasksCount} tareas
             </span>
           </div>
@@ -140,13 +140,13 @@ export function RiskCard({ risk, onPlanStudy }: RiskCardProps) {
         {/* Bloque Explicable: ¿Por qué? */}
         <div className="mt-4 p-3 rounded-xl bg-[var(--paper)] border border-[var(--border)]">
           <div className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--ink)] uppercase font-mono tracking-wider">
-            <HelpCircle className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+            <HelpCircle className="w-3.5 h-3.5 text-[var(--ink)]" />
             <span>¿Por qué este cálculo?</span>
           </div>
           <div className="mt-2 space-y-1.5">
             {risk.reasons.map((reason, idx) => (
               <p key={idx} className="text-xs text-[var(--ink-secondary)] leading-snug flex items-start gap-1.5">
-                <span className="text-[#3b3abf] dark:text-[#a0a0ff] font-black">•</span>
+                <span className="text-[var(--ink)] font-black">•</span>
                 <span>{reason}</span>
               </p>
             ))}
@@ -157,7 +157,7 @@ export function RiskCard({ risk, onPlanStudy }: RiskCardProps) {
       {onPlanStudy && risk.level !== 'ESTABLE' && (
         <button
           onClick={() => onPlanStudy(risk.subjectId)}
-          className="mt-4 w-full py-2.5 px-3 rounded-xl bg-[#f0f0ff] dark:bg-[#1c1e38] hover:bg-[#e8e8ff] dark:hover:bg-[#25284a] text-[#3b3abf] dark:text-[#a0a0ff] text-xs font-bold border border-[#c5c5ff] dark:border-[#333760] transition-all text-center cursor-pointer"
+          className="mt-4 w-full py-2.5 px-3 rounded-xl bg-[var(--surface-raised)] hover:bg-[var(--paper)] text-[var(--ink)] text-xs font-bold border border-[var(--border)] transition-all text-center cursor-pointer"
         >
           Organizar sesiones de estudio en huecos libres →
         </button>

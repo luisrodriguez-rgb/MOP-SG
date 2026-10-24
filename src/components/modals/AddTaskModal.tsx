@@ -131,7 +131,7 @@ export function AddTaskModal() {
         {/* Cabecera */}
         <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#3b3abf]/10 border border-[#3b3abf]/20 flex items-center justify-center text-[#3b3abf] dark:text-[#a0a0ff]">
+            <div className="w-9 h-9 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--ink)]">
               <PlusCircle className="w-4 h-4" />
             </div>
             <div>
@@ -169,7 +169,7 @@ export function AddTaskModal() {
                 }
               }}
               placeholder="Ej: Editar video promocional Playtest o Diagramar simulacro PDF"
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[#3b3abf] focus:ring-2 focus:ring-[#3b3abf]/15 transition-all"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] focus:ring-2 focus:ring-[var(--ink)]/15 transition-all"
             />
           </div>
 
@@ -192,7 +192,7 @@ export function AddTaskModal() {
 
             <div>
               <label className="block text-xs font-bold text-[var(--ink)] mb-1 flex items-center gap-1">
-                <User className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+                <User className="w-3.5 h-3.5 text-[var(--ink)]" />
                 <span>Responsable</span>
               </label>
               <CustomSelect
@@ -235,7 +235,7 @@ export function AddTaskModal() {
 
             <div>
               <label className="block text-xs font-bold text-[var(--ink)] mb-1 flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+                <MapPin className="w-3.5 h-3.5 text-[var(--ink)]" />
                 <span>Salón / Modalidad de entrega</span>
               </label>
               <input
@@ -243,7 +243,7 @@ export function AddTaskModal() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="Ej: Salón B-102, Teams, Moodle o Físico"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[#3b3abf] focus:ring-2 focus:ring-[#3b3abf]/15 transition-all"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] focus:ring-2 focus:ring-[var(--ink)]/15 transition-all"
               />
             </div>
           </div>
@@ -252,11 +252,11 @@ export function AddTaskModal() {
           <div className="p-3.5 rounded-2xl bg-[var(--paper)] border border-[var(--border)] space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[var(--ink)] flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+                <Calendar className="w-3.5 h-3.5 text-[var(--ink)]" />
                 <span>Fecha y Hora de Entrega</span>
               </span>
               {friendlyDate && (
-                <span className="text-[11px] font-mono font-bold text-[#3b3abf] dark:text-[#a0a0ff] bg-[#3b3abf]/10 px-2 py-0.5 rounded-lg">
+                <span className="text-[11px] font-mono font-bold text-[var(--ink)] bg-[var(--surface-raised)] border border-[var(--border)] px-2 py-0.5 rounded-lg">
                   {friendlyDate} · {dueTimeStr}
                 </span>
               )}
@@ -272,7 +272,7 @@ export function AddTaskModal() {
                   required
                   value={dueDateStr}
                   onChange={(e) => setDueDateStr(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[#3b3abf] transition-colors"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--ink)] transition-colors"
                 />
               </div>
 
@@ -286,7 +286,7 @@ export function AddTaskModal() {
                   required
                   value={dueTimeStr}
                   onChange={(e) => setDueTimeStr(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[#3b3abf] transition-colors"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--ink)] transition-colors"
                 />
               </div>
             </div>
@@ -310,7 +310,7 @@ export function AddTaskModal() {
                     key={preset.days}
                     type="button"
                     onClick={() => applyDatePreset(preset.days)}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[var(--surface)] hover:bg-[#3b3abf]/10 hover:text-[#3b3abf] dark:hover:text-[#a0a0ff] border border-[var(--border)] text-[var(--muted)] transition-all cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[var(--surface)] hover:bg-[var(--surface-raised)] hover:text-[var(--ink)] border border-[var(--border)] text-[var(--muted)] transition-all cursor-pointer"
                   >
                     {preset.label}
                   </button>
@@ -330,7 +330,7 @@ export function AddTaskModal() {
                   onClick={() => setPriority(p)}
                   className={`py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                     priority === p
-                      ? 'bg-[#3b3abf] text-white border-[#3b3abf] shadow-xs'
+                      ? 'bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)] shadow-xs'
                       : 'bg-[var(--paper)] text-[var(--muted)] border-[var(--border)] hover:text-[var(--ink)]'
                   }`}
                 >
@@ -351,7 +351,7 @@ export function AddTaskModal() {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Ej: Llevar impreso a doble cara, incluir rúbrica, llevar computador con batería cargada..."
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[#3b3abf] focus:ring-2 focus:ring-[#3b3abf]/15 transition-all resize-none"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] focus:ring-2 focus:ring-[var(--ink)]/15 transition-all resize-none"
             />
           </div>
 
@@ -359,7 +359,7 @@ export function AddTaskModal() {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-2.5 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold shadow-md shadow-[#3b3abf]/20 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
+              className="w-full py-2.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
             >
               <CheckCircle className="w-3.5 h-3.5 text-white" />
               <span>{editingTask ? 'Guardar Cambios de la Tarea' : 'Guardar Tarea'}</span>

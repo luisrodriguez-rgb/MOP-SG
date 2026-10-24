@@ -215,7 +215,7 @@ function RoutineFormContent({
                   }}
                   className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-between transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-[#3b3abf] text-white border-[#3b3abf] shadow-xs'
+                      ? 'bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)] shadow-xs'
                       : 'bg-[var(--paper)] text-[var(--ink-secondary)] border-[var(--border)] hover:bg-[var(--surface-raised)]'
                   }`}
                 >
@@ -240,7 +240,7 @@ function RoutineFormContent({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Ej: Almuerzo en Cafetería Central, Gimnasio Samán"
-            className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[#3b3abf]"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)]"
           />
         </div>
 
@@ -253,7 +253,7 @@ function RoutineFormContent({
               required
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-mono text-[var(--ink)] focus:outline-none focus:border-[#3b3abf]"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-mono text-[var(--ink)] focus:outline-none focus:border-[var(--ink)]"
             />
           </div>
 
@@ -264,7 +264,7 @@ function RoutineFormContent({
               required
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-mono text-[var(--ink)] focus:outline-none focus:border-[#3b3abf]"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-mono text-[var(--ink)] focus:outline-none focus:border-[var(--ink)]"
             />
           </div>
         </div>
@@ -280,7 +280,7 @@ function RoutineFormContent({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Ej: Llevar ropa de cambio, locker 42, almorzar con grupo de trabajo"
-            className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[#3b3abf] resize-none"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] resize-none"
           />
         </div>
 
@@ -293,7 +293,7 @@ function RoutineFormContent({
                   type="checkbox"
                   checked={applyAllDays}
                   onChange={(e) => setApplyAllDays(e.target.checked)}
-                  className="w-4 h-4 rounded text-[#3b3abf] focus:ring-0 cursor-pointer"
+                  className="w-4 h-4 rounded text-[var(--ink)] focus:ring-0 cursor-pointer"
                 />
                 <span className="font-semibold">Repetir de Lunes a Viernes</span>
               </label>
@@ -314,7 +314,7 @@ function RoutineFormContent({
                       onClick={() => setDayOfWeek(d.v as DayOfWeek)}
                       className={`py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
                         dayOfWeek === d.v
-                          ? 'bg-[#3b3abf] text-white border-[#3b3abf]'
+                          ? 'bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]'
                           : 'bg-[var(--paper)] text-[var(--muted)] border-[var(--border)] hover:bg-[var(--surface-raised)]'
                       }`}
                     >
@@ -345,7 +345,7 @@ function RoutineFormContent({
                     onClick={() => setDayOfWeek(d.v as DayOfWeek)}
                     className={`py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
                       dayOfWeek === d.v
-                        ? 'bg-[#3b3abf] text-white border-[#3b3abf]'
+                        ? 'bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]'
                         : 'bg-[var(--paper)] text-[var(--muted)] border-[var(--border)] hover:bg-[var(--surface-raised)]'
                     }`}
                   >
@@ -361,7 +361,7 @@ function RoutineFormContent({
                       type="checkbox"
                       checked={applyAllDays}
                       onChange={(e) => setApplyAllDays(e.target.checked)}
-                      className="w-4 h-4 rounded text-[#3b3abf] focus:ring-0 cursor-pointer"
+                      className="w-4 h-4 rounded text-[var(--ink)] focus:ring-0 cursor-pointer"
                     />
                     <span className="font-medium">
                       Aplicar cambios a toda la serie recurrente ({siblingRoutines.length + 1} días)
@@ -377,7 +377,7 @@ function RoutineFormContent({
         <div className="pt-3 border-t border-[var(--border)] flex flex-col gap-2">
           <button
             type="submit"
-            className="w-full py-2.5 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold shadow-md shadow-[#3b3abf]/20 transition-all cursor-pointer"
+            className="w-full py-2.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold shadow-md transition-all cursor-pointer"
           >
             {isEditing ? 'Guardar Cambios' : 'Guardar Tiempo Fijo'}
           </button>

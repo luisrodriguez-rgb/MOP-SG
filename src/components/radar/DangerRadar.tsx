@@ -52,7 +52,7 @@ export function DangerRadar({
       <div className="card-academic p-6 sm:p-8 bg-[var(--surface)] border border-[var(--border)] transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider uppercase text-[#3b3abf] dark:text-[#a0a0ff]">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider uppercase text-[var(--ink)]">
               <ShieldAlert className="w-4 h-4" />
               <span>Semáforo de Operación & Salud de Áreas</span>
             </div>
@@ -90,7 +90,7 @@ export function DangerRadar({
         {members.length > 0 && (
           <div className="mt-5 pt-4 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-xs font-bold text-[var(--ink)]">
-              <Users className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+              <Users className="w-3.5 h-3.5 text-[var(--ink)]" />
               <span>Filtrar por Responsable:</span>
             </div>
             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
@@ -99,7 +99,7 @@ export function DangerRadar({
                 onClick={() => setFilterMemberId('all')}
                 className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer whitespace-nowrap ${
                   filterMemberId === 'all'
-                    ? 'bg-[#3b3abf] text-white shadow-xs'
+                    ? 'bg-[var(--ink)] text-[var(--paper)] shadow-xs'
                     : 'bg-[var(--paper)] text-[var(--muted)] hover:text-[var(--ink)] border border-[var(--border)]'
                 }`}
               >
@@ -112,13 +112,13 @@ export function DangerRadar({
                   onClick={() => setFilterMemberId(m.id)}
                   className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                     filterMemberId === m.id
-                      ? 'bg-[#3b3abf] text-white shadow-xs'
+                      ? 'bg-[var(--ink)] text-[var(--paper)] shadow-xs'
                       : 'bg-[var(--paper)] text-[var(--muted)] hover:text-[var(--ink)] border border-[var(--border)]'
                   }`}
                 >
                   <span
                     className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: m.color || '#3b3abf' }}
+                    style={{ backgroundColor: m.color || 'var(--ink)' }}
                   />
                   <span>{m.name}</span>
                 </button>

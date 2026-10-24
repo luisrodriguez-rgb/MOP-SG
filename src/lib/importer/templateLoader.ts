@@ -139,7 +139,7 @@ export async function startFreshEmptySemester(input: {
         semesterId,
         name: s.name.trim(),
         code: s.code.trim() || `MAT-${101 + idx}`,
-        color: s.color || '#3b3abf',
+        color: s.color || '#3F3F46',
         credits: s.credits || 3,
         professor: s.professor?.trim() || 'Docente Asignado',
         maxAbsences: 4,

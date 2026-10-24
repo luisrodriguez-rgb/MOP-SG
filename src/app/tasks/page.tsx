@@ -66,7 +66,7 @@ export default function TasksPage() {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center space-y-2">
-          <div className="w-8 h-8 border-3 border-[#3b3abf] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-3 border-[var(--ink)] border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs text-[var(--muted)] font-mono">Cargando tareas...</p>
         </div>
       </div>
@@ -78,13 +78,13 @@ export default function TasksPage() {
       {/* Cabecera Principal */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs transition-colors">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#3b3abf]/10 border border-[#3b3abf]/20 flex items-center justify-center text-[#3b3abf] dark:text-[#a0a0ff]">
+          <div className="w-10 h-10 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--ink)]">
             <ListTodo className="w-5 h-5" />
           </div>
           <div>
             <h1 className="text-lg font-black text-[var(--ink)] tracking-tight flex items-center gap-2">
               <span>Tareas y Entregas</span>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-[var(--paper)] text-[#3b3abf] dark:text-[#a0a0ff] border border-[var(--border)]">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-[var(--paper)] text-[var(--ink)] border border-[var(--border)]">
                 {pendingCount} pendientes
               </span>
             </h1>
@@ -96,7 +96,7 @@ export default function TasksPage() {
 
         <button
           onClick={openAddTask}
-          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold transition-all shadow-sm cursor-pointer self-start sm:self-auto active:scale-95"
+          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold transition-all shadow-sm cursor-pointer self-start sm:self-auto active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>Nueva Tarea</span>
@@ -154,7 +154,7 @@ export default function TasksPage() {
               onClick={() => setFilterStatus('all')}
               className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                 filterStatus === 'all'
-                  ? 'bg-[#3b3abf] text-white shadow-2xs'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] shadow-2xs'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
@@ -164,7 +164,7 @@ export default function TasksPage() {
               onClick={() => setFilterStatus('pending')}
               className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                 filterStatus === 'pending'
-                  ? 'bg-[#3b3abf] text-white shadow-2xs'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] shadow-2xs'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
@@ -174,7 +174,7 @@ export default function TasksPage() {
               onClick={() => setFilterStatus('completed')}
               className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                 filterStatus === 'completed'
-                  ? 'bg-[#3b3abf] text-white shadow-2xs'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] shadow-2xs'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
@@ -191,7 +191,7 @@ export default function TasksPage() {
             placeholder="Buscar por título o materia..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[#3b3abf] transition-colors"
+            className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--ink)] transition-colors"
           />
         </div>
       </div>
@@ -211,7 +211,7 @@ export default function TasksPage() {
             </p>
             <button
               onClick={openAddTask}
-              className="mt-4 px-4 py-2 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer shadow-sm"
+              className="mt-4 px-4 py-2 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer shadow-sm"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Añadir Tarea</span>
@@ -249,7 +249,7 @@ export default function TasksPage() {
                 className={`p-4 rounded-2xl bg-[var(--surface)] border transition-all flex flex-col justify-between gap-3 group ${
                   isCompleted
                     ? 'border-[var(--border)] opacity-60'
-                    : 'border-[var(--border)] hover:border-[#3b3abf]/50 shadow-xs'
+                    : 'border-[var(--border)] hover:border-[var(--ink)]/50 shadow-xs'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -259,8 +259,8 @@ export default function TasksPage() {
                       onClick={() => handleToggle(task.id)}
                       className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-all shrink-0 mt-0.5 sm:mt-0 cursor-pointer ${
                         isCompleted
-                          ? 'bg-[#3b3abf] border-[#3b3abf] text-white'
-                          : 'border-[var(--border)] bg-[var(--paper)] group-hover:border-[#3b3abf]'
+                          ? 'bg-[var(--ink)] border-[var(--ink)] text-[var(--paper)]'
+                          : 'border-[var(--border)] bg-[var(--paper)] group-hover:border-[var(--ink)]'
                       }`}
                     >
                       {isCompleted && <Check className="w-3.5 h-3.5 stroke-[3]" />}
@@ -302,14 +302,14 @@ export default function TasksPage() {
                           <span>· ~{task.estimatedMinutes} min</span>
                         )}
                         {task.assigneeName && (
-                          <span className="px-2 py-0.5 rounded-full font-sans font-bold text-[10px] bg-[#3b3abf]/10 text-[#3b3abf] dark:text-[#a0a0ff] border border-[#3b3abf]/20 flex items-center gap-1">
+                          <span className="px-2 py-0.5 rounded-full font-sans font-bold text-[10px] bg-[var(--surface-raised)] text-[var(--ink)] border border-[var(--border)] flex items-center gap-1">
                             <User className="w-2.5 h-2.5" />
                             <span>{task.assigneeName}</span>
                           </span>
                         )}
                         {task.location && (
                           <span className="flex items-center gap-1 text-[var(--ink)] font-sans font-medium">
-                            <MapPin className="w-3 h-3 text-[#3b3abf] dark:text-[#a0a0ff]" />
+                            <MapPin className="w-3 h-3 text-[var(--ink)]" />
                             <span>{task.location}</span>
                           </span>
                         )}
@@ -323,7 +323,7 @@ export default function TasksPage() {
                       onClick={() =>
                         startFocusSession(task.title, sub?.name || 'Estudio', task.estimatedMinutes || 25)
                       }
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[var(--paper)] hover:bg-[#3b3abf] hover:text-white text-[#3b3abf] dark:text-[#a0a0ff] text-xs font-bold transition-all cursor-pointer border border-[var(--border)] shadow-2xs"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[var(--paper)] hover:bg-[var(--ink)] hover:text-[var(--paper)] text-[var(--ink)] text-xs font-bold transition-all cursor-pointer border border-[var(--border)] shadow-2xs"
                       title="Iniciar sesión Pomodoro con esta tarea"
                     >
                       <Timer className="w-3.5 h-3.5" />
@@ -332,7 +332,7 @@ export default function TasksPage() {
 
                     <button
                       onClick={() => openEditTask(task)}
-                      className="p-2 rounded-xl text-[var(--muted)] hover:text-[#3b3abf] hover:bg-[#3b3abf]/10 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-raised)] transition-colors cursor-pointer"
                       title="Editar tarea"
                     >
                       <Pencil className="w-4 h-4" />

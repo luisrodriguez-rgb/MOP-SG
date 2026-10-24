@@ -55,20 +55,6 @@
   /* Botón e identidad primaria: Negro tinta SG */
   --primary: #0A0A0A;
   --primary-hover: #1A1A1A;
-
-  /* Compatibilidad con paleta histórica */
-  --blue-950: #0A0A0A;
-  --blue-900: #111729;
-  --blue-850: #161616;
-  --blue-800: #1F2438;
-  --blue-700: #111729;
-  --blue-600: #0A0A0A;
-  --blue-500: #3B4262;
-  --blue-400: #5B6170;
-  --blue-300: #A1A1AA;
-  --blue-200: #E4E4E7;
-  --blue-100: #F4F4F5;
-  --blue-50: #FAFAFA;
 }
 
 /* Modo Oscuro — Auténtico Negro SG (#0A0A0A cálido, no azul marino) */
@@ -103,19 +89,6 @@ html.dark {
 
   --primary: #F4F4F5;
   --primary-hover: #E4E4E7;
-
-  --blue-950: #000000;
-  --blue-900: #0A0A0A;
-  --blue-850: #121212;
-  --blue-800: #181818;
-  --blue-700: #222222;
-  --blue-600: #F4F4F5;
-  --blue-500: #E4E4E7;
-  --blue-400: #A1A1AA;
-  --blue-300: #71717A;
-  --blue-200: #27272A;
-  --blue-100: #18181B;
-  --blue-50: #0A0A0A;
 }
 
 html.dark h1,
@@ -153,22 +126,22 @@ body {
 .card-academic-interactive:hover,
 .card-cambas-interactive:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px -4px rgba(26, 26, 94, 0.1);
-  border-color: var(--blue-300);
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.08);
+  border-color: var(--line);
 }
 
 /* Hero & Feature Banners */
 .banner-academic,
 .banner-cambas {
-  background: linear-gradient(135deg, #1e1e8a 0%, #3b3abf 60%, #5b5be8 100%);
+  background: var(--ink);
   color: #ffffff;
   border-radius: 1.5rem;
-  box-shadow: 0 10px 30px -5px rgba(59, 58, 191, 0.35);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
 }
 
 /* Segmented Pill Navigation */
 .pill-control {
-  background: #ffffff;
+  background: var(--surface);
   border: 1px solid var(--border);
   padding: 0.25rem;
   border-radius: 9999px;
@@ -177,11 +150,11 @@ body {
 }
 
 .pill-item-active {
-  background: var(--blue-600);
+  background: var(--ink);
   color: #ffffff;
   border-radius: 9999px;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(59, 58, 191, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Status Badges */
@@ -218,8 +191,8 @@ html.dark .card-cambas-interactive {
 }
 html.dark .card-academic-interactive:hover,
 html.dark .card-cambas-interactive:hover {
-  border-color: var(--blue-500);
-  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(91, 91, 232, 0.15);
+  border-color: var(--line);
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.6);
 }
 
 html.dark .pill-control {
@@ -236,18 +209,18 @@ html.dark .pill-control {
   background: var(--paper);
 }
 ::-webkit-scrollbar-thumb {
-  background: #c5c5ff;
+  background: var(--border);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a0a0ff;
+  background: var(--muted);
 }
 
 html.dark ::-webkit-scrollbar-thumb {
-  background: #232742;
+  background: var(--surface-raised);
 }
 html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #3b3abf;
+  background: var(--line);
 }
 
 /* Custom Academic Select Dropdowns */
@@ -255,7 +228,7 @@ select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%233b3abf'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%235B6170'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
   background-size: 0.85rem;
@@ -266,7 +239,7 @@ select {
 }
 
 html.dark select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a0a0ff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23A1A1AA'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
 }
 
 select option {

@@ -236,7 +236,7 @@ export async function ingestAcademicEvidence(
               nrc: c.nrc,
               name: c.name,
               credits: c.credits,
-              color: '#3b3abf',
+              color: '#3F3F46',
               professor: c.professor,
               maxAbsences: 4,
             });

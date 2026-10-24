@@ -257,7 +257,7 @@ export function planStudyGaps(input: StudyPlannerInput): StudyRecommendation[] {
       id: `rec_${bestTarget.id}_${slot.date}_${slotStartMin}`,
       subjectId: bestTarget.subjectId,
       subjectName,
-      subjectColor: subject?.color || '#3b3abf',
+      subjectColor: subject?.color || '#3F3F46',
       examId: bestTarget.type === 'exam' ? bestTarget.id : undefined,
       assignmentId: bestTarget.type === 'assignment' ? bestTarget.id : undefined,
       title: `Preparar: ${bestTarget.title}`,

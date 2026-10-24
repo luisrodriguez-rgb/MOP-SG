@@ -80,7 +80,7 @@ export function getCurrentBlock({
           subjectId: c.subjectId,
           name: subject?.name || 'Clase',
           code: subject?.code || '',
-          color: subject?.color || '#6366f1',
+          color: subject?.color || '#3F3F46',
           location: c.location,
           startTime: c.startTime,
           endTime: c.endTime,

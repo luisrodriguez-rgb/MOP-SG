@@ -29,13 +29,13 @@ export function MobileNav() {
             href={item.href}
             className={`flex flex-col items-center justify-center min-w-[54px] py-1 px-2 rounded-xl transition-all ${
               isActive
-                ? 'text-[#3b3abf] dark:text-[#a0a0ff] font-bold'
+                ? 'text-[var(--ink)] font-bold'
                 : 'text-[var(--muted)] hover:text-[var(--ink)]'
             }`}
           >
             <div
               className={`p-1 rounded-lg transition-colors ${
-                isActive ? 'bg-[#f0f0ff] dark:bg-[#1c1e38]' : ''
+                isActive ? 'bg-[var(--surface-raised)]' : ''
               }`}
             >
               <Icon className="w-5 h-5" />

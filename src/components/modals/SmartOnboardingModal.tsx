@@ -97,7 +97,7 @@ export function SmartOnboardingModal() {
       code: '',
       professor: '',
       location: '',
-      color: '#3b3abf',
+      color: '#3F3F46',
       blocks: [{ dayOfWeek: 1, startTime: '07:00', endTime: '09:00', location: '' }],
     },
   ]);
@@ -270,7 +270,7 @@ export function SmartOnboardingModal() {
               }}
               className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 activeTab === 'universal'
-                  ? 'bg-[#3b3abf] text-white shadow-md shadow-[#3b3abf]/30'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] shadow-xs'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
@@ -281,7 +281,7 @@ export function SmartOnboardingModal() {
               onClick={() => setActiveTab('templates')}
               className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 activeTab === 'templates'
-                  ? 'bg-[#3b3abf] text-white shadow-md shadow-[#3b3abf]/30'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] shadow-xs'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
@@ -292,11 +292,11 @@ export function SmartOnboardingModal() {
               onClick={() => setActiveTab('zero')}
               className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 activeTab === 'zero'
-                  ? 'bg-[#3b3abf] text-white shadow-md shadow-[#3b3abf]/30'
+                  ? 'bg-[var(--ink)] text-[var(--paper)] shadow-xs'
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
-              <Plus className="w-4 h-4 text-purple-400" />
+              <Plus className="w-4 h-4 text-[var(--muted)]" />
               <span>Crear Desde Cero</span>
             </button>
           </div>
@@ -309,8 +309,8 @@ export function SmartOnboardingModal() {
              ══════════════════════════════════════════════════════════ */}
           {activeTab === 'universal' && !ingestResult && (
             <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-700 dark:text-blue-300 flex items-start gap-3">
-                <ShieldCheck className="w-5 h-5 shrink-0 text-[#3b3abf] dark:text-[#a0a0ff] mt-0.5" />
+              <div className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] text-xs text-[var(--ink)] flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 shrink-0 text-[var(--ink)] mt-0.5" />
                 <div>
                   <strong className="block font-bold">Sin decisiones técnicas ni datos inventados:</strong>
                   Sube cualquier combinación de archivos (PDF de Balance Jasper, calendario .ICS, captura de horario o notas) o pega el texto directamente. El motor resolverá tus asignaturas de forma transparente.
@@ -324,7 +324,7 @@ export function SmartOnboardingModal() {
                 </label>
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-[var(--border)] hover:border-[#3b3abf] rounded-2xl p-6 text-center cursor-pointer transition-all bg-[var(--paper)] hover:bg-[var(--surface)] group"
+                  className="border-2 border-dashed border-[var(--border)] hover:border-[var(--line)] rounded-2xl p-6 text-center cursor-pointer transition-all bg-[var(--paper)] hover:bg-[var(--surface)] group"
                 >
                   <input
                     type="file"
@@ -335,7 +335,7 @@ export function SmartOnboardingModal() {
                     className="hidden"
                   />
                   <div className="flex flex-col items-center gap-2">
-                    <div className="p-3 rounded-2xl bg-[var(--surface)] text-[#3b3abf] dark:text-[#a0a0ff] shadow-sm group-hover:scale-110 transition-transform">
+                    <div className="p-3 rounded-2xl bg-[var(--surface)] text-[var(--ink)] shadow-sm group-hover:scale-110 transition-transform">
                       <Upload className="w-6 h-6" />
                     </div>
                     <span className="text-xs font-bold text-[var(--ink)]">
@@ -359,7 +359,7 @@ export function SmartOnboardingModal() {
                           key={idx}
                           className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs font-mono text-[var(--ink)]"
                         >
-                          <FileText className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+                          <FileText className="w-3.5 h-3.5 text-[var(--ink)]" />
                           <span className="max-w-[200px] truncate">{file.name}</span>
                           <button
                             onClick={(e) => {
@@ -397,7 +397,7 @@ export function SmartOnboardingModal() {
                   onChange={(e) => setPastedText(e.target.value)}
                   rows={4}
                   placeholder="Pega aquí el contenido de tu Balance Académico, tabla de horario de Banner o notas de clase..."
-                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-3 text-xs text-[var(--ink)] font-mono placeholder:text-[var(--muted)] focus:outline-none focus:border-[#3b3abf] focus:ring-1 focus:ring-[#3b3abf]"
+                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-3 text-xs text-[var(--ink)] font-mono placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] focus:ring-1 focus:ring-[var(--ink)]"
                 />
               </div>
 
@@ -405,7 +405,7 @@ export function SmartOnboardingModal() {
               <button
                 onClick={handleProcessUniversal}
                 disabled={(stagedFiles.length === 0 && !pastedText.trim()) || isProcessing}
-                className="w-full py-3.5 px-6 rounded-2xl bg-[#3b3abf] hover:bg-[#2828a8] disabled:opacity-50 text-white text-sm font-black shadow-lg shadow-[#3b3abf]/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 px-6 rounded-2xl bg-[var(--ink)] hover:opacity-90 disabled:opacity-50 text-[var(--paper)] text-sm font-black shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 {isProcessing ? (
                   <>
@@ -468,7 +468,7 @@ export function SmartOnboardingModal() {
                   <div
                     className={`w-9 h-9 rounded-xl flex items-center justify-center font-black ${
                       ingestResult.summary.scheduleBlocksCount > 0
-                        ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                        ? 'bg-[var(--surface-raised)] text-[var(--ink)]'
                         : 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
                     }`}
                   >
@@ -499,7 +499,7 @@ export function SmartOnboardingModal() {
                 </div>
 
                 <div className="p-4 rounded-2xl bg-[var(--paper)] border border-[var(--border)] flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-black">
+                  <div className="w-9 h-9 rounded-xl bg-[var(--surface-raised)] text-[var(--ink)] flex items-center justify-center font-black">
                     ✓
                   </div>
                   <div>
@@ -515,17 +515,17 @@ export function SmartOnboardingModal() {
 
               {/* Banner de Enriquecimiento Inteligente (Plantilla Oficial Detectada) */}
               {ingestResult.matchedTemplate && (
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-[#3b3abf]/15 via-purple-500/10 to-indigo-500/15 border border-[#3b3abf]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="p-4 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#3b3abf] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                    <div className="w-9 h-9 rounded-xl bg-[var(--ink)] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                       <Sparkles className="w-5 h-5 text-amber-300" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#3b3abf] text-white">
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[var(--ink)] text-white">
                           Plantilla Oficial Calibrada
                         </span>
-                        <span className="text-xs font-mono font-bold text-[#3b3abf] dark:text-[#a0a0ff]">
+                        <span className="text-xs font-mono font-bold text-[var(--ink)]">
                           {ingestResult.matchedTemplate.name}
                         </span>
                       </div>
@@ -543,7 +543,7 @@ export function SmartOnboardingModal() {
                     className={`py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer ${
                       isAutofilled
                         ? 'bg-emerald-600 text-white shadow-xs'
-                        : 'bg-[#3b3abf] hover:bg-[#2828a8] text-white shadow-md shadow-[#3b3abf]/20'
+                        : 'bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] shadow-xs'
                     }`}
                   >
                     {isAutofilled ? (
@@ -584,13 +584,13 @@ export function SmartOnboardingModal() {
 
                 {/* Evaluaciones Ausentes vs Vacías */}
                 {ingestResult.summary.examsCount === null && (
-                  <div className="p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-start gap-3 text-xs text-blue-800 dark:text-blue-200">
-                    <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                  <div className="p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] flex items-start gap-3 text-xs text-[var(--ink)]">
+                    <Info className="w-4 h-4 text-[var(--muted)] shrink-0 mt-0.5" />
                     <div>
                       <strong className="font-bold block">
                         ℹ Evaluaciones: No encontradas en la evidencia cargada
                       </strong>
-                      <span className="text-[11px] text-blue-700 dark:text-blue-300">
+                      <span className="text-[11px] text-[var(--muted)]">
                         Mi Semestre no inventa parciales ficticios. Podrás registrar tus entregas y exámenes más adelante o cargar el syllabus de cada materia.
                       </span>
                     </div>
@@ -618,7 +618,7 @@ export function SmartOnboardingModal() {
                   className="w-full p-4 flex items-center justify-between text-xs font-bold text-[var(--ink)] hover:bg-[var(--surface)] transition-colors cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-[#3b3abf]" />
+                    <FileText className="w-4 h-4 text-[var(--ink)]" />
                     <span>Ver detalle completo de asignaturas ({ingestResult.data.subjects.length})</span>
                   </span>
                   {showDetails ? (
@@ -703,11 +703,11 @@ export function SmartOnboardingModal() {
                 {ACADEMIC_TEMPLATES.map((tmpl) => (
                   <div
                     key={tmpl.id}
-                    className="p-5 rounded-2xl bg-[var(--paper)] border border-[var(--border)] hover:border-[#3b3abf] transition-all flex flex-col justify-between group"
+                    className="p-5 rounded-2xl bg-[var(--paper)] border border-[var(--border)] hover:border-[var(--line)] transition-all flex flex-col justify-between group"
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#3b3abf]/15 text-[#3b3abf] dark:text-[#a0a0ff] border border-[#3b3abf]/20">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[var(--surface-raised)] text-[var(--muted)] border border-[var(--border)]">
                           {tmpl.badge}
                         </span>
                         <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400">
@@ -715,7 +715,7 @@ export function SmartOnboardingModal() {
                         </span>
                       </div>
 
-                      <h4 className="text-sm font-extrabold text-[var(--ink)] mt-2 group-hover:text-[#3b3abf] dark:group-hover:text-[#a0a0ff] transition-colors">
+                      <h4 className="text-sm font-extrabold text-[var(--ink)] mt-2 group-hover:text-[var(--ink)] transition-colors">
                         {tmpl.name}
                       </h4>
                       <p className="text-[11px] text-[var(--muted)] mt-1 line-clamp-2">
@@ -737,7 +737,7 @@ export function SmartOnboardingModal() {
                       className={`mt-4 w-full py-2 px-4 rounded-xl text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                         loadedTemplateId === tmpl.id
                           ? 'bg-emerald-600 shadow-md shadow-emerald-600/30'
-                          : 'bg-[#3b3abf] hover:bg-[#2828a8] shadow-md shadow-[#3b3abf]/20'
+                          : 'bg-[var(--ink)] hover:opacity-90 shadow-xs'
                       }`}
                     >
                       {loadedTemplateId === tmpl.id ? (
@@ -773,7 +773,7 @@ export function SmartOnboardingModal() {
                 <div className="flex items-center gap-2 text-xs font-bold">
                   <span
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                      zeroStep === 1 ? 'bg-[#3b3abf] text-white' : 'bg-[var(--surface)] text-[var(--muted)]'
+                      zeroStep === 1 ? 'bg-[var(--ink)] text-[var(--paper)]' : 'bg-[var(--surface)] text-[var(--muted)]'
                     }`}
                   >
                     1
@@ -786,7 +786,7 @@ export function SmartOnboardingModal() {
                 <div className="flex items-center gap-2 text-xs font-bold">
                   <span
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                      zeroStep === 2 ? 'bg-[#3b3abf] text-white' : 'bg-[var(--surface)] text-[var(--muted)]'
+                      zeroStep === 2 ? 'bg-[var(--ink)] text-[var(--paper)]' : 'bg-[var(--surface)] text-[var(--muted)]'
                     }`}
                   >
                     2
@@ -799,7 +799,7 @@ export function SmartOnboardingModal() {
                 <div className="flex items-center gap-2 text-xs font-bold">
                   <span
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                      zeroStep === 3 ? 'bg-[#3b3abf] text-white' : 'bg-[var(--surface)] text-[var(--muted)]'
+                      zeroStep === 3 ? 'bg-[var(--ink)] text-[var(--paper)]' : 'bg-[var(--surface)] text-[var(--muted)]'
                     }`}
                   >
                     3
@@ -821,7 +821,7 @@ export function SmartOnboardingModal() {
                         placeholder="Ej. Luis Felipe Rodríguez"
                         value={zeroProfile.name}
                         onChange={(e) => setZeroProfile({ ...zeroProfile, name: e.target.value })}
-                        className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-bold focus:outline-none focus:border-[#3b3abf]"
+                        className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-bold focus:outline-none focus:border-[var(--ink)]"
                       />
                     </div>
                     <div>
@@ -831,7 +831,7 @@ export function SmartOnboardingModal() {
                         placeholder="Ej. A00414805"
                         value={zeroProfile.studentCode}
                         onChange={(e) => setZeroProfile({ ...zeroProfile, studentCode: e.target.value })}
-                        className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-mono focus:outline-none focus:border-[#3b3abf]"
+                        className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--ink)]"
                       />
                     </div>
                     <div>
@@ -840,7 +840,7 @@ export function SmartOnboardingModal() {
                         type="text"
                         value={zeroProfile.university}
                         onChange={(e) => setZeroProfile({ ...zeroProfile, university: e.target.value })}
-                        className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-medium focus:outline-none focus:border-[#3b3abf]"
+                        className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-medium focus:outline-none focus:border-[var(--ink)]"
                       />
                     </div>
                     <div>
@@ -850,7 +850,7 @@ export function SmartOnboardingModal() {
                         placeholder="Ej. Ingeniería de Sistemas"
                         value={zeroProfile.program}
                         onChange={(e) => setZeroProfile({ ...zeroProfile, program: e.target.value })}
-                        className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-medium focus:outline-none focus:border-[#3b3abf]"
+                        className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-medium focus:outline-none focus:border-[var(--ink)]"
                       />
                     </div>
                   </div>
@@ -858,7 +858,7 @@ export function SmartOnboardingModal() {
                   <button
                     onClick={() => setZeroStep(2)}
                     disabled={!zeroProfile.name.trim()}
-                    className="mt-4 w-full py-3 px-4 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] disabled:opacity-50 text-white text-xs font-bold shadow-md shadow-[#3b3abf]/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="mt-4 w-full py-3 px-4 rounded-xl bg-[var(--ink)] hover:opacity-90 disabled:opacity-50 text-[var(--paper)] text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <span>Siguiente: Configurar Materias</span>
                     <ArrowRight className="w-4 h-4" />
@@ -883,12 +883,12 @@ export function SmartOnboardingModal() {
                             code: '',
                             professor: '',
                             location: '',
-                            color: '#3b3abf',
+                            color: '#3F3F46',
                             blocks: [{ dayOfWeek: 1, startTime: '07:00', endTime: '09:00', location: '' }],
                           },
                         ])
                       }
-                      className="text-xs font-mono text-[#3b3abf] dark:text-[#a0a0ff] font-bold flex items-center gap-1 hover:underline cursor-pointer"
+                      className="text-xs font-mono text-[var(--ink)] font-bold flex items-center gap-1 hover:underline cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" /> Añadir Materia
                     </button>
@@ -958,7 +958,7 @@ export function SmartOnboardingModal() {
                     <button
                       onClick={() => setZeroStep(3)}
                       disabled={zeroSubjects.every((s) => !s.name.trim())}
-                      className="flex-1 py-2.5 px-4 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] disabled:opacity-50 text-white text-xs font-bold shadow-md shadow-[#3b3abf]/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="flex-1 py-2.5 px-4 rounded-xl bg-[var(--ink)] hover:opacity-90 disabled:opacity-50 text-[var(--paper)] text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <span>Siguiente: Asignar Horarios</span>
                       <ArrowRight className="w-4 h-4" />

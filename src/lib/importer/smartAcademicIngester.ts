@@ -38,7 +38,7 @@ export interface ParsedAcademicData {
 }
 
 const PALETTE = [
-  '#3b3abf', // Azul principal Mi Semestre
+  '#3F3F46', // Neutral grafito
   '#0284c7', // Celeste cielo
   '#0d9488', // Verde azulado / Teal
   '#16a34a', // Verde esmeralda

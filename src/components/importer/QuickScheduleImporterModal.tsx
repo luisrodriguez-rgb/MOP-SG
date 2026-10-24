@@ -50,7 +50,7 @@ export function QuickScheduleImporterModal() {
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[#e8e8ff] dark:bg-[#3b3abf]/20 text-[#3b3abf] dark:text-[#a0a0ff]">
+            <div className="p-2 rounded-xl bg-[var(--surface-raised)] text-[var(--ink)]">
               <Upload className="w-5 h-5" />
             </div>
             <div>
@@ -72,7 +72,7 @@ export function QuickScheduleImporterModal() {
             onClick={() => setActiveTab('preset')}
             className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'preset'
-                ? 'bg-[#3b3abf] text-white shadow-sm'
+                ? 'bg-[var(--ink)] text-[var(--paper)] shadow-sm'
                 : 'text-[var(--muted)] hover:text-[var(--ink)]'
             }`}
           >
@@ -82,7 +82,7 @@ export function QuickScheduleImporterModal() {
             onClick={() => setActiveTab('text')}
             className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'text'
-                ? 'bg-[#3b3abf] text-white shadow-sm'
+                ? 'bg-[var(--ink)] text-[var(--paper)] shadow-sm'
                 : 'text-[var(--muted)] hover:text-[var(--ink)]'
             }`}
           >
@@ -113,7 +113,7 @@ export function QuickScheduleImporterModal() {
                 <button
                   onClick={handleLoadEngineeringPreset}
                   disabled={isSuccess}
-                  className="px-4 py-1.5 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold shadow-md shadow-[#3b3abf]/20 transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-1.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   {isSuccess ? <Check className="w-4 h-4" /> : <Sparkles className="w-3.5 h-3.5" />}
                   <span>{isSuccess ? '¡Importado con éxito!' : 'Cargar este horario'}</span>
@@ -135,14 +135,14 @@ export function QuickScheduleImporterModal() {
                 onChange={(e) => setPastedText(e.target.value)}
                 rows={5}
                 placeholder="Ejemplo:&#10;Cálculo Multivariado - Lunes 07:00-09:00 - Salón 204&#10;Física Mecánica - Martes 10:00-12:00 - Aula 102&#10;Álgebra Lineal - Jueves 14:00-16:00 - Salón 305"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-xs text-[var(--ink)] font-mono placeholder:text-[var(--muted)] focus:outline-none focus:border-[#3b3abf] focus:ring-1 focus:ring-[#3b3abf]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-xs text-[var(--ink)] font-mono placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] focus:ring-1 focus:ring-[var(--ink)]"
               />
             </div>
 
             <button
               onClick={handleParseText}
               disabled={!pastedText.trim() || isSuccess}
-              className="w-full py-2.5 px-4 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] disabled:opacity-50 text-white text-xs font-bold shadow-md shadow-[#3b3abf]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl bg-[var(--ink)] hover:opacity-90 disabled:opacity-50 text-[var(--paper)] text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               {isSuccess ? <Check className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
               <span>{isSuccess ? '¡Horario Procesado!' : 'Analizar e Importar'}</span>

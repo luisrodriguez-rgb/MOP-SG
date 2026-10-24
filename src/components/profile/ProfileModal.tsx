@@ -210,7 +210,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
         {/* Cabecera del Modal */}
         <div className="p-6 bg-[var(--surface)] border-b border-[var(--border)] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#3b3abf] text-white flex items-center justify-center font-bold shadow-md shadow-[#3b3abf]/20">
+            <div className="w-10 h-10 rounded-2xl bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center font-bold shadow-md">
               <User className="w-5 h-5" />
             </div>
             <div>
@@ -238,7 +238,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
             onClick={() => setActiveTab('profile')}
             className={`py-2.5 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === 'profile'
-                ? 'border-[#3b3abf] text-[#3b3abf] dark:text-[#a0a0ff]'
+                ? 'border-[var(--ink)] text-[var(--ink)]'
                 : 'border-transparent text-[var(--muted)] hover:text-[var(--ink)]'
             }`}
           >
@@ -250,7 +250,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
             onClick={() => setActiveTab('cloud')}
             className={`py-2.5 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === 'cloud'
-                ? 'border-[#3b3abf] text-[#3b3abf] dark:text-[#a0a0ff]'
+                ? 'border-[var(--ink)] text-[var(--ink)]'
                 : 'border-transparent text-[var(--muted)] hover:text-[var(--ink)]'
             }`}
           >
@@ -270,7 +270,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
               {/* Tarjeta de Identidad en Vivo */}
               <div className="p-4 rounded-2xl bg-[var(--paper)] border border-[var(--border)] flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1e1e8a] to-[#3b3abf] text-white font-black text-sm flex items-center justify-center shadow-sm">
+                  <div className="w-12 h-12 rounded-2xl bg-[var(--ink)] text-[var(--paper)] font-black text-sm flex items-center justify-center shadow-sm">
                     {initials}
                   </div>
                   <div>
@@ -278,7 +278,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                       {name || 'Nombre del Estudiante'}
                     </h3>
                     <div className="flex items-center gap-2 text-xs text-[var(--muted)] font-mono mt-0.5">
-                      <span className="text-[#3b3abf] dark:text-[#a0a0ff] font-bold">
+                      <span className="text-[var(--ink)] font-bold">
                         {studentCode || 'A00000000'}
                       </span>
                       <span>·</span>
@@ -310,7 +310,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ej. Juan Pérez"
-                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[#3b3abf] transition-colors"
+                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
                   />
                 </div>
 
@@ -322,7 +322,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                     value={studentCode}
                     onChange={(e) => setStudentCode(e.target.value)}
                     placeholder="Ej. A00123456"
-                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[#3b3abf] transition-colors"
+                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--ink)] transition-colors"
                   />
                 </div>
 
@@ -334,7 +334,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                     max="14"
                     value={semesterNumber}
                     onChange={(e) => setSemesterNumber(parseInt(e.target.value, 10) || 1)}
-                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[#3b3abf] transition-colors"
+                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--ink)] transition-colors"
                   />
                 </div>
 
@@ -345,7 +345,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                     value={university}
                     onChange={(e) => setUniversity(e.target.value)}
                     placeholder="Ej. Universidad Icesi"
-                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[#3b3abf] transition-colors"
+                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
                   />
                 </div>
 
@@ -356,7 +356,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                     value={program}
                     onChange={(e) => setProgram(e.target.value)}
                     placeholder="Ej. Ingeniería de Sistemas"
-                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[#3b3abf] transition-colors"
+                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
                   />
                 </div>
 
@@ -367,7 +367,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="usuario@u.icesi.edu.co"
-                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[#3b3abf] transition-colors"
+                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--ink)] transition-colors"
                   />
                 </div>
               </div>
@@ -375,7 +375,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
               {/* Botón Guardar Cambios */}
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold transition-all shadow-md shadow-[#3b3abf]/20 flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                className="w-full py-3 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98"
               >
                 <Save className="w-4 h-4" />
                 <span>Guardar Mi Información</span>
@@ -413,7 +413,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
             <div className="space-y-5">
               <div className="p-4 rounded-2xl bg-[var(--paper)] border border-[var(--border)] flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <Cloud className="w-5 h-5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+                  <Cloud className="w-5 h-5 text-[var(--ink)]" />
                   <div>
                     <h3 className="text-sm font-black text-[var(--ink)]">
                       Nube Supabase PostgreSQL
@@ -481,7 +481,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                         <button
                           onClick={handlePushToCloud}
                           disabled={isSyncLoading}
-                          className="py-3 px-4 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold transition-all shadow-md shadow-[#3b3abf]/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-98"
+                          className="py-3 px-4 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-98"
                         >
                           {isSyncLoading ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -496,7 +496,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                           disabled={isSyncLoading}
                           className="py-3 px-4 rounded-xl bg-[var(--paper)] hover:bg-[var(--surface-raised)] text-[var(--ink)] border border-[var(--border)] text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-98"
                         >
-                          <CloudDownload className="w-4 h-4 text-[#3b3abf] dark:text-[#a0a0ff]" />
+                          <CloudDownload className="w-4 h-4 text-[var(--ink)]" />
                           <span>Descargar a este Equipo</span>
                         </button>
                       </div>
@@ -518,7 +518,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                               placeholder="tu.correo@u.icesi.edu.co"
                               value={authEmail}
                               onChange={(e) => setAuthEmail(e.target.value)}
-                              className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[#3b3abf] transition-colors"
+                              className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
                             />
                           </div>
                         </div>
@@ -539,7 +539,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                               placeholder="••••••••"
                               value={authPassword}
                               onChange={(e) => setAuthPassword(e.target.value)}
-                              className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[#3b3abf] transition-colors"
+                              className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
                             />
                           </div>
                         </div>
@@ -548,7 +548,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                           <button
                             type="submit"
                             disabled={isAuthLoading}
-                            className="flex-1 py-3 rounded-xl bg-[#3b3abf] hover:bg-[#2828a8] text-white text-xs font-bold transition-all shadow-md shadow-[#3b3abf]/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-98"
+                            className="flex-1 py-3 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-98"
                           >
                             {isAuthLoading ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
@@ -577,9 +577,9 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                     Configuración de Supabase requerida
                   </p>
                   <p>
-                    Para habilitar la sincronización en la nube, añade estas variables en tu archivo <code className="text-[#3b3abf] dark:text-[#a0a0ff] font-mono">.env.local</code> o en Vercel:
+                    Para habilitar la sincronización en la nube, añade estas variables en tu archivo <code className="text-[var(--ink)] font-mono">.env.local</code> o en Vercel:
                   </p>
-                  <pre className="p-3 rounded-lg bg-[var(--surface)] border border-[var(--border)] font-mono text-[11px] text-[#3b3abf] dark:text-[#a0a0ff] overflow-x-auto">
+                  <pre className="p-3 rounded-lg bg-[var(--surface)] border border-[var(--border)] font-mono text-[11px] text-[var(--ink)] overflow-x-auto">
                     NEXT_PUBLIC_SUPABASE_URL=tu-proyecto.supabase.co{'\n'}
                     NEXT_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key
                   </pre>

@@ -11,7 +11,7 @@ function testAcademicScenarios() {
       name: 'Cálculo Multivariado',
       code: 'MAT201',
       credits: 4,
-      color: '#3b3abf',
+      color: '#3F3F46',
       maxAbsences: 4,
       passingGrade: 3.0,
     },
