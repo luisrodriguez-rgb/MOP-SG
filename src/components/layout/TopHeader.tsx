@@ -25,6 +25,7 @@ export function TopHeader() {
     openInbox,
     openCalendarModal,
     openShareModal,
+    openWhoAreYou,
     focusSession,
     tickFocusSession,
     togglePauseFocus,
@@ -206,14 +207,20 @@ export function TopHeader() {
             <span className="hidden md:inline">Calendario</span>
           </button>
 
-          {/* Avatar Header */}
-          <div
-            onClick={openProfile}
-            className="w-8 h-8 rounded-full bg-[#18181B] text-white font-black text-xs flex items-center justify-center cursor-pointer shadow-xs border border-[#27272A]"
-            title={studentName}
+          {/* Selector de Socio en este navegador */}
+          <button
+            type="button"
+            onClick={openWhoAreYou}
+            className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full bg-[var(--surface)] hover:bg-[var(--border)] border border-[var(--border)] text-xs transition-all shadow-2xs cursor-pointer group"
+            title={`Socio actual: ${studentName}. Haz clic para cambiar de socio en este navegador.`}
           >
-            {initials}
-          </div>
+            <div className="w-6 h-6 rounded-full bg-[#18181B] text-white font-black text-[10px] flex items-center justify-center shadow-xs border border-[#27272A] shrink-0">
+              {initials}
+            </div>
+            <span className="font-bold text-[var(--ink)] max-w-[80px] truncate text-left hidden sm:inline">
+              {profile?.name || 'Socio'}
+            </span>
+          </button>
         </div>
       </div>
     </header>

@@ -40,6 +40,7 @@ interface UIState {
   activeSubjectDetailId: string | null;
   isShareModalOpen: boolean;
   isCareerSwitchModalOpen: boolean;
+  isWhoAreYouOpen: boolean;
 
   focusSession: FocusSessionState;
   focusCompletionData: FocusCompletionData | null;
@@ -52,6 +53,8 @@ interface UIState {
   closeShareModal: () => void;
   openCareerSwitchModal: () => void;
   closeCareerSwitchModal: () => void;
+  openWhoAreYou: () => void;
+  closeWhoAreYou: () => void;
   openAddTask: () => void;
   openEditTask: (task: Assignment) => void;
   closeAddTask: () => void;
@@ -112,6 +115,7 @@ export const useUIStore = create<UIState>((set) => ({
   activeSubjectDetailId: null,
   isShareModalOpen: false,
   isCareerSwitchModalOpen: false,
+  isWhoAreYouOpen: false,
 
   focusSession: {
     isActive: false,
@@ -132,6 +136,8 @@ export const useUIStore = create<UIState>((set) => ({
   closeShareModal: () => set({ isShareModalOpen: false }),
   openCareerSwitchModal: () => set({ isCareerSwitchModalOpen: true }),
   closeCareerSwitchModal: () => set({ isCareerSwitchModalOpen: false }),
+  openWhoAreYou: () => set({ isWhoAreYouOpen: true }),
+  closeWhoAreYou: () => set({ isWhoAreYouOpen: false }),
   openAddTask: () => set({ isAddTaskOpen: true, editingTask: null }),
   openEditTask: (task) => set({ isAddTaskOpen: true, editingTask: task }),
   closeAddTask: () => set({ isAddTaskOpen: false, editingTask: null }),

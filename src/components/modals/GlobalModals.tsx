@@ -59,10 +59,15 @@ const CareerSwitchModal = dynamic(
   () => import('@/components/modals/CareerSwitchModal').then((m) => m.CareerSwitchModal),
   { ssr: false }
 );
+const MemberSelectionModal = dynamic(
+  () => import('@/components/profile/MemberSelectionModal').then((m) => m.MemberSelectionModal),
+  { ssr: false }
+);
 
 export function GlobalModals() {
   return (
     <>
+      <MemberSelectionModal />
       <SmartOnboardingModal />
       <QuickScheduleImporterModal />
       <AddTaskModal />

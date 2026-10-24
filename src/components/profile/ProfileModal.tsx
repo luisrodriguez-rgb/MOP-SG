@@ -33,7 +33,7 @@ interface ProfileModalProps {
 }
 
 export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
-  const { isProfileOpen, closeProfile } = useUIStore();
+  const { isProfileOpen, closeProfile, openWhoAreYou } = useUIStore();
   const [activeTab, setActiveTab] = useState<'profile' | 'cloud'>('profile');
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
@@ -73,7 +73,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
       setName(current.name || allMembers[0].name);
       setRole(allMembers[0].role);
     } else {
-      setName(current.name || 'Leon');
+      setName(current.name || 'Socio SG');
       setRole('Operaciones SG');
     }
     setEmail(current.email || '');
@@ -113,7 +113,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
     e.preventDefault();
     const updated: Profile = {
       ...profile,
-      name: name.trim() || 'Leon',
+      name: name.trim() || 'Socio SG',
       email: email.trim(),
       studentCode: '',
       university: 'Seamos Genios',
@@ -140,7 +140,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
   };
 
   const handleResetLocalData = async () => {
-    if (confirm('¿Restablecer los datos locales de Seamos Genios? Se limpiarán tareas y se mantendrán las 5 áreas y los 3 socios.')) {
+    if (confirm('¿Restablecer los datos locales de Seamos Genios? Se limpiarán tareas y se mantendrán las 4 áreas y los 3 socios.')) {
       await resetDatabaseToCleanSlate();
       await loadProfileData();
       onProfileUpdated?.();
@@ -398,7 +398,26 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                   Acciones Rápidas de Espacio de Trabajo
                 </div>
 
-                <div>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeProfile();
+                      openWhoAreYou();
+                    }}
+                    className="w-full p-3 rounded-xl bg-[var(--paper)] border border-[var(--border)] hover:bg-[var(--surface-raised)] text-[var(--ink)] font-semibold transition-all flex items-center justify-between cursor-pointer group text-left"
+                  >
+                    <div>
+                      <div className="font-bold flex items-center gap-1.5 text-[var(--ink)]">
+                        <Users className="w-3.5 h-3.5 text-[#BB271A]" />
+                        <span>Cambiar de socio en este navegador</span>
+                      </div>
+                      <div className="text-[10px] text-[var(--muted)] mt-0.5">
+                        Seleccionar entre Leon, Dani o Ángel para este dispositivo
+                      </div>
+                    </div>
+                  </button>
+
                   <button
                     type="button"
                     onClick={handleResetLocalData}
@@ -410,7 +429,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                         <span>Reiniciar datos locales</span>
                       </div>
                       <div className="text-[10px] text-[var(--muted)] mt-0.5">
-                        Restablecer las 5 áreas operativas de Seamos Genios sin tareas ni hitos
+                        Restablecer las 4 áreas operativas de Seamos Genios sin tareas ni hitos
                       </div>
                     </div>
                   </button>

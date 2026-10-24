@@ -12,8 +12,8 @@ export function CampusWelcomeBanner({ studentName }: CampusWelcomeBannerProps) {
   const { profile } = useSemesterData();
 
   // Tomar solo el primer nombre para evitar desbordes visuales
-  const rawName = studentName || profile?.name || 'Luis';
-  const firstName = rawName.trim().split(' ')[0] || 'Luis';
+  const rawName = studentName || profile?.name || 'Socio';
+  const firstName = rawName.trim().split(' ')[0] || 'Socio';
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours();

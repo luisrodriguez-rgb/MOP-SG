@@ -20,18 +20,38 @@ export const profileRepository = {
 
   async getActiveProfile(): Promise<Profile | undefined> {
     if (typeof window === 'undefined') return undefined;
-    const activeId = localStorage.getItem(ACTIVE_USER_KEY);
+    const activeId = localStorage.getItem(ACTIVE_USER_KEY) || localStorage.getItem('mop_sg_current_member');
     if (activeId) {
       const found = await db.profiles.get(activeId);
       if (found) return found;
+
+      // Si existe el miembro pero aún no se guardó el perfil en IndexedDB, generarlo
+      const member = await db.members.get(activeId);
+      if (member) {
+        const autoProfile: Profile = {
+          id: member.id,
+          name: member.name,
+          studentCode: `SG-${member.name.toUpperCase().slice(0, 4)}`,
+          documentId: '',
+          university: 'Seamos Genios',
+          program: member.role,
+          semesterNumber: 1,
+          cohort: '2026',
+          gpa: 5.0,
+          email: '',
+        };
+        await db.profiles.put(autoProfile);
+        return autoProfile;
+      }
     }
-    const all = await db.profiles.toArray();
-    return all[0];
+    // Si este navegador no ha elegido socio, no asumir ningún perfil ajeno
+    return undefined;
   },
 
   async setActiveProfile(id: string): Promise<void> {
     if (typeof window !== 'undefined') {
       localStorage.setItem(ACTIVE_USER_KEY, id);
+      localStorage.setItem('mop_sg_current_member', id);
     }
   },
 

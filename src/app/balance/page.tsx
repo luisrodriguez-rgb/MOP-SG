@@ -17,8 +17,8 @@ export default function BalanceAcademicoPage() {
   const [activeTab, setActiveTab] = useState<'matriculadas' | 'historial' | 'pendientes'>('matriculadas');
 
   const studentName = profile?.name || 'Socio SG';
-  const studentCode = profile?.studentCode || 'SG-LEO';
-  const studentProgram = profile?.program || 'Operaciones & Diseño';
+  const studentCode = profile?.studentCode || 'SG-SOCIO';
+  const studentProgram = profile?.program || 'Operaciones Seamos Genios';
   const studentGpa = profile?.gpa || 4.5;
 
   if (isLoading) {

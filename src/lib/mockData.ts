@@ -19,15 +19,16 @@ import {
 } from './storage';
 
 // ═════════════════════════════════════════════════════════════
-// PERFIL INICIAL SEAMOS GENIOS
+// PERFIL INICIAL SEAMOS GENIOS (Vacío por defecto: cada navegador
+// selecciona su socio a través de "¿Quién eres?")
 // ═════════════════════════════════════════════════════════════
 export const defaultProfile: Profile = {
   id: 'profile-socio-sg',
-  name: 'Leon',
+  name: '',
   studentCode: '',
   documentId: '',
   university: 'Seamos Genios',
-  program: 'Equipo Fundador',
+  program: 'Operación Seamos Genios',
   semesterNumber: 1,
   cohort: '2026',
   gpa: 5.0,
@@ -116,12 +117,6 @@ export const mockHistoryCourses: CourseHistory[] = [];
 export const mockPendingCourses: PendingCourse[] = [];
 
 export async function seedDatabaseIfEmpty(): Promise<boolean> {
-  const existingProfiles = await profileRepository.getAll();
-  if (existingProfiles.length === 0) {
-    await profileRepository.save(defaultProfile);
-    await profileRepository.setActiveProfile(defaultProfile.id);
-  }
-
   const existingSemesters = await semesterRepository.getAll();
   if (existingSemesters.length === 0) {
     await semesterRepository.save(defaultSemester);
@@ -136,8 +131,6 @@ export async function resetDatabaseToCleanSlate(): Promise<void> {
   const { db } = await import('./storage/database');
   await db.delete();
   await db.open();
-  await profileRepository.save(defaultProfile);
-  await profileRepository.setActiveProfile(defaultProfile.id);
   await semesterRepository.save(defaultSemester);
   await subjectRepository.bulkSave(defaultSubjects);
   await memberRepository.seedDefaultMembersIfEmpty();

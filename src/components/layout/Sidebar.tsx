@@ -34,14 +34,16 @@ export function Sidebar() {
     { href: '/timeline', label: 'Línea de Semanas', icon: Layers },
   ];
 
-  const studentName = profile?.name || 'Leon';
+  const studentName = profile?.name || 'Socio SG';
   const studentProgram = profile?.program || 'Seamos Genios · Playtest';
-  const initials = studentName
-    .split(' ')
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase();
+  const initials = profile?.name
+    ? profile.name
+        .split(' ')
+        .slice(0, 2)
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+    : 'SG';
 
   return (
     <aside className="hidden md:flex w-64 shrink-0 bg-[#0A0A0A] text-[#F4F4F5] flex-col justify-between border-r border-[#27272A] h-screen sticky top-0 overflow-y-auto transition-colors z-40 select-none">
