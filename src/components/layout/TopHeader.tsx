@@ -11,7 +11,6 @@ import {
   Bell,
   Sparkles,
   Timer,
-  Share2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
@@ -24,7 +23,6 @@ export function TopHeader() {
     openProfile,
     openInbox,
     openCalendarModal,
-    openShareModal,
     openWhoAreYou,
     focusSession,
     tickFocusSession,

@@ -25,7 +25,7 @@ export function MemberSelectionModal() {
       }
 
       const currentStored = typeof window !== 'undefined'
-        ? localStorage.getItem('mop_sg_current_member') || localStorage.getItem(STORAGE_KEYS.ACTIVE_USER_ID)
+        ? localStorage.getItem(STORAGE_KEYS.ACTIVE_USER_ID)
         : null;
 
       setSelectedId(currentStored);
@@ -59,7 +59,6 @@ export function MemberSelectionModal() {
     setIsSaving(true);
     try {
       if (typeof window !== 'undefined') {
-        localStorage.setItem('mop_sg_current_member', member.id);
         localStorage.setItem(STORAGE_KEYS.ACTIVE_USER_ID, member.id);
       }
 

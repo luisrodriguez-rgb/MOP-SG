@@ -35,10 +35,6 @@ const AddRoutineModal = dynamic(
   () => import('@/components/modals/AddRoutineModal').then((m) => m.AddRoutineModal),
   { ssr: false }
 );
-const SmartOnboardingModal = dynamic(
-  () => import('@/components/modals/SmartOnboardingModal').then((m) => m.SmartOnboardingModal),
-  { ssr: false }
-);
 const InboxModal = dynamic(
   () => import('@/components/inbox/InboxModal').then((m) => m.InboxModal),
   { ssr: false }
@@ -51,14 +47,6 @@ const CommandPalette = dynamic(
   () => import('@/components/command/CommandPalette').then((m) => m.CommandPalette),
   { ssr: false }
 );
-const ShareSemesterModal = dynamic(
-  () => import('@/components/modals/ShareSemesterModal').then((m) => m.ShareSemesterModal),
-  { ssr: false }
-);
-const CareerSwitchModal = dynamic(
-  () => import('@/components/modals/CareerSwitchModal').then((m) => m.CareerSwitchModal),
-  { ssr: false }
-);
 const MemberSelectionModal = dynamic(
   () => import('@/components/profile/MemberSelectionModal').then((m) => m.MemberSelectionModal),
   { ssr: false }
@@ -68,7 +56,6 @@ export function GlobalModals() {
   return (
     <>
       <MemberSelectionModal />
-      <SmartOnboardingModal />
       <QuickScheduleImporterModal />
       <AddTaskModal />
       <AddExamModal />
@@ -80,8 +67,6 @@ export function GlobalModals() {
       <InboxModal />
       <CalendarImportModal />
       <CommandPalette />
-      <ShareSemesterModal />
-      <CareerSwitchModal />
     </>
   );
 }

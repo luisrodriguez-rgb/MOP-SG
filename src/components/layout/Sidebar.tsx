@@ -19,7 +19,7 @@ import { CustomSelect } from '@/components/ui/CustomSelect';
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { openCareerSwitchModal, openProfile } = useUIStore();
+  const { openProfile } = useUIStore();
   const { profile, semester, allSemesters, switchSemester } = useSemesterData();
 
   const isCurrent = (path: string) =>
@@ -93,9 +93,9 @@ export function Sidebar() {
           <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-[#71717A] font-bold pb-2">
             <span>TEMPORADA</span>
             <button
-              onClick={openCareerSwitchModal}
+              onClick={openProfile}
               className="text-[#BB271A] hover:underline transition-colors cursor-pointer"
-              title="Cambiar temporada o configuración"
+              title="Configuración de temporada"
             >
               + Ajustes
             </button>
@@ -117,7 +117,7 @@ export function Sidebar() {
               />
             ) : (
               <div
-                onClick={openCareerSwitchModal}
+                onClick={openProfile}
                 className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#161616] hover:bg-[#202020] border border-[#27272A] transition-all cursor-pointer group"
               >
                 <div className="w-6 h-6 rounded-lg bg-[#27272A] border border-[#3F3F46] flex items-center justify-center text-[#BB271A] text-[11px] font-mono font-bold">

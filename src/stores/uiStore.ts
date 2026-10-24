@@ -21,7 +21,6 @@ export interface FocusCompletionData {
 
 interface UIState {
   isImporterOpen: boolean;
-  isOnboardingOpen: boolean;
   isAddTaskOpen: boolean;
   editingTask: Assignment | null;
   isAddExamOpen: boolean;
@@ -38,8 +37,6 @@ interface UIState {
   isCalendarModalOpen: boolean;
   isCommandPaletteOpen: boolean;
   activeSubjectDetailId: string | null;
-  isShareModalOpen: boolean;
-  isCareerSwitchModalOpen: boolean;
   isWhoAreYouOpen: boolean;
 
   focusSession: FocusSessionState;
@@ -47,12 +44,6 @@ interface UIState {
 
   openImporter: () => void;
   closeImporter: () => void;
-  openOnboarding: () => void;
-  closeOnboarding: () => void;
-  openShareModal: () => void;
-  closeShareModal: () => void;
-  openCareerSwitchModal: () => void;
-  closeCareerSwitchModal: () => void;
   openWhoAreYou: () => void;
   closeWhoAreYou: () => void;
   openAddTask: () => void;
@@ -96,7 +87,6 @@ interface UIState {
 
 export const useUIStore = create<UIState>((set) => ({
   isImporterOpen: false,
-  isOnboardingOpen: false,
   isAddTaskOpen: false,
   editingTask: null,
   isAddExamOpen: false,
@@ -113,8 +103,6 @@ export const useUIStore = create<UIState>((set) => ({
   isCalendarModalOpen: false,
   isCommandPaletteOpen: false,
   activeSubjectDetailId: null,
-  isShareModalOpen: false,
-  isCareerSwitchModalOpen: false,
   isWhoAreYouOpen: false,
 
   focusSession: {
@@ -130,12 +118,6 @@ export const useUIStore = create<UIState>((set) => ({
 
   openImporter: () => set({ isImporterOpen: true }),
   closeImporter: () => set({ isImporterOpen: false }),
-  openOnboarding: () => set({ isOnboardingOpen: true }),
-  closeOnboarding: () => set({ isOnboardingOpen: false }),
-  openShareModal: () => set({ isShareModalOpen: true }),
-  closeShareModal: () => set({ isShareModalOpen: false }),
-  openCareerSwitchModal: () => set({ isCareerSwitchModalOpen: true }),
-  closeCareerSwitchModal: () => set({ isCareerSwitchModalOpen: false }),
   openWhoAreYou: () => set({ isWhoAreYouOpen: true }),
   closeWhoAreYou: () => set({ isWhoAreYouOpen: false }),
   openAddTask: () => set({ isAddTaskOpen: true, editingTask: null }),

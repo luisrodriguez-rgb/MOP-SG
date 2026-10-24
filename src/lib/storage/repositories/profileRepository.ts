@@ -20,7 +20,7 @@ export const profileRepository = {
 
   async getActiveProfile(): Promise<Profile | undefined> {
     if (typeof window === 'undefined') return undefined;
-    const activeId = localStorage.getItem(ACTIVE_USER_KEY) || localStorage.getItem('mop_sg_current_member');
+    const activeId = localStorage.getItem(ACTIVE_USER_KEY);
     if (activeId) {
       const found = await db.profiles.get(activeId);
       if (found) return found;
@@ -51,7 +51,6 @@ export const profileRepository = {
   async setActiveProfile(id: string): Promise<void> {
     if (typeof window !== 'undefined') {
       localStorage.setItem(ACTIVE_USER_KEY, id);
-      localStorage.setItem('mop_sg_current_member', id);
     }
   },
 
