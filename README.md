@@ -1,304 +1,156 @@
 <div align="center">
 
-<img src="public/logo.webp" alt="Mi Semestre Logo" width="130" style="border-radius: 14%; box-shadow: 0 10px 30px rgba(0,0,0,0.25);" />
+<img src="public/icon.png" alt="MOP-SG Logo" width="120" style="border-radius: 18%; box-shadow: 0 10px 30px rgba(0,0,0,0.25);" />
 
-# Mi Semestre · Sistema Operativo Personal del Semestre
+# MOP-SG · Mi Operación Personal — Seamos Genios
 
-> **Sistema operativo personal para gestionar un semestre universitario.**  
-> Entiende tu situación académica real y te dice qué hacer ahora mismo.
+> **Sistema Operativo Ejecutivo de Decisión y Control del Tiempo para Seamos Genios.**  
+> Elimina la incertidumbre operativa y le dice al equipo fundador exactamente qué hacer ahora mismo.
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16_(App_Router)-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![pnpm 11](https://img.shields.io/badge/Package_Manager-pnpm_11-F69220?style=for-the-badge&logo=pnpm)](https://pnpm.io/)
 [![Dexie.js](https://img.shields.io/badge/Storage-Local--First_(Dexie/IndexedDB)-00A86B?style=for-the-badge)](https://dexie.org/)
-[![Supabase](https://img.shields.io/badge/Cloud-Supabase_(PostgreSQL_+_RLS)-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
-[![Security](https://img.shields.io/badge/Security-Hardened_(OWASP_Aligned)-16a34a?style=for-the-badge&logo=shield)](#6-seguridad-y-endurecimiento-t%C3%A9cnico)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-
-<br/>
-
-<img src="public/campus_icesi.webp" alt="Campus Universidad Icesi" width="100%" style="border-radius: 16px; margin: 16px 0; max-height: 380px; object-fit: cover; box-shadow: 0 12px 36px rgba(0,0,0,0.2);" />
+[![Status](https://img.shields.io/badge/Status-Playtest_Nov_2026-BB271A?style=for-the-badge)](#hacia-el-playtest-noviembre-2026)
 
 </div>
 
 ---
 
-## 1. La Tesis del Producto: ¿Por qué no es otro horario?
+## 1. La Tesis del Sistema: ¿Por qué MOP-SG?
 
-Un estudiante universitario común tiene su vida académica fracturada en múltiples islas de información:
-* **Horario de clases:** Portal de registro o Banner.
-* **Entregas y tareas:** Moodle, Canvas, Teams y carpetas de Drive.
-* **Fechas de exámenes:** Sílabos en PDF y mensajes dispersos en WhatsApp.
-* **Notas y progreso:** Sistema académico oficial (Jasper / SIAG).
-* **Tiempo libre real:** **Nadie lo calcula.**
+Los equipos fundadores de startups en etapas intensivas enfrentan una sobrecarga cognitiva constante:
+* **Entregables y tareas dispersas:** Notas de WhatsApp, chats de Discord, repositorios y tableros.
+* **Hitos críticos inminentes:** Fechas de lanzamiento inamovibles (como el **Playtest de mediados de noviembre**).
+* **Múltiples socios con frentes distintos:** Diseño, video, marketing, arquitectura de software, soporte y pedagogía.
+* **Tiempo libre real:** Rara vez se calcula contrastando la disponibilidad real de cada socio contra las horas requeridas.
 
-La pregunta crítica del estudiante nunca es *«¿A qué hora tengo clase?»*, sino:
+La pregunta que responde **MOP-SG** cada minuto no es *«¿Qué tareas tengo en la lista?»*, sino:
 
-> **«Tengo 5 materias, parciales en 4 días, 3 talleres pendientes y un hueco de 1h 40m en el campus. ¿Me alcanza el tiempo? ¿Qué debería priorizar ahora mismo para no colapsar el fin de semana?»**
+> **«Son las 3:15 p.m., faltan 18 días para el Playtest y tengo un hueco libre de 2 horas. ¿Qué entregable crítico debo ejecutar ya mismo para evitar que mi área colapse el cronograma del equipo?»**
 
-**Mi Semestre** transforma el horario estático en un **Sistema Operativo de Decisión**: descuenta tiempos de traslado, rutinas de almuerzo y margen cognitivo, cruzando las horas libres reales con la urgencia causal de parciales y entregas para recomendar la mejor acción inmediata.
+---
 
-### El Bucle de Decisión Académica
+## 2. Los Socios Fundadores & Áreas Operativas
+
+MOP-SG integra asignación y filtrado por responsable en todas las vistas (Tareas, Hitos, Radar de Atrasos y Dashboard):
+
+| Socio | ID | Especialidad & Roles Operativos | Color Avatar |
+| :--- | :--- | :--- | :--- |
+| **Leon** | `member-leon` | Administración, Marketing, Diseño & Video | Grafito (`#3F3F46`) |
+| **Dani** | `member-dani` | Desarrollo, Administración & Soporte | Piedra (`#78716C`) |
+| **Ángel** | `member-angel` | Administración & Docencia / Pedagogía | Pizarra (`#475569`) |
+
+Los avatares usan una paleta sobria neutra para evitar colisiones visuales con los estados de semáforo del sistema.
+
+---
+
+## 3. Principios de Diseño: "SG con Calma"
+
+* **Una Sola Respuesta:** El panel de inicio evita la saturación visual. Destaca un único centro de decisión operativo claro.
+* **El Único Botón Rojo:** El color de marca rojo (`#BB271A` en modo claro, `#DC382D` en modo oscuro) está reservado **exclusivamente** para el botón de acción principal (*"Empezar"*) y para estados de riesgo crítico comprobado.
+* **Estados en Atención:** Se representan en tono ámbar (`var(--warn)`), garantizando una jerarquía visual armónica.
+* **Modo Oscuro Auténtico:** Negro cálido (`#0A0A0A` / `#161616`), optimizado para largas jornadas de trabajo enfocado.
+
+---
+
+## 4. Módulos y Capacidades
+
+### 4.1. Buzón de Captura Rápida (`QuickCaptureBar`)
+* **Experiencia Conversacional:** Permite pegar texto informal de WhatsApp o notas rápidas.
+* **Inferencia Dinámica:** Detecta automáticamente qué socio es responsable comparando el texto con los nombres de la tabla `members` (eliminando mayúsculas y tildes mediante normalización `NFD`).
+* **Diseño Responsive:**
+  * En **móvil (`< md`)**: Barra fija en la parte inferior (`fixed bottom-0`) adaptada a la barra de inicio del iPhone (`env(safe-area-inset-bottom)`).
+  * En **escritorio (`md:`)**: Integrada en la parte superior del dashboard.
+* **Confirmación Previa:** Antes de persistir, muestra una tarjeta de validación para ajustar título, socio, área, fecha límite y minutos estimados.
+
+### 4.2. Centro de Decisión Operativa (`DecisionHeroCard`)
+* Identifica en tiempo real si te encuentras en un compromiso programado o en una franja libre.
+* Recomienda con explicaciones auditables la acción inmediata de mayor impacto.
+* Sub-tira ejecutiva con:
+  1. *Siguiente en cola:* Segundo entregable prioritario y su responsable.
+  2. *Cuenta regresiva al Playtest:* Conectada dinámicamente al hito cuyo título contenga *"Playtest"*.
+  3. *Radar resumido:* Resumen de áreas al día o en atención sin fricción.
+
+### 4.3. Radar de Atrasos Recalibrado
+* **Desacoplado de Asistencia:** Se eliminó la presión por faltas académicas.
+* **Comparación de Horas Reales vs Estimadas:**
+  * En **vista individual**: Compara las horas estimadas de los entregables del socio contra sus huecos libres reales antes de la fecha del hito. Si las horas estimadas superan el tiempo disponible, activa alerta crítica.
+  * En **vista de equipo**: Evalúa la inminencia de hitos compartidos (≤ 3 días) sin contrastar las tareas colectivas contra el calendario de una sola persona.
+
+---
+
+## 5. Arquitectura Técnica
 
 ```text
-CAPTURA   ──► Importa calendario externo (.ics) o pega cualquier mensaje caótico de WhatsApp.
-ENTIENDE  ──► Normaliza materias, tareas, parciales, clases y rutinas fijas con Zod.
-DECIDE    ──► Calcula disponibilidad neta, riesgo académico y prioridad causal.
-ACTÚA     ──► Propone con explicaciones auditables qué hacer en el hueco disponible.
-EJECUTA   ──► Inicia una sesión de foco (Pomodoro) vinculada directamente a esa decisión.
-RECALCULA ──► Al completar la sesión, actualiza el estado académico y ajusta el semestre.
-```
-
----
-
-## 2. Flujo Completo de Decisión (Decision Loop)
-
-```mermaid
-flowchart TD
-    A[Onboarding Inteligente] -->|Jasper Icesi / OCR / Plantillas| B[(IndexedDB Local-First)]
-    B --> C[Horario Semanal Interactivo]
-    B --> D[Rutinas Fijas & Compromisos]
-    C & D --> E[Motor Académico Determinístico]
-    E --> F{¿Dónde estoy ahora?}
-    F -->|En Clase| G[Ver tiempo restante & aula física]
-    F -->|En Hueco Libre| H[¿Qué hago ahora? - Acción Prioritaria]
-    F -->|Descanso| I[Recarga & Planificación de Siguiente Hito]
-    H --> J[Sesión Pomodoro Adaptativa]
-    J -->|Completado / Parcial| B
-    B -.->|Sincronización Opcional| K[(Supabase Cloud PostgreSQL + RLS)]
-```
-
----
-
-## 3. Características Principales
-
-### 3.1. Asistente de Configuración Inicial (Onboarding Inteligente de 3 Pasos)
-
-El flujo de bienvenida guía al estudiante en menos de 60 segundos desde la personalización de su perfil hasta un semestre completamente modelado:
-
-* **Paso 1: Identidad & Programa Académico:** Configuración de nombre, código estudiantil y selección del programa oficial de pregrado entre 10 carreras de la Universidad Icesi.
-* **Paso 2: Magic Drop & Carga Rápida de Horario:**
-  * **Magic Drop (Ctrl+V / Cmd+V):** Zona de captura universal con detección de pegado directo desde el portapapeles. Procesa reportes de matrícula en texto plano o HTML extraídos de Jasper/Banner.
-  * **Catálogo Determinístico de NRCs:** Reconocimiento de códigos NRC contra el catálogo oficial de Icesi (`nrcCatalog.ts`), completando automáticamente nombre de materia, salón físico, profesor y créditos académicos sin depender de APIs externas ni cuotas de IA.
-  * **Catálogo de 10 Plantillas Oficiales Icesi:** Carga instantánea en 1 clic de semestres calibrados con materias reales, créditos y aulas asignadas:
-    1. *Ingeniería Industrial* (Fundamentos de Optimización, Gestión de Operaciones, Termofluidos, Ergonomía, Finanzas).
-    2. *Ingeniería de Sistemas* (Estructuras de Datos, Arquitectura de Software, Bases de Datos, Redes, Cálculo Multivariado).
-    3. *Economía y Negocios Internacionales* (Microeconomía Intermedia, Macroeconomía, Econometría, Comercio Internacional).
-    4. *Ingeniería Telemática* (Protocolos de Comunicación, Redes Ópticas, Seguridad en Redes, Sistemas Distribuidos).
-    5. *Diseño de Medios Interactivos (DMI)* (Taller de Experiencia de Usuario, Programación Creativa, Modelado 3D, Narrativa Transmedia).
-    6. *Administración de Empresas* (Contabilidad Gerencial, Mercadeo Estratégico, Gestión de Talento, Teoría Organizacional).
-    7. *Medicina* (Anatomía Clínica, Fisiología Humana, Bioquímica Médica, Histología, Embriología Médica).
-    8. *Biología* (Biología Celular, Genética General, Ecología de Poblaciones, Botánica Aplicada, Zoología).
-    9. *Derecho* (Derecho Constitucional Colombiano, Obligaciones Civiles, Derecho Penal General, Teoría del Estado).
-    10. *Psicología* (Procesos Cognitivos, Psicología del Desarrollo, Neuropsicología, Métodos de Investigación).
-  * **Reconocimiento Óptico (OCR Local de Imágenes):** Arrastra o pega capturas de pantalla de horarios (.png, .jpg, .webp) procesadas localmente en el cliente.
-  * **Configurador Manual Asistido:** Wizard paso a paso para estudiantes que deseen estructurar su horario desde cero.
-* **Paso 3: Revelación de Valor & Diagnóstico Inicial:** Muestra antes de ingresar al dashboard el diagnóstico de horas libres netas, huecos de estudio aprovechables y alertas de asignaturas de alto riesgo.
-
-### 3.2. Panel de Control y Revelación Progresiva (Progressive Disclosure)
-
-* **Enfoque Inteligente por Materia:** En lugar de saturar al estudiante con información simultánea, el radar identifica la asignatura prioritaria ("Tu Enfoque") según proximidad de exámenes, porcentaje en juego y notas registradas, mostrando su explicación causal detallada.
-* **Agrupación Limpia de Materias Estables:** Las asignaturas bajo control o sin riesgo inmediato se colapsan ordenadamente con un interruptor para inspección rápida, reduciendo la fatiga de decisión.
-* **Tarjeta de Acción Inmediata (NowActionCard):** Explica exactamente qué hacer en el bloque actual: estudiar en un hueco de tiempo, dirigirse al aula de la siguiente clase o tomar un descanso regenerativo.
-* **Sesión Pomodoro Integrada:** Un clic para entrar en modo de estudio concentrado con temporizador adaptativo sincronizado con la tarea activa.
-
-### 3.3. Herramientas de Productividad Universitaria
-
-* **Compartir Semestre en 1 Clic (WhatsApp & Enlace Base64):**
-  * Generación instantánea de reporte textual formateado para WhatsApp con el listado de materias, créditos, códigos NRC y carga semanal.
-  * Enlace portable con estado de configuración codificado en Base64 para respaldo o visualización rápida.
-* **Selector Rápido de Carrera (+ Cambiar):** Acceso permanente en la barra lateral para alternar entre los 10 programas oficiales de Icesi o reiniciar el asistente de configuración desde cero.
-* **Buzón Rápido Estilo Mensajería (Atajo ⌘K / Ctrl+K):**
-  * Captura ultrarrápida de eventos, quizes, talleres y notas mediante lenguaje natural.
-  * Entrada optimizada con chips de ejemplo y confirmación directa con la tecla Enter.
-  * Procesamiento híbrido: análisis determinístico local prioritario y respaldo mediante servidor de extracción inteligente.
-
-### 3.4. Horario Semanal Interactivo & Rutinas Fijas
-
-* Edición integral en vivo: nombre de materia, código NRC, profesor, color distintivo, límite de inasistencias y salón físico.
-* Bloques de tiempo fijos para compromisos cotidianos: **almuerzo, gimnasio, traslados y trabajo**.
-* Control de inasistencias por clase con radar preventivo de pérdida de materia por faltas.
-
-### 3.5. Motor Académico Determinístico Puro
-
-* **Cálculo de Huecos Libres (`calculateFreeSlots`):** Divide los espacios entre clases descontando tiempos de traslado y margen personal.
-* **Radar de Riesgo Causal (`calculateRisk`):** Analiza notas acumuladas, peso del próximo examen, faltas restantes y proximidad de entregas.
-* **Detección de Conflictos (`detectConflicts`):** Previene solapamientos de clases o actividades fijas.
-
-### 3.6. Sincronización en la Nube con Supabase (PostgreSQL + RLS)
-
-* Arquitectura **Local-First**: Operatividad 100% offline garantizada en el navegador con Dexie.js.
-* Respaldo y restauración en la nube con Supabase Auth y PostgreSQL.
-* Seguridad garantizada mediante **Row Level Security (RLS)**: Cada estudiante solo puede leer y modificar sus propios datos mediante `auth.uid()`.
-
----
-
-## 4. Auditoría de Ciberseguridad (Cyber Neo & OWASP 2025)
-
-El proyecto fue auditado exhaustivamente bajo el estándar **OWASP 2025 Top 10** y **CWE Top 25** mediante el motor de seguridad Cyber Neo:
-
-| Parámetro | Resultado | Estado |
-|---|---|---|
-| **Puntuación de Riesgo** | **9 / 100** | **Riesgo Bajo (Low Risk)** |
-| **Vulnerabilidades SCA (CVEs)** | **0 detectadas** en 484 dependencias | Limpio |
-| **Integridad de Lockfile** | Consistente con `pnpm-lock.yaml` | Verificado |
-| **Filtración de Credenciales** | 0 claves privadas en historial Git (`.env` protegido) | Conforme |
-| **Cabeceras HTTP de Seguridad** | HSTS, X-Frame-Options: DENY, nosniff, CSP | Configurado |
-| **Protección en Base de Datos** | Políticas RLS estrictas en todas las tablas | Conforme |
-
-El informe completo de seguridad se encuentra disponible en:  
-[cyber-neo-report.md](cyber-neo-report.md)
-
----
-
-## 5. Arquitectura del Repositorio
-
-```text
-.
-├── public/                               # Assets estáticos, logos WebP y banner institucional
+MOP-SG
 ├── src/
-│   ├── app/                              # Next.js 16 App Router (Rutas Estáticas Prerenderizadas)
-│   │   ├── balance/page.tsx              # Balance académico oficial y avance de carrera
-│   │   ├── dashboard/page.tsx            # Centro de decisión: "¿Qué hago ahora?"
-│   │   ├── schedule/page.tsx             # Horario semanal y bloques de tiempo
-│   │   ├── tasks/page.tsx                # Entregas con estimación de esfuerzo
-│   │   ├── exams/page.tsx                # Parciales con ponderación porcentual
-│   │   ├── radar/page.tsx                # Radar de riesgo explicable por materia
-│   │   ├── timeline/page.tsx             # Línea temporal de 16 semanas
-│   │   ├── globals.css                   # Design Tokens CAMBAS+ (Modo Claro & Oscuro)
-│   │   └── layout.tsx                    # Shell del sistema y modales diferidos
-│   │
+│   ├── app/                    # Rutas Next.js 16 (App Router)
+│   │   ├── dashboard/          # Panel principal "Una Sola Respuesta"
+│   │   ├── schedule/           # Horario semanal & disponibilidad
+│   │   ├── tasks/              # Entregables por área y socio
+│   │   ├── exams/              # Hitos & lanzamiento Playtest
+│   │   ├── radar/              # Radar de Atrasos
+│   │   ├── timeline/           # Cronología y semanas
+│   │   └── globals.css         # Tokens de diseño Seamos Genios
 │   ├── components/
-│   │   ├── dashboard/                    # NowActionCard, DecisionHeroCard, Widgets con Progressive Disclosure
-│   │   ├── layout/                       # Sidebar con selector de carrera, TopHeader con compartir
-│   │   ├── modals/                       # Modales globales: ShareSemesterModal, CareerSwitchModal, InboxModal
-│   │   ├── onboarding/                   # Asistente de 3 pasos: OnboardingFlow, Magic Drop, preview de carrera
-│   │   ├── schedule/SmartTimetable.tsx   # Rejilla horaria interactiva con rutinas y clases
-│   │   └── radar/RiskCard.tsx            # Visualización cuantitativa del riesgo académico
-│   │
-│   ├── hooks/
-│   │   └── useSemesterData.ts            # Hook de sincronización local reactiva con Dexie
-│   │
+│   │   ├── dashboard/          # DecisionHeroCard, widgets de horario y radar
+│   │   ├── inbox/              # QuickCaptureBar (Buzón móvil y desktop)
+│   │   └── layout/             # Sidebar y navegación sobria
+│   ├── hooks/                  # useSemesterData (gestión de estado y Dexie)
 │   ├── lib/
-│   │   ├── academic-engine/              # Lógica de cálculo pura sin dependencias de UI
-│   │   ├── importer/                     # Parser Jasper Icesi, OCR y catálogo de NRCs (nrcCatalog.ts)
-│   │   ├── templates/                    # Catálogo de 10 plantillas oficiales Icesi (academicTemplates.ts)
-│   │   ├── storage/                      # Repositorios tipados en IndexedDB (Dexie.js)
-│   │   └── supabase/                     # Cliente singleton y servicio de sincronización cloud
-│   │
-│   ├── stores/                           # Estado UI global con Zustand
-│   └── tests/                            # Suites de pruebas unitarias (Engine + Ingester)
-│
-├── supabase/
-│   └── schema.sql                        # Esquema PostgreSQL, tablas e índices RLS
-├── pnpm-lock.yaml                        # Lockfile determinístico de pnpm
-└── next.config.ts                        # Cabeceras de seguridad HTTP y optimizaciones Next.js
+│   │   ├── academic-engine/    # Motor de cálculo: franjas libres y radar
+│   │   ├── labels.ts           # Vocabulario operativo centralizado
+│   │   └── storage/            # Base de datos local Dexie (MopSgDB)
+│   └── types/                  # Contratos TypeScript
 ```
 
----
-
-## 6. Seguridad y Endurecimiento Técnico (Security Hardening)
-
-El sistema implementa una arquitectura defensiva multicapa diseñada para proteger la privacidad del estudiante y blindar el servidor contra vectores comunes de explotación:
-
-* **Cabeceras HTTP de Protección ([next.config.ts](file:///Users/leonfeliperodriguez/Desktop/Trabajos/Horario/next.config.ts)):**
-  * `Strict-Transport-Security: max-age=31536000; includeSubDomains` (HSTS estricto de 1 año sin directiva `preload` prematura para evitar bloqueos operativos en staging).
-  * `X-Frame-Options: DENY` (prevención total de Clickjacking).
-  * `X-Content-Type-Options: nosniff` (mitigación de ataques de confusión MIME).
-  * `Referrer-Policy: strict-origin-when-cross-origin`.
-  * `Permissions-Policy: camera=(), microphone=(), geolocation=()`.
-  * `poweredByHeader: false` (ocultamiento de huella de Next.js).
-* **Defensa Anti-SSRF en Cada Salto ([/api/calendar/import-url](file:///Users/leonfeliperodriguez/Desktop/Trabajos/Horario/src/app/api/calendar/import-url/route.ts)):**
-  * Seguimiento de redirecciones manual (`redirect: 'manual'`) con re-validación de seguridad en cada salto previo a la conexión.
-  * Esquemas restringidos exclusivamente a `https://`.
-  * Bloqueo de rangos privados e interfaces internas: `127.0.0.1`, `localhost`, `::1` (IPv6), `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16` y `169.254.0.0/16` (metadatos cloud / link-local).
-  * Límite estricto de carga útil de 2 MB y corte por timeout a los 5.000 ms para frustrar ataques de denegación de servicio o DNS rebinding.
-* **Aislamiento de Secretos de IA:**
-  * El procesamiento del Buzón Inteligente reside exclusivamente en el Route Handler del servidor (`/api/ai/extract`). `GEMINI_API_KEY` nunca viaja al navegador ni se exige a los estudiantes.
-* **Arquitectura Local-First & Privacidad:**
-  * La base de datos primaria funciona 100% offline en el navegador mediante IndexedDB (Dexie.js).
-  * No existe rastreo ni recolección de datos personales por parte de servidores externos.
-* **Políticas Row Level Security (RLS) en Supabase:**
-  * Esquema PostgreSQL protegido donde cada tabla valida criptográficamente que `auth.uid() = user_id`, impidiendo lecturas o escrituras cruzadas entre usuarios.
+### Aislamiento de Almacenamiento
+* **Dexie Database:** `MopSgDB` (completamente aislada de `MiSemestreDB`).
+* **Prefijos de Configuración:** `mopsg_*` en `localStorage`.
 
 ---
 
-## 7. Instalación y Puesta en Marcha
+## 6. Puesta en Marcha Local
 
 ### Prerrequisitos
-* **Node.js 20+**
-* **pnpm 11+** (Recomendado) o npm
+* Node.js 20+
+* pnpm 11 (`npm install -g pnpm`)
 
-### Pasos de Instalación
+### Instalación y Ejecución
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/luisrodriguez-rgb/MOP-SG.git
+cd MOP-SG
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/luisrodriguez-rgb/Mi-Semestre.git
-   cd Mi-Semestre
-   ```
+# 2. Instalar dependencias
+pnpm install
 
-2. **Instalar dependencias con pnpm:**
-   ```bash
-   pnpm install
-   ```
+# 3. Iniciar el servidor de desarrollo
+pnpm dev
+```
+La aplicación estará disponible en:
+* `http://localhost:3000` (escritorio)
+* `http://192.168.1.149:3000` (dispositivos móviles en la misma red Wi-Fi, habilitado vía `allowedDevOrigins`).
 
-3. **Configurar variables de entorno:**
-   Copia la plantilla `.env.example`:
-   ```bash
-   cp .env.example .env
-   ```
-   Agrega tus credenciales de Supabase (opcional para sincronización en la nube):
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=tu-clave-anonima-publica
-   ```
+### Comprobaciones de Calidad
+```bash
+# Verificación estricta de TypeScript
+pnpm exec tsc --noEmit
 
-4. **Iniciar el servidor de desarrollo:**
-   ```bash
-   pnpm dev
-   ```
-   Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+# Ejecutar suite de pruebas completa
+pnpm test
 
-5. **Ejecutar la suite de pruebas automatizadas:**
-   ```bash
-   pnpm test
-   ```
-
-6. **Compilar para producción:**
-   ```bash
-   pnpm run build
-   ```
+# Compilación de producción
+pnpm run build
+```
 
 ---
 
-## 8. Scripts Disponibles
+## 7. Políticas de Desarrollo y Commits Atómicos
 
-| Comando | Descripción |
-| :--- | :--- |
-| `pnpm dev` | Inicia el entorno de desarrollo con Fast Refresh y Webpack. |
-| `pnpm test` | Ejecuta las pruebas del motor académico y del ingestor inteligente. |
-| `pnpm run build` | Compila y optimiza la aplicación para producción (Rutas estáticas). |
-| `pnpm run start` | Inicia el servidor optimizado de producción. |
-| `pnpm run lint` | Ejecuta ESLint verificando buenas prácticas y tipado. |
-
----
-
-## 9. Despliegue en Producción
-
-El proyecto está preparado para despliegue instantáneo en **Vercel** o cualquier infraestructura compatible con Next.js:
-
-1. Importar el repositorio en el panel de Vercel.
-2. Configurar el Framework Preset como **Next.js**.
-3. En la sección **Environment Variables**, añadir:
-   * `NEXT_PUBLIC_SUPABASE_URL`
-   * `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Ejecutar `Deploy`.
-
-*URL de producción oficial:* **[https://mi-semestre-ten.vercel.app/](https://mi-semestre-ten.vercel.app/)**
-
----
-
-## Licencia
-
-Distribuido bajo la Licencia MIT. Consulta el archivo `LICENSE` para más información.
+Este repositorio se rige bajo la regla de **Commits Profesionales, Atómicos y Descriptivos**:
+* **1 commit = 1 cambio lógico:** Nunca se mezclan refactors, estilos y dependencias en un solo commit.
+* **Conventional Commits:** Uso estricto de prefijos (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `style:`).
+* **Protección del Upstream:** El remoto original (`Mi-Semestre`) tiene la URL de push configurada en `DISABLED` para evitar sobrescrituras accidentales.
