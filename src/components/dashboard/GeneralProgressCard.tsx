@@ -30,8 +30,8 @@ export function GeneralProgressCard({
   const strokeDashoffset = circumference - (progressPercentage / 100) * circumference;
 
   return (
-    <div className="rounded-2xl bg-white dark:bg-[#0f1330] border border-[#e2e6f2] dark:border-[#1c224b] p-6 shadow-xs transition-colors">
-      <h3 className="text-sm font-bold text-[#0f1330] dark:text-white tracking-tight">
+    <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 shadow-xs transition-colors">
+      <h3 className="text-sm font-bold text-[var(--ink)] tracking-tight">
         Tu progreso general
       </h3>
 
@@ -45,7 +45,7 @@ export function GeneralProgressCard({
               cx="50"
               cy="50"
               r={radius}
-              className="text-[#e2e6f4] dark:text-[#1c224b]"
+              className="text-[var(--border)]"
               strokeWidth="10"
               stroke="currentColor"
               fill="transparent"
@@ -55,7 +55,7 @@ export function GeneralProgressCard({
               cx="50"
               cy="50"
               r={radius}
-              className="text-[#202588] dark:text-[#4d56e2] transition-all duration-700 ease-out"
+              className="text-[#BB271A] dark:text-[#DC382D] transition-all duration-700 ease-out"
               strokeWidth="10"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
@@ -64,57 +64,57 @@ export function GeneralProgressCard({
               fill="transparent"
             />
           </svg>
-          <div className="absolute inset-0 flex items-center justify-center text-sm font-black font-mono text-[#0f1330] dark:text-white">
+          <div className="absolute inset-0 flex items-center justify-center text-sm font-black font-mono text-[var(--ink)]">
             {progressPercentage}%
           </div>
         </div>
 
         {/* Resumen semana */}
         <div>
-          <div className="text-sm font-black text-[#0f1330] dark:text-white">
+          <div className="text-sm font-black text-[var(--ink)]">
             Avance de temporada ({Math.round(progressPercentage)}%)
           </div>
-          <div className="text-xs text-[#626c96] dark:text-[#8b95c2] mt-0.5 font-medium">
+          <div className="text-xs text-[var(--muted)] mt-0.5 font-medium">
             {currentWeek} de {totalWeeks} semanas transcurridas
           </div>
         </div>
       </div>
 
       {/* Lista de métricas */}
-      <div className="mt-5 pt-4 border-t border-[#f0f3fa] dark:border-[#181d42] space-y-3">
+      <div className="mt-5 pt-4 border-t border-[var(--border)] space-y-3">
         <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2.5 text-[#505a88] dark:text-[#949ecb] font-medium">
-            <Layers3 className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
+          <div className="flex items-center gap-2.5 text-[var(--muted)] font-medium">
+            <Layers3 className="w-4 h-4 text-[var(--ink)]" />
             <span>Áreas operativas</span>
           </div>
-          <span className="font-mono font-bold text-[#0f1330] dark:text-white">
+          <span className="font-mono font-bold text-[var(--ink)]">
             {totalSubjectsCount} / {totalSubjectsCount}
           </span>
         </div>
 
         <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2.5 text-[#505a88] dark:text-[#949ecb] font-medium">
-            <ClipboardList className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
+          <div className="flex items-center gap-2.5 text-[var(--muted)] font-medium">
+            <ClipboardList className="w-4 h-4 text-[var(--ink)]" />
             <span>Tareas pendientes</span>
           </div>
-          <span className="font-mono font-bold text-[#0f1330] dark:text-white">
+          <span className="font-mono font-bold text-[var(--ink)]">
             {pendingAssignmentsCount}
           </span>
         </div>
 
         <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2.5 text-[#505a88] dark:text-[#949ecb] font-medium">
-            <Calendar className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
+          <div className="flex items-center gap-2.5 text-[var(--muted)] font-medium">
+            <Calendar className="w-4 h-4 text-[var(--ink)]" />
             <span>Hitos próximos</span>
           </div>
-          <span className="font-mono font-bold text-[#0f1330] dark:text-white">
+          <span className="font-mono font-bold text-[var(--ink)]">
             {upcomingExamsCount}
           </span>
         </div>
 
         <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2.5 text-[#505a88] dark:text-[#949ecb] font-medium">
-            <UserCheck className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
+          <div className="flex items-center gap-2.5 text-[var(--muted)] font-medium">
+            <UserCheck className="w-4 h-4 text-[var(--ink)]" />
             <span>Asistencia promedio</span>
           </div>
           <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">

@@ -3,10 +3,10 @@ import { DayOfWeek } from '@/types';
 
 export const UNIVERSAL_PALETTE = [
   '#3F3F46', // Neutral grafito
-  '#0284c7', // Celeste
+  '#52525B', // Neutral medio
   '#0d9488', // Teal
   '#16a34a', // Verde
-  '#7c3aed', // Púrpura
+  '#71717A', // Neutral pizarra
   '#db2777', // Magenta
   '#d97706', // Ámbar
   '#ea580c', // Naranja

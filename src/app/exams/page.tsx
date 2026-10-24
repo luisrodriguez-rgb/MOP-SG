@@ -125,12 +125,12 @@ export default function ExamsPage() {
       {/* Grid de Hitos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredExams.length === 0 ? (
-          <div className="col-span-full text-center py-12 rounded-2xl bg-white dark:bg-[#0f1330] border border-[#e2e6f2] dark:border-[#1c224b] p-6">
+          <div className="col-span-full text-center py-12 rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6">
             <Calendar className="w-10 h-10 text-[var(--muted)] mx-auto mb-2" />
-            <h3 className="text-sm font-bold text-[#0f1330] dark:text-white">
+            <h3 className="text-sm font-bold text-[var(--ink)]">
               No hay hitos programados
             </h3>
-            <p className="text-xs text-[#626c96] dark:text-[#8b95c2] mt-1">
+            <p className="text-xs text-[var(--muted)] mt-1">
               Registra hitos y entregas para que el Radar de Atrasos calcule la presión de tiempo.
             </p>
             <button

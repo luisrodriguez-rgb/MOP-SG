@@ -4,7 +4,7 @@ import { TeamMember } from '@/types';
 export const DEFAULT_MEMBERS: TeamMember[] = [
   { id: 'member-leon', name: 'Leon', role: 'Administración, Marketing, Diseño & Video', color: '#3F3F46', active: true },
   { id: 'member-dani', name: 'Dani', role: 'Desarrollo, Administración & Soporte', color: '#78716C', active: true },
-  { id: 'member-angel', name: 'Ángel', role: 'Administración & Docencia', color: '#475569', active: true },
+  { id: 'member-angel', name: 'Ángel', role: 'Administración & Docencia', color: '#52525B', active: true },
 ];
 
 export const memberRepository = {

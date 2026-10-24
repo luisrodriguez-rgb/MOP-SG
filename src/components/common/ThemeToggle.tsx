@@ -61,7 +61,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
       aria-label="Cambiar tema de color"
     >
       {theme === 'light' && <Sun className="w-4 h-4 text-amber-500" />}
-      {theme === 'dark' && <Moon className="w-4 h-4 text-[#8888ff]" />}
+      {theme === 'dark' && <Moon className="w-4 h-4 text-[var(--ink)]" />}
       {theme === 'system' && <Monitor className="w-4 h-4 text-[var(--muted)]" />}
     </button>
   );

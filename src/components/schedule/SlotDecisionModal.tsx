@@ -185,7 +185,7 @@ export function SlotDecisionModal({
 
                       <button
                         onClick={() => handleStartTaskFocus(task, subjectName)}
-                        className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#0c102a] dark:bg-[#1e2554] hover:bg-[#181f4a] text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+                        className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#0A0A0A] hover:bg-[#1A1A1A] dark:bg-[#F4F4F5] dark:text-[#0A0A0A] text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
                         title="Iniciar Pomodoro en este hueco"
                       >
                         <Play className="w-3 h-3 fill-white" />

@@ -142,7 +142,7 @@ export function NowActionCard({
       {/* Header Limpio y Dominante */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[#1e1e8a] dark:text-[#a0a0ff]">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[var(--ink)]">
             <span>{dayNameFormatted} · {effectiveTime}</span>
             <span>·</span>
             <span className="text-[var(--muted)]">CENTRO DE DECISIÓN</span>
@@ -177,7 +177,7 @@ export function NowActionCard({
                 onClick={() => setUseRealTime(!useRealTime)}
                 className={`px-2 py-1 rounded-xl font-mono text-[10px] font-bold transition-all cursor-pointer ${
                   useRealTime
-                    ? 'bg-[#1e1e8a] text-white shadow-2xs'
+                    ? 'bg-[var(--ink)] text-white shadow-2xs'
                     : 'bg-[var(--surface)] text-[var(--muted)] border border-[var(--border)]'
                 }`}
               >
@@ -224,19 +224,19 @@ export function NowActionCard({
                   {currentBlockResult.currentClass.name}
                 </div>
                 <div className="flex items-center gap-2 text-xs text-[var(--muted)] mt-1.5 font-medium">
-                  <span className="font-mono text-[#1e1e8a] dark:text-[#a0a0ff] font-bold">
+                  <span className="font-mono text-[var(--ink)] font-bold">
                     {currentBlockResult.currentClass.code}
                   </span>
                   {currentBlockResult.currentClass.location && (
                     <span className="flex items-center gap-1">
-                      · <MapPin className="w-3.5 h-3.5 text-[#1e1e8a] dark:text-[#a0a0ff]" />
+                      · <MapPin className="w-3.5 h-3.5 text-[var(--ink)]" />
                       {currentBlockResult.currentClass.location}
                     </span>
                   )}
                 </div>
                 <div className="mt-5 p-3.5 rounded-xl bg-[var(--paper)] border border-[var(--border)] text-xs flex items-center justify-between">
                   <span className="text-[var(--muted)]">Tiempo restante:</span>
-                  <span className="font-mono font-bold text-sm text-[#1e1e8a] dark:text-[#a0a0ff]">
+                  <span className="font-mono font-bold text-sm text-[var(--ink)]">
                     {formatMinutesHuman(currentBlockResult.currentClass.remainingMinutes)}
                   </span>
                 </div>
@@ -328,9 +328,9 @@ export function NowActionCard({
         </div>
 
         {/* 2. TARJETA MI MEJOR SIGUIENTE ACCIÓN (Héroe central de decisión) */}
-        <div className="lg:col-span-4 flex flex-col justify-between rounded-2xl bg-[#16164f] dark:bg-[#111328] text-white p-6 border border-[#2828a8]/40 shadow-lg shadow-[#16164f]/15 relative overflow-hidden">
+        <div className="lg:col-span-4 flex flex-col justify-between rounded-2xl bg-[#0A0A0A] dark:bg-[#121212] text-white p-6 border border-[var(--border)] shadow-lg relative overflow-hidden">
           <div>
-            <div className="flex items-center justify-between text-[11px] font-mono font-bold tracking-wider uppercase text-[#c5c5ff] pb-3 border-b border-white/10">
+            <div className="flex items-center justify-between text-[11px] font-mono font-bold tracking-wider uppercase text-white/80 pb-3 border-b border-white/10">
               <span className="flex items-center gap-1.5">
                 <Flame className="w-3.5 h-3.5 text-amber-300" />
                 2. MI MEJOR SIGUIENTE ACCIÓN
@@ -342,7 +342,7 @@ export function NowActionCard({
 
             {recommendedTask ? (
               <div className="mt-4 space-y-3">
-                <div className="text-xs font-mono font-bold text-[#a0a0ff]">
+                <div className="text-xs font-mono font-bold text-[var(--accent)]">
                   {recommendedTask.subject?.name || 'Área'}
                 </div>
 
@@ -351,19 +351,19 @@ export function NowActionCard({
                 </div>
 
                 {/* Explicación de causalidad directa */}
-                <div className="text-xs text-[#e8e8ff] bg-black/25 p-3.5 rounded-xl border border-white/10 leading-relaxed">
-                  <span className="font-bold text-[#a0a0ff]">Por qué ahora: </span>
+                <div className="text-xs text-white/90 bg-black/25 p-3.5 rounded-xl border border-white/10 leading-relaxed">
+                  <span className="font-bold text-[var(--accent)]">Por qué ahora: </span>
                   {recommendedTask.reason}
                 </div>
 
-                <div className="flex items-center gap-2 text-xs text-[#c5c5ff] font-mono pt-1">
+                <div className="flex items-center gap-2 text-xs text-white/80 font-mono pt-1">
                   <span>Tiempo estimado: <strong>{formatMinutesHuman(recommendedTask.task.estimatedMinutes)}</strong></span>
                   <span>·</span>
                   <span className="text-amber-300 font-bold uppercase">Alta Urgencia</span>
                 </div>
               </div>
             ) : (
-              <div className="mt-6 text-xs text-[#c5c5ff] leading-relaxed">
+              <div className="mt-6 text-xs text-white/80 leading-relaxed">
                 No tienes entregas pendientes urgentes. Puedes avanzar en lecturas complementarias o tomar un descanso reparador.
               </div>
             )}
@@ -371,9 +371,9 @@ export function NowActionCard({
 
           <button
             onClick={handleStartFocus}
-            className="mt-6 w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-white hover:bg-[#f0f0ff] active:scale-[0.98] text-[#16164f] text-xs font-black shadow-lg shadow-black/20 transition-all cursor-pointer"
+            className="mt-6 w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-white hover:bg-white/90 active:scale-[0.98] text-[#0A0A0A] text-xs font-black shadow-lg shadow-black/20 transition-all cursor-pointer"
           >
-            <Play className="w-3.5 h-3.5 fill-[#16164f]" />
+            <Play className="w-3.5 h-3.5 fill-[#0A0A0A]" />
             <span>COMENZAR ENFOQUE ({recommendedTask?.task.estimatedMinutes || 45}m)</span>
           </button>
         </div>
@@ -383,7 +383,7 @@ export function NowActionCard({
           <div>
             <div className="flex items-center justify-between text-[11px] font-mono font-bold tracking-wider uppercase text-[var(--muted)] pb-3 border-b border-[var(--border)]">
               <span className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-[#1e1e8a] dark:text-[#a0a0ff]" />
+                <Calendar className="w-3.5 h-3.5 text-[var(--ink)]" />
                 3. DESPUÉS
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--paper)] text-[var(--ink)] border border-[var(--border)] font-bold">
@@ -402,7 +402,7 @@ export function NowActionCard({
                 </div>
                 {currentBlockResult.nextBlock.location && (
                   <div className="text-[10px] text-[var(--muted)] flex items-center gap-1 mt-0.5">
-                    <MapPin className="w-3 h-3 text-[#1e1e8a] dark:text-[#a0a0ff]" />
+                    <MapPin className="w-3 h-3 text-[var(--ink)]" />
                     {currentBlockResult.nextBlock.location}
                   </div>
                 )}

@@ -115,7 +115,7 @@ export function ClassDetailModal({
         <div
           className="p-6 text-white relative overflow-hidden"
           style={{
-            background: `linear-gradient(135deg, ${subject.color || '#111729'} 0%, #0c102a 100%)`,
+            background: `linear-gradient(135deg, ${subject.color || '#18181B'} 0%, #18181B 100%)`,
           }}
         >
           {/* Botón cerrar */}
@@ -363,7 +363,7 @@ export function ClassDetailModal({
 
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-[#0c102a] dark:bg-[#1e2554] hover:bg-[#181f4a] text-white text-xs font-bold transition-all cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-[#18181B] dark:bg-[var(--surface-raised)] hover:bg-[var(--border)] text-white text-xs font-bold transition-all cursor-pointer"
           >
             Cerrar
           </button>

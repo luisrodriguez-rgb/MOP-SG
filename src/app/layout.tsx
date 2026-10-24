@@ -7,7 +7,7 @@ import { MobileNav } from '@/components/layout/MobileNav';
 import { GlobalModals } from '@/components/modals/GlobalModals';
 
 export const viewport: Viewport = {
-  themeColor: '#16164f',
+  themeColor: '#0A0A0A',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -80,7 +80,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex bg-[var(--paper)] text-[var(--ink)] antialiased selection:bg-[#c5c5ff] selection:text-[#1a1a5e]">
+      <body className="min-h-full flex bg-[var(--paper)] text-[var(--ink)] antialiased selection:bg-[var(--accent)] selection:text-white">
         {/* Sidebar institucional para pantallas medianas y grandes */}
         <Sidebar />
 

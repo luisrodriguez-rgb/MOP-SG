@@ -130,27 +130,27 @@ export function SemesterTimeline({
       <div className="banner-academic p-6 sm:p-8 relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#c5c5ff] font-bold">
+            <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-white/80 font-bold">
               <Layers className="w-4 h-4" />
               <span>Hoja de Ruta del Semestre</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
               Línea de {totalWeeks} Semanas
             </h2>
-            <p className="text-xs text-[#e8e8ff] mt-1 max-w-xl">
+            <p className="text-xs text-white/90 mt-1 max-w-xl">
               Visualiza en qué punto del semestre te encuentras y anticípate a las semanas de mayor densidad de entregas y parciales.
             </p>
           </div>
 
           {metrics && (
             <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 text-right">
-              <div className="text-xs font-mono uppercase text-[#c5c5ff]">
+              <div className="text-xs font-mono uppercase text-white/80">
                 Semana Actual {metrics.hasStarted && `(Día ${metrics.daysElapsed + 1} de ${metrics.totalDays})`}
               </div>
               <div className="text-2xl font-black text-white mt-0.5">
-                Semana {metrics.currentWeek} <span className="text-sm font-normal text-[#c5c5ff]">/ {totalWeeks}</span>
+                Semana {metrics.currentWeek} <span className="text-sm font-normal text-white/80">/ {totalWeeks}</span>
               </div>
-              <div className="text-[11px] text-[#a0a0ff] font-mono mt-0.5">
+              <div className="text-[11px] text-white/70 font-mono mt-0.5">
                 {getWeekRange(metrics.currentWeek).shortLabel} · {metrics.daysRemaining} días restantes para finalizar
               </div>
             </div>

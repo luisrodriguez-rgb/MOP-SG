@@ -135,7 +135,7 @@ export function AddExamModal() {
         {/* Cabecera */}
         <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#7c3aed]/10 border border-[#7c3aed]/20 flex items-center justify-center text-[#7c3aed] dark:text-[#c084fc]">
+            <div className="w-9 h-9 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)]">
               <Calendar className="w-4 h-4" />
             </div>
             <div>
@@ -190,7 +190,7 @@ export function AddExamModal() {
 
             <div>
               <label className="block text-xs font-bold text-[var(--ink)] mb-1 flex items-center gap-1">
-                <User className="w-3.5 h-3.5 text-[#7c3aed] dark:text-[#c084fc]" />
+                <User className="w-3.5 h-3.5 text-[var(--accent)]" />
                 <span>Responsable del Hito</span>
               </label>
               <CustomSelect
@@ -250,11 +250,11 @@ export function AddExamModal() {
           <div className="p-3.5 rounded-2xl bg-[var(--paper)] border border-[var(--border)] space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[var(--ink)] flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-[#7c3aed] dark:text-[#c084fc]" />
+                <Calendar className="w-3.5 h-3.5 text-[var(--accent)]" />
                 <span>Fecha y Hora del Examen</span>
               </span>
               {friendlyDate && (
-                <span className="text-[11px] font-mono font-bold text-[#7c3aed] dark:text-[#c084fc] bg-[#7c3aed]/10 px-2 py-0.5 rounded-lg">
+                <span className="text-[11px] font-mono font-bold text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded-lg">
                   {friendlyDate} · {examTimeStr}
                 </span>
               )}
@@ -270,7 +270,7 @@ export function AddExamModal() {
                   required
                   value={examDateStr}
                   onChange={(e) => setExamDateStr(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[#7c3aed] transition-colors"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--accent)] transition-colors"
                 />
               </div>
 
@@ -284,7 +284,7 @@ export function AddExamModal() {
                   required
                   value={examTimeStr}
                   onChange={(e) => setExamTimeStr(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[#7c3aed] transition-colors"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--accent)] transition-colors"
                 />
               </div>
             </div>
@@ -306,7 +306,7 @@ export function AddExamModal() {
                     key={preset.days}
                     type="button"
                     onClick={() => applyDatePreset(preset.days)}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[var(--surface)] hover:bg-[#7c3aed]/10 hover:text-[#7c3aed] dark:hover:text-[#c084fc] border border-[var(--border)] text-[var(--muted)] transition-all cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[var(--surface)] hover:bg-[var(--accent)]/10 hover:text-[var(--accent)] border border-[var(--border)] text-[var(--muted)] transition-all cursor-pointer"
                   >
                     {preset.label}
                   </button>

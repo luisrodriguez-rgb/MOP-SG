@@ -38,22 +38,22 @@ export function RecentTasksWidget({ assignments: propAssignments, onToggleTask }
     .slice(0, 4);
 
   return (
-    <div className="rounded-2xl bg-white dark:bg-[#0f1330] border border-[#e2e6f2] dark:border-[#1c224b] p-5 shadow-xs transition-colors">
+    <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-5 shadow-xs transition-colors">
       {/* Cabecera */}
-      <div className="flex items-center justify-between pb-3.5 border-b border-[#f0f3fa] dark:border-[#181d42]">
+      <div className="flex items-center justify-between pb-3.5 border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
-          <ClipboardList className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
-          <h3 className="text-sm font-bold text-[#0f1330] dark:text-white tracking-tight">
+          <ClipboardList className="w-4 h-4 text-[var(--ink)]" />
+          <h3 className="text-sm font-bold text-[var(--ink)] tracking-tight">
             Tareas recientes
           </h3>
-          <span className="text-[10px] font-mono font-bold text-[#626c96] dark:text-[#8b95c2] ml-1 bg-[#f0f3fa] dark:bg-[#141838] px-2 py-0.5 rounded-full border border-[#e2e6f2] dark:border-[#1e2552]">
+          <span className="text-[10px] font-mono font-bold text-[var(--muted)] ml-1 bg-[var(--surface-raised)] dark:bg-[var(--surface-raised)] px-2 py-0.5 rounded-full border border-[var(--border)] dark:border-[var(--border)]">
             {assignmentsList.filter((t) => t.status !== 'completed').length}{' '}
             {assignmentsList.filter((t) => t.status !== 'completed').length === 1 ? 'pendiente' : 'pendientes'}
           </span>
         </div>
         <Link
           href="/tasks"
-          className="text-xs font-semibold text-[#3b43a8] dark:text-[#8e98ec] hover:underline flex items-center gap-0.5"
+          className="text-xs font-semibold text-[var(--ink)] hover:underline flex items-center gap-0.5"
         >
           <span>Ver todas</span>
           <ArrowRight className="w-3 h-3" />
@@ -64,12 +64,12 @@ export function RecentTasksWidget({ assignments: propAssignments, onToggleTask }
       <div className="mt-3.5 space-y-2.5">
         {displayTasks.length === 0 ? (
           <div className="text-center py-5">
-            <p className="text-xs text-[#626c96] dark:text-[#8b95c2]">
+            <p className="text-xs text-[var(--muted)]">
               No tienes tareas pendientes.
             </p>
             <button
               onClick={openAddTask}
-              className="mt-2 text-xs font-bold text-[#3b43a8] dark:text-[#8e98ec] hover:underline inline-flex items-center gap-1 cursor-pointer"
+              className="mt-2 text-xs font-bold text-[var(--ink)] hover:underline inline-flex items-center gap-1 cursor-pointer"
             >
               <Plus className="w-3 h-3" />
               <span>Añadir primera tarea</span>
@@ -91,15 +91,15 @@ export function RecentTasksWidget({ assignments: propAssignments, onToggleTask }
               <div
                 key={task.id}
                 onClick={() => toggleTask(task.id)}
-                className="flex items-center justify-between p-2 rounded-xl hover:bg-[#f8faff] dark:hover:bg-[#141838] transition-colors cursor-pointer group"
+                className="flex items-center justify-between p-2 rounded-xl hover:bg-[var(--surface-raised)] dark:hover:bg-[var(--surface-raised)] transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
                   {/* Checkbox cuadrado redondeado */}
                   <div
                     className={`w-4 h-4 rounded-md border flex items-center justify-center transition-colors shrink-0 ${
                       isCompleted
-                        ? 'bg-[#202588] border-[#202588] text-white'
-                        : 'border-[#d0d7ed] dark:border-[#2b3366] bg-white dark:bg-[#141838] group-hover:border-[#3b43a8]'
+                        ? 'bg-[var(--ink)] border-[var(--ink)] text-white'
+                        : 'border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--surface-raised)] group-hover:border-[var(--ink)]'
                     }`}
                   >
                     {isCompleted && <Check className="w-2.5 h-2.5 stroke-[3]" />}
@@ -109,8 +109,8 @@ export function RecentTasksWidget({ assignments: propAssignments, onToggleTask }
                     <span
                       className={`text-xs font-semibold leading-tight block truncate ${
                         isCompleted
-                          ? 'line-through text-[#8b95c2] dark:text-[#5e699c]'
-                          : 'text-[#0f1330] dark:text-white'
+                          ? 'line-through text-[var(--muted)] dark:text-[var(--muted)]'
+                          : 'text-[var(--ink)]'
                       }`}
                     >
                       {task.title}
@@ -127,8 +127,8 @@ export function RecentTasksWidget({ assignments: propAssignments, onToggleTask }
                 <span
                   className={`text-[10px] font-mono font-bold shrink-0 ml-2 px-2 py-0.5 rounded-full ${
                     isCompleted
-                      ? 'text-[#8b95c2] bg-[#f0f3fa] dark:bg-[#161c40]'
-                      : 'text-[#3b43a8] dark:text-[#8e98ec] bg-[#f0f3ff] dark:bg-[#171c48]'
+                      ? 'text-[var(--muted)] bg-[var(--surface-raised)] dark:bg-[var(--surface-raised)]'
+                      : 'text-[var(--ink)] bg-[var(--surface-raised)] dark:bg-[var(--surface-raised)]'
                   }`}
                 >
                   {dueFormatted}

@@ -748,7 +748,7 @@ export function SmartTimetable({
                                   <div className="space-y-0.5 text-[9px] text-[var(--muted)] font-mono mt-1">
                                     {c.location && (
                                       <div className="flex items-center gap-1 truncate text-[var(--ink-secondary)] font-medium">
-                                        <MapPin className="w-2.5 h-2.5 text-[#7b7bff] shrink-0" />
+                                        <MapPin className="w-2.5 h-2.5 text-[var(--muted)] shrink-0" />
                                         <span className="truncate">{c.location}</span>
                                       </div>
                                     )}
@@ -770,7 +770,7 @@ export function SmartTimetable({
                                     </div>
                                     {c.location && (
                                       <div className="flex items-center gap-1 truncate text-[9px] text-[var(--muted)] mt-0.5">
-                                        <MapPin className="w-2.5 h-2.5 text-[#7b7bff] shrink-0" />
+                                        <MapPin className="w-2.5 h-2.5 text-[var(--muted)] shrink-0" />
                                         <span className="truncate">{c.location}</span>
                                       </div>
                                     )}
@@ -1048,7 +1048,7 @@ export function SmartTimetable({
                           <div className="flex items-center justify-between text-xs text-[var(--muted)] mt-1 font-mono">
                             {c.location && (
                               <div className="flex items-center gap-1.5 text-[var(--ink-secondary)] font-medium">
-                                <MapPin className="w-3.5 h-3.5 text-[#7b7bff]" />
+                                <MapPin className="w-3.5 h-3.5 text-[var(--muted)]" />
                                 <span>{c.location}</span>
                               </div>
                             )}

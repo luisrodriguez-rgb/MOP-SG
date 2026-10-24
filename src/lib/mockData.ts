@@ -86,7 +86,7 @@ export const defaultSubjects: Subject[] = [
     code: 'DOC-CNT',
     professor: 'Ángel',
     credits: 4,
-    color: '#475569',
+    color: '#52525B',
     maxAbsences: 0,
     passingGrade: 3.0,
     currentGrade: 5.0,

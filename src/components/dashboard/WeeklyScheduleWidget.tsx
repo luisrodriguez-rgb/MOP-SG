@@ -185,15 +185,15 @@ export function WeeklyScheduleWidget({
   }, [classes]);
 
   return (
-    <div className="rounded-2xl bg-white dark:bg-[#0f1330] border border-[#e2e6f2] dark:border-[#1c224b] p-5 shadow-xs transition-colors">
+    <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-5 shadow-xs transition-colors">
       {/* Cabecera del Widget con Título y Controles */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pb-3.5 border-b border-[#f0f3fa] dark:border-[#181d42]">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-3.5 border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
-          <h3 className="text-sm font-bold text-[#0f1330] dark:text-white tracking-tight">
+          <Calendar className="w-4 h-4 text-[var(--ink)]" />
+          <h3 className="text-sm font-bold text-[var(--ink)] tracking-tight">
             Horario semanal
           </h3>
-          <span className="text-[10px] font-mono font-bold text-[#626c96] dark:text-[#8b95c2] ml-1 bg-[#f0f3fa] dark:bg-[#141838] px-2 py-0.5 rounded-full border border-[#e2e6f2] dark:border-[#1e2552]">
+          <span className="text-[10px] font-mono font-bold text-[var(--muted)] ml-1 bg-[var(--surface-raised)] dark:bg-[var(--surface-raised)] px-2 py-0.5 rounded-full border border-[var(--border)] dark:border-[var(--border)]">
             {uniqueSubjectsCount} {uniqueSubjectsCount === 1 ? 'materia' : 'materias'} · {classes.length} {classes.length === 1 ? 'bloque' : 'bloques'}
           </span>
         </div>
@@ -210,13 +210,13 @@ export function WeeklyScheduleWidget({
           </button>
 
           {/* Toggle Semana / Día */}
-          <div className="flex items-center p-0.5 rounded-lg bg-[#f0f3fa] dark:bg-[#141838] text-xs font-medium">
+          <div className="flex items-center p-0.5 rounded-lg bg-[var(--surface-raised)] dark:bg-[var(--surface-raised)] text-xs font-medium">
             <button
               onClick={() => setViewMode('Semana')}
               className={`px-2.5 py-0.5 rounded-md transition-all cursor-pointer ${
                 viewMode === 'Semana'
-                  ? 'bg-white dark:bg-[#202758] text-[#0c102a] dark:text-white font-bold shadow-2xs'
-                  : 'text-[#626c96] hover:text-[#0c102a] dark:hover:text-white'
+                  ? 'bg-white dark:bg-[var(--surface-raised)] text-[var(--ink)] dark:text-white font-bold shadow-2xs'
+                  : 'text-[var(--muted)] hover:text-[var(--ink)] dark:hover:text-white'
               }`}
             >
               Semana
@@ -225,8 +225,8 @@ export function WeeklyScheduleWidget({
               onClick={() => setViewMode('Día')}
               className={`px-2.5 py-0.5 rounded-md transition-all cursor-pointer ${
                 viewMode === 'Día'
-                  ? 'bg-white dark:bg-[#202758] text-[#0c102a] dark:text-white font-bold shadow-2xs'
-                  : 'text-[#626c96] hover:text-[#0c102a] dark:hover:text-white'
+                  ? 'bg-white dark:bg-[var(--surface-raised)] text-[var(--ink)] dark:text-white font-bold shadow-2xs'
+                  : 'text-[var(--muted)] hover:text-[var(--ink)] dark:hover:text-white'
               }`}
             >
               Día
@@ -239,8 +239,8 @@ export function WeeklyScheduleWidget({
       <div className="overflow-x-auto mt-3">
         <div className="min-w-[580px]">
           {/* Fila de Días */}
-          <div className="grid grid-cols-[56px_repeat(6,1fr)] border-b border-[#f0f3fa] dark:border-[#181d42] pb-2 text-center text-xs">
-            <div className="text-[10px] font-mono text-[#8b95c2]"></div>
+          <div className="grid grid-cols-[56px_repeat(6,1fr)] border-b border-[var(--border)] pb-2 text-center text-xs">
+            <div className="text-[10px] font-mono text-[var(--muted)]"></div>
             {WEEK_DAYS.map((d) => {
               const isToday = d.dayNum === activeDay;
               return (
@@ -249,8 +249,8 @@ export function WeeklyScheduleWidget({
                     onClick={() => setActiveDay(d.dayNum)}
                     className={`py-1 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       isToday
-                        ? 'bg-[#0c102a] dark:bg-[#252ab8] text-white shadow-xs'
-                        : 'text-[#505a88] dark:text-[#a0a8d6] hover:bg-[#f0f3fa] dark:hover:bg-[#141838]'
+                        ? 'bg-[var(--surface)] dark:bg-[var(--ink)] text-white shadow-xs'
+                        : 'text-[var(--muted)] dark:text-[var(--muted)] hover:bg-[var(--surface-raised)] dark:hover:bg-[var(--surface-raised)]'
                     }`}
                   >
                     <span>{d.name} </span>
@@ -262,9 +262,9 @@ export function WeeklyScheduleWidget({
           </div>
 
           {/* Cuerpo del Timetable con las horas y los bloques */}
-          <div className="relative grid grid-cols-[56px_repeat(6,1fr)] h-[460px] bg-white dark:bg-[#0f1330] mt-1">
+          <div className="relative grid grid-cols-[56px_repeat(6,1fr)] h-[460px] bg-white dark:bg-[var(--surface)] mt-1">
             {/* Eje de Horas en el borde izquierdo */}
-            <div className="flex flex-col justify-between py-1 text-[10px] font-mono text-[#8b95c2] border-r border-[#f0f3fa] dark:border-[#181d42] select-none pr-2 text-right">
+            <div className="flex flex-col justify-between py-1 text-[10px] font-mono text-[var(--muted)] border-r border-[var(--border)] select-none pr-2 text-right">
               {HOURS.map((h, i) => (
                 <span key={i} className="leading-none whitespace-nowrap">
                   {h}
@@ -312,13 +312,13 @@ export function WeeklyScheduleWidget({
               return (
                 <div
                   key={d.dayNum}
-                  className="relative border-r border-[#f0f3fa] dark:border-[#181d42] last:border-r-0"
+                  className="relative border-r border-[var(--border)] last:border-r-0"
                 >
                   {/* Líneas horizontales de guía */}
                   {HOURS.map((_, i) => (
                     <div
                       key={i}
-                      className="absolute inset-x-0 border-b border-[#f0f3fa]/80 dark:border-[#181d42]/60 pointer-events-none"
+                      className="absolute inset-x-0 border-b border-[var(--border)] pointer-events-none"
                       style={{ top: `${(i / (HOURS.length - 1)) * 100}%` }}
                     />
                   ))}

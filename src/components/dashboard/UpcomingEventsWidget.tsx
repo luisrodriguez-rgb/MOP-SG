@@ -22,21 +22,21 @@ export function UpcomingEventsWidget({ exams: propExams }: UpcomingEventsWidgetP
     .slice(0, 4);
 
   return (
-    <div className="rounded-2xl bg-white dark:bg-[#0f1330] border border-[#e2e6f2] dark:border-[#1c224b] p-5 shadow-xs transition-colors">
+    <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-5 shadow-xs transition-colors">
       {/* Cabecera */}
-      <div className="flex items-center justify-between pb-3.5 border-b border-[#f0f3fa] dark:border-[#181d42]">
+      <div className="flex items-center justify-between pb-3.5 border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
-          <h3 className="text-sm font-bold text-[#0f1330] dark:text-white tracking-tight">
+          <Calendar className="w-4 h-4 text-[var(--ink)]" />
+          <h3 className="text-sm font-bold text-[var(--ink)] tracking-tight">
             Próximos hitos
           </h3>
-          <span className="text-[10px] font-mono font-bold text-[#626c96] dark:text-[#8b95c2] ml-1 bg-[#f0f3fa] dark:bg-[#141838] px-2 py-0.5 rounded-full border border-[#e2e6f2] dark:border-[#1e2552]">
+          <span className="text-[10px] font-mono font-bold text-[var(--muted)] ml-1 bg-[var(--surface-raised)] dark:bg-[var(--surface-raised)] px-2 py-0.5 rounded-full border border-[var(--border)] dark:border-[var(--border)]">
             {examsList.length} {examsList.length === 1 ? 'hito' : 'hitos'}
           </span>
         </div>
         <Link
           href="/exams"
-          className="text-xs font-semibold text-[#3b43a8] dark:text-[#8e98ec] hover:underline flex items-center gap-0.5"
+          className="text-xs font-semibold text-[var(--ink)] hover:underline flex items-center gap-0.5"
         >
           <span>Ver todos</span>
           <ArrowRight className="w-3 h-3" />
@@ -47,12 +47,12 @@ export function UpcomingEventsWidget({ exams: propExams }: UpcomingEventsWidgetP
       <div className="mt-3.5 space-y-2.5">
         {sortedExams.length === 0 ? (
           <div className="text-center py-5">
-            <p className="text-xs text-[#626c96] dark:text-[#8b95c2]">
+            <p className="text-xs text-[var(--muted)]">
               No tienes hitos programados aún.
             </p>
             <button
               onClick={openAddExam}
-              className="mt-2 text-xs font-bold text-[#3b43a8] dark:text-[#8e98ec] hover:underline inline-flex items-center gap-1 cursor-pointer"
+              className="mt-2 text-xs font-bold text-[var(--ink)] hover:underline inline-flex items-center gap-1 cursor-pointer"
             >
               <Plus className="w-3 h-3" />
               <span>Añadir primer hito</span>
@@ -73,14 +73,14 @@ export function UpcomingEventsWidget({ exams: propExams }: UpcomingEventsWidgetP
             return (
               <div
                 key={exam.id}
-                className="flex items-center gap-3 p-2 rounded-xl hover:bg-[#f8faff] dark:hover:bg-[#141838] transition-colors group cursor-default"
+                className="flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--surface-raised)] dark:hover:bg-[var(--surface-raised)] transition-colors group cursor-default"
               >
                 {/* Cuadro de Fecha Tipo Calendario */}
-                <div className="w-10 h-11 rounded-xl bg-[#f0f3fa] dark:bg-[#161c42] border border-[#e2e6f2] dark:border-[#22295a] flex flex-col items-center justify-center shrink-0">
-                  <span className="text-[9px] font-mono font-bold text-[#626c96] dark:text-[#8894c7] leading-none uppercase">
+                <div className="w-10 h-11 rounded-xl bg-[var(--surface-raised)] dark:bg-[var(--surface-raised)] border border-[var(--border)] dark:border-[var(--border)] flex flex-col items-center justify-center shrink-0">
+                  <span className="text-[9px] font-mono font-bold text-[var(--muted)] dark:text-[var(--muted)] leading-none uppercase">
                     {month}
                   </span>
-                  <span className="text-sm font-black text-[#0f1330] dark:text-white leading-tight font-mono mt-0.5">
+                  <span className="text-sm font-black text-[var(--ink)] leading-tight font-mono mt-0.5">
                     {day}
                   </span>
                 </div>
@@ -88,14 +88,14 @@ export function UpcomingEventsWidget({ exams: propExams }: UpcomingEventsWidgetP
                 {/* Detalles */}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-1.5">
-                    <span className="text-xs font-bold text-[#0f1330] dark:text-white truncate">
+                    <span className="text-xs font-bold text-[var(--ink)] truncate">
                       {exam.title}
                     </span>
                     <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-full border bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20 shrink-0">
                       {exam.weight}%
                     </span>
                   </div>
-                  <div className="text-[10px] text-[#626c96] dark:text-[#8b95c2] truncate mt-0.5">
+                  <div className="text-[10px] text-[var(--muted)] truncate mt-0.5">
                     {sub?.name || 'Área'} {timeStr ? `· ${timeStr}` : ''} {exam.location ? `· ${exam.location}` : ''}
                   </div>
                 </div>

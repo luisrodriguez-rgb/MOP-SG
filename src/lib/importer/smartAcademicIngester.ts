@@ -39,10 +39,10 @@ export interface ParsedAcademicData {
 
 const PALETTE = [
   '#3F3F46', // Neutral grafito
-  '#0284c7', // Celeste cielo
+  '#52525B', // Neutral medio
   '#0d9488', // Verde azulado / Teal
   '#16a34a', // Verde esmeralda
-  '#7c3aed', // Púrpura intenso
+  '#71717A', // Neutral pizarra
   '#db2777', // Magenta rosa
   '#d97706', // Ámbar dorado
   '#ea580c', // Naranja fuego

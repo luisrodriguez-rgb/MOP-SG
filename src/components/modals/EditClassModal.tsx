@@ -23,7 +23,7 @@ export function EditClassModal() {
   const [subjectCode, setSubjectCode] = useState('');
   const [subjectNrc, setSubjectNrc] = useState('');
   const [subjectProfessor, setSubjectProfessor] = useState('');
-  const [subjectColor, setSubjectColor] = useState('#111729');
+  const [subjectColor, setSubjectColor] = useState('#18181B');
   const [subjectMaxAbsences, setSubjectMaxAbsences] = useState(4);
 
   useEffect(() => {
@@ -41,14 +41,14 @@ export function EditClassModal() {
         setSubjectCode(sub.code || '');
         setSubjectNrc(sub.nrc || '');
         setSubjectProfessor(sub.professor || '');
-        setSubjectColor(sub.color || '#111729');
+        setSubjectColor(sub.color || '#18181B');
         setSubjectMaxAbsences(sub.maxAbsences ?? 4);
       } else {
         setSubjectName('');
         setSubjectCode('');
         setSubjectNrc('');
         setSubjectProfessor('');
-        setSubjectColor('#111729');
+        setSubjectColor('#18181B');
         setSubjectMaxAbsences(4);
       }
     } else {
@@ -72,7 +72,7 @@ export function EditClassModal() {
         setSubjectCode('');
         setSubjectNrc('');
         setSubjectProfessor('');
-        setSubjectColor('#111729');
+        setSubjectColor('#18181B');
         setSubjectMaxAbsences(4);
       }
     }
@@ -166,16 +166,16 @@ export function EditClassModal() {
   ];
 
   const colorPalette = [
-    '#111729',
-    '#7c3aed',
+    '#18181B',
+    '#71717A',
     '#059669',
     '#d97706',
     '#dc2626',
-    '#0284c7',
+    '#52525B',
     '#3F3F46',
     '#e11d48',
     '#0891b2',
-    '#475569',
+    '#3F3F46',
   ];
 
   return (
