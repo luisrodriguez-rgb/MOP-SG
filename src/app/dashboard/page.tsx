@@ -50,7 +50,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-5 animate-in fade-in duration-200">
+    <div className="space-y-5 pb-28 md:pb-5 animate-in fade-in duration-200">
       {/* ═════════════════════════════════════════════════════════════
           BUZÓN EJECUTIVO DE CAPTURA RÁPIDA (CONVERSACIONAL)
          ═════════════════════════════════════════════════════════════ */}

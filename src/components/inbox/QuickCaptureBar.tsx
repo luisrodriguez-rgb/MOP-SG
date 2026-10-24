@@ -81,27 +81,26 @@ export function QuickCaptureBar({
       const inferredTitle = extracted?.title || text;
       const inferredMinutes = inferTaskMinutes(inferredTitle, extracted?.estimatedMinutes);
 
-      // Inferencia dinámica de responsable basada en la tabla members (sin nombres hardcodeados)
-      const textLower = text.toLowerCase();
+      // Inferencia dinámica de responsable comparando contra la tabla members (sin tildes y en minúsculas)
+      const stripAccents = (str: string) =>
+        str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+      const normalizedText = stripAccents(text);
       let matchedAssigneeId = '';
+
       for (const m of members) {
-        if (textLower.includes(m.name.toLowerCase())) {
+        const normalizedMemberName = stripAccents(m.name);
+        const nameTokens = normalizedMemberName.split(/\s+/).filter((t) => t.length >= 3);
+        const matchesName =
+          normalizedText.includes(normalizedMemberName) ||
+          nameTokens.some((tok) => {
+            const regex = new RegExp(`\\b${tok}\\b`, 'i');
+            return regex.test(normalizedText);
+          });
+
+        if (matchesName) {
           matchedAssigneeId = m.id;
           break;
-        }
-      }
-
-      // Si no se menciona por nombre, inferir por especialidad o rol
-      if (!matchedAssigneeId) {
-        if (textLower.includes('video') || textLower.includes('marketing') || textLower.includes('diseño') || textLower.includes('guion')) {
-          const leon = members.find((m) => m.name.toLowerCase().includes('leon'));
-          if (leon) matchedAssigneeId = leon.id;
-        } else if (textLower.includes('dev') || textLower.includes('soporte') || textLower.includes('codigo') || textLower.includes('app') || textLower.includes('bug')) {
-          const dani = members.find((m) => m.name.toLowerCase().includes('dani'));
-          if (dani) matchedAssigneeId = dani.id;
-        } else if (textLower.includes('clase') || textLower.includes('docencia') || textLower.includes('simulacro') || textLower.includes('icfes') || textLower.includes('pedagog')) {
-          const angel = members.find((m) => m.name.toLowerCase().includes('angel') || m.name.toLowerCase().includes('ángel'));
-          if (angel) matchedAssigneeId = angel.id;
         }
       }
 
@@ -169,46 +168,21 @@ export function QuickCaptureBar({
   };
 
   return (
-    <div className="w-full">
-      {/* Barra de Conversación / Captura Rápida */}
-      <form
-        onSubmit={handleCapture}
-        className="relative flex items-center bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-xs transition-all focus-within:border-[#0A0A0A] dark:focus-within:border-[#F4F4F5] focus-within:ring-2 focus-within:ring-[#0A0A0A]/5 p-1.5"
-      >
-        <div className="pl-3 pr-2 text-[var(--muted)] shrink-0">
-          <Sparkles className="w-4 h-4 text-[#BB271A]" />
+    <div className="w-full md:relative fixed bottom-0 left-0 right-0 z-40 bg-[var(--surface)] md:bg-transparent backdrop-blur-md md:backdrop-blur-none border-t md:border-t-0 border-[var(--border)] p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:p-0 shadow-lg md:shadow-none transition-all">
+      {/* Toast confirmación */}
+      {justSaved && (
+        <div className="mb-2 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-center gap-2 animate-in fade-in duration-150">
+          <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          <span>¡Entregable guardado y programado con éxito!</span>
         </div>
-
-        <input
-          type="text"
-          value={rawText}
-          onChange={(e) => setRawText(e.target.value)}
-          placeholder="¿Qué salió hoy? Pega lo del WhatsApp o escribe un entregable..."
-          className="w-full bg-transparent border-none text-xs sm:text-sm text-[var(--ink)] placeholder:text-[var(--muted)] outline-none py-2 px-1 font-sans"
-        />
-
-        <button
-          type="submit"
-          disabled={!rawText.trim() || isProcessing}
-          className="px-3.5 py-2 rounded-xl bg-[#0A0A0A] hover:bg-[#1A1A1A] text-white dark:bg-[#F4F4F5] dark:text-[#0A0A0A] dark:hover:bg-[#E4E4E7] text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0 flex items-center gap-1.5 cursor-pointer"
-        >
-          {isProcessing ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <>
-              <Send className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Capturar</span>
-            </>
-          )}
-        </button>
-      </form>
+      )}
 
       {/* Tarjeta de Confirmación Antes de Guardar (Sin sorpresas) */}
       {draft && (
-        <div className="mt-3 p-4 sm:p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-md animate-in fade-in duration-150 space-y-4">
+        <div className="mb-3 max-h-[75vh] overflow-y-auto p-4 sm:p-5 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] shadow-xl animate-in fade-in duration-150 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#BB271A]" />
+              <span className="w-2 h-2 rounded-full bg-[var(--ink)]" />
               <span className="text-xs font-mono font-bold tracking-wider uppercase text-[var(--ink)]">
                 Confirmar antes de registrar
               </span>
@@ -230,7 +204,7 @@ export function QuickCaptureBar({
               type="text"
               value={draft.title}
               onChange={(e) => setDraft({ ...draft, title: e.target.value })}
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg)] px-3.5 py-2 text-xs font-bold text-[var(--ink)] outline-none focus:border-[#0A0A0A] transition-all"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg)] px-3.5 py-2 text-xs font-bold text-[var(--ink)] outline-none focus:border-[#0A0A0A] dark:focus:border-[#F4F4F5] transition-all"
             />
           </div>
 
@@ -331,13 +305,38 @@ export function QuickCaptureBar({
         </div>
       )}
 
-      {/* Toast confirmación */}
-      {justSaved && (
-        <div className="mt-2 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-center gap-2 animate-in fade-in duration-150">
-          <Check className="w-4 h-4" />
-          <span>¡Entregable guardado y programado con éxito!</span>
+      {/* Barra de Entrada / Captura Rápida */}
+      <form
+        onSubmit={handleCapture}
+        className="relative flex items-center bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-xs transition-all focus-within:border-[#0A0A0A] dark:focus-within:border-[#F4F4F5] focus-within:ring-2 focus-within:ring-[#0A0A0A]/5 p-1.5"
+      >
+        <div className="pl-3 pr-2 text-[var(--muted)] shrink-0">
+          <Sparkles className="w-4 h-4 text-[var(--ink)]" />
         </div>
-      )}
+
+        <input
+          type="text"
+          value={rawText}
+          onChange={(e) => setRawText(e.target.value)}
+          placeholder="¿Qué salió hoy? Pega lo del WhatsApp o escribe un entregable..."
+          className="w-full bg-transparent border-none text-xs sm:text-sm text-[var(--ink)] placeholder:text-[var(--muted)] outline-none py-2 px-1 font-sans"
+        />
+
+        <button
+          type="submit"
+          disabled={!rawText.trim() || isProcessing}
+          className="px-3.5 py-2 rounded-xl bg-[#0A0A0A] hover:bg-[#1A1A1A] text-white dark:bg-[#F4F4F5] dark:text-[#0A0A0A] dark:hover:bg-[#E4E4E7] text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0 flex items-center gap-1.5 cursor-pointer"
+        >
+          {isProcessing ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <>
+              <Send className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Capturar</span>
+            </>
+          )}
+        </button>
+      </form>
     </div>
   );
 }
