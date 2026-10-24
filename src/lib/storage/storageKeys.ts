@@ -14,4 +14,5 @@ export const STORAGE_KEYS = {
   ACTIVE_USER_ID: `${STORAGE_PREFIX}active_user_id`,
   DECISION_EVENTS: `${STORAGE_PREFIX}decision_events_v1`,
   THEME: `${STORAGE_PREFIX}theme`,
+  CALENDAR_FEEDS: `${STORAGE_PREFIX}calendar_feeds`,
 } as const;

@@ -26,7 +26,13 @@ import {
   Save,
   KeyRound,
   Users,
+  Calendar,
+  Trash2,
+  Lock,
+  Link2,
 } from 'lucide-react';
+import { CalendarFeedConfig, CalendarFeedType } from '@/types';
+import { calendarFeedService } from '@/lib/calendar/calendarFeedService';
 
 interface ProfileModalProps {
   onProfileUpdated?: () => void;
@@ -34,7 +40,7 @@ interface ProfileModalProps {
 
 export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
   const { isProfileOpen, closeProfile, openWhoAreYou } = useUIStore();
-  const [activeTab, setActiveTab] = useState<'profile' | 'cloud'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'calendars' | 'cloud'>('profile');
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -43,6 +49,16 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
   const [role, setRole] = useState('');
   const [email, setEmail] = useState('');
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // Estados de Calendarios iCal
+  const [feeds, setFeeds] = useState<CalendarFeedConfig[]>([]);
+  const [newFeedName, setNewFeedName] = useState('');
+  const [newFeedUrl, setNewFeedUrl] = useState('');
+  const [newFeedType, setNewFeedType] = useState<CalendarFeedType>('fixed_blocks');
+  const [isAddingFeed, setIsAddingFeed] = useState(false);
+  const [syncingFeedId, setSyncingFeedId] = useState<string | null>(null);
+  const [isSyncingAll, setIsSyncingAll] = useState(false);
+  const [calendarStatusMsg, setCalendarStatusMsg] = useState<{ text: string; isError?: boolean } | null>(null);
 
   // Supabase Cloud states
   const [isCloudConfigured, setIsCloudConfigured] = useState(false);
@@ -64,11 +80,14 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
     const matched = allMembers.find(
       (m) => m.name.toLowerCase() === (current.name || '').toLowerCase()
     );
+    let activeId = '';
     if (matched) {
+      activeId = matched.id;
       setSelectedMemberId(matched.id);
       setName(current.name || matched.name);
       setRole(matched.role);
     } else if (allMembers.length > 0) {
+      activeId = allMembers[0].id;
       setSelectedMemberId(allMembers[0].id);
       setName(current.name || allMembers[0].name);
       setRole(allMembers[0].role);
@@ -77,6 +96,10 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
       setRole('Operaciones SG');
     }
     setEmail(current.email || '');
+
+    if (activeId) {
+      setFeeds(calendarFeedService.getFeedsByMember(activeId));
+    }
   }, []);
 
   const checkCloudState = useCallback(async () => {
@@ -106,6 +129,101 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
     if (m) {
       setName(m.name);
       setRole(m.role);
+    }
+    setFeeds(calendarFeedService.getFeedsByMember(memberId));
+  };
+
+  // Handlers para Calendarios iCal
+  const handleAddFeed = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newFeedName.trim() || !newFeedUrl.trim()) {
+      setCalendarStatusMsg({ text: 'Por favor ingresa nombre y URL secreta iCal.', isError: true });
+      return;
+    }
+
+    if (!selectedMemberId) {
+      setCalendarStatusMsg({ text: 'Selecciona primero el socio responsable.', isError: true });
+      return;
+    }
+
+    setIsAddingFeed(true);
+    setCalendarStatusMsg(null);
+
+    const feed: CalendarFeedConfig = {
+      id: `feed_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      memberId: selectedMemberId,
+      name: newFeedName.trim(),
+      url: newFeedUrl.trim(),
+      type: newFeedType,
+    };
+
+    calendarFeedService.saveFeed(feed);
+    const syncRes = await calendarFeedService.syncFeed(feed);
+
+    if (syncRes.success) {
+      setCalendarStatusMsg({
+        text: `¡Calendario "${feed.name}" agregado y sincronizado (${syncRes.eventCount} eventos)!`,
+      });
+      setNewFeedName('');
+      setNewFeedUrl('');
+      setNewFeedType('fixed_blocks');
+    } else {
+      setCalendarStatusMsg({
+        text: `Calendario guardado localmente, pero ocurrió un aviso de red: ${syncRes.error}`,
+        isError: true,
+      });
+    }
+
+    setFeeds(calendarFeedService.getFeedsByMember(selectedMemberId));
+    setIsAddingFeed(false);
+    onProfileUpdated?.();
+  };
+
+  const handleSyncFeed = async (feed: CalendarFeedConfig) => {
+    setSyncingFeedId(feed.id);
+    setCalendarStatusMsg(null);
+    const res = await calendarFeedService.syncFeed(feed);
+    if (res.success) {
+      setCalendarStatusMsg({
+        text: `"${feed.name}" sincronizado con éxito (${res.eventCount} eventos).`,
+      });
+    } else {
+      setCalendarStatusMsg({
+        text: `Error al sincronizar "${feed.name}": ${res.error}`,
+        isError: true,
+      });
+    }
+    setFeeds(calendarFeedService.getFeedsByMember(selectedMemberId));
+    setSyncingFeedId(null);
+    onProfileUpdated?.();
+  };
+
+  const handleSyncAllFeeds = async () => {
+    if (!selectedMemberId) return;
+    setIsSyncingAll(true);
+    setCalendarStatusMsg(null);
+    const { totalEvents, errors } = await calendarFeedService.syncAllFeedsForMember(selectedMemberId);
+    if (errors.length === 0) {
+      setCalendarStatusMsg({
+        text: `¡Todos los calendarios sincronizados (${totalEvents} eventos procesados)!`,
+      });
+    } else {
+      setCalendarStatusMsg({
+        text: `Sincronizados ${totalEvents} eventos. Hubo errores: ${errors.join('; ')}`,
+        isError: true,
+      });
+    }
+    setFeeds(calendarFeedService.getFeedsByMember(selectedMemberId));
+    setIsSyncingAll(false);
+    onProfileUpdated?.();
+  };
+
+  const handleDeleteFeed = async (feedId: string, feedName: string) => {
+    if (confirm(`¿Eliminar el calendario "${feedName}"? Se purgarán sus bloques importados del horario local.`)) {
+      await calendarFeedService.deleteFeed(feedId);
+      setFeeds(calendarFeedService.getFeedsByMember(selectedMemberId));
+      setCalendarStatusMsg({ text: `Calendario "${feedName}" y sus bloques fueron removidos.` });
+      onProfileUpdated?.();
     }
   };
 
@@ -279,6 +397,23 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
           </button>
 
           <button
+            onClick={() => setActiveTab('calendars')}
+            className={`py-2.5 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
+              activeTab === 'calendars'
+                ? 'border-[var(--ink)] text-[var(--ink)]'
+                : 'border-transparent text-[var(--muted)] hover:text-[var(--ink)]'
+            }`}
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Calendarios iCal</span>
+            {feeds.length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-[var(--surface-hover)] text-[var(--ink)] font-mono font-bold">
+                {feeds.length}
+              </span>
+            )}
+          </button>
+
+          <button
             onClick={() => setActiveTab('cloud')}
             className={`py-2.5 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === 'cloud'
@@ -438,7 +573,232 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
             </form>
           )}
 
-          {/* TAB 2: NUBE Y AUTENTICACIÓN SUPABASE */}
+          {/* TAB 2: CALENDARIOS ICAL POR SOCIO */}
+          {activeTab === 'calendars' && (
+            <div className="space-y-5">
+              {/* Tarjeta de Encabezado de Calendarios del Socio */}
+              <div className="p-4 rounded-2xl bg-[var(--paper)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center font-bold shadow-sm">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-[var(--ink)]">
+                      Horarios de Google Calendar · {name || 'Socio SG'}
+                    </h3>
+                    <p className="text-xs text-[var(--muted)]">
+                      Sincroniza tu horario universitario o turnos para proteger tus huecos libres.
+                    </p>
+                  </div>
+                </div>
+
+                {feeds.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleSyncAllFeeds}
+                    disabled={isSyncingAll}
+                    className="self-start sm:self-auto px-3.5 py-2 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--ink)] text-xs font-bold transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isSyncingAll ? 'animate-spin' : ''}`} />
+                    <span>{isSyncingAll ? 'Actualizando...' : 'Actualizar todo'}</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Banner de Privacidad */}
+              <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
+                <Lock className="w-4 h-4 shrink-0 mt-0.5" />
+                <div className="space-y-0.5">
+                  <span className="font-bold block">Privacidad y seguridad del calendario:</span>
+                  <p className="text-[11px] leading-relaxed">
+                    Las direcciones secretas de iCal se guardan exclusivamente en el almacenamiento local de este navegador (localStorage). Nunca se guardan en el código ni se suben a Supabase.
+                  </p>
+                </div>
+              </div>
+
+              {/* Mensajes de feedback */}
+              {calendarStatusMsg && (
+                <div
+                  className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
+                    calendarStatusMsg.isError
+                      ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
+                      : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                  }`}
+                >
+                  {calendarStatusMsg.isError ? (
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                  ) : (
+                    <Check className="w-4 h-4 shrink-0" />
+                  )}
+                  <span>{calendarStatusMsg.text}</span>
+                </div>
+              )}
+
+              {/* Formulario para agregar calendario */}
+              <form onSubmit={handleAddFeed} className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] space-y-4">
+                <div className="flex items-center gap-2">
+                  <Link2 className="w-4 h-4 text-[var(--ink)]" />
+                  <h4 className="text-xs font-black uppercase tracking-wider text-[var(--ink)]">
+                    Vincular nuevo calendario iCal (.ics)
+                  </h4>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="space-y-1.5 sm:col-span-1">
+                    <label className="font-bold text-[var(--ink)]">Nombre del calendario</label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Clases Universidad, Turnos Monitoría..."
+                      value={newFeedName}
+                      onChange={(e) => setNewFeedName(e.target.value)}
+                      className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3 py-2 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-1">
+                    <label className="font-bold text-[var(--ink)]">Tipo de integración</label>
+                    <select
+                      value={newFeedType}
+                      onChange={(e) => setNewFeedType(e.target.value as CalendarFeedType)}
+                      className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3 py-2 text-xs text-[var(--ink)] font-bold focus:outline-none focus:border-[var(--ink)] transition-colors cursor-pointer"
+                    >
+                      <option value="fixed_blocks">Bloques fijos (clases, monitorías, turnos)</option>
+                      <option value="sg_meetings">Reuniones SG (Área Admin & Incubadora)</option>
+                      <option value="ignore">Ignorar (no importar eventos)</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="font-bold text-[var(--ink)] flex items-center justify-between">
+                      <span>Dirección secreta en formato iCal</span>
+                      <span className="text-[10px] text-[var(--muted)] font-normal">Termina en .ics o empieza con webcal://</span>
+                    </label>
+                    <input
+                      type="url"
+                      placeholder="https://calendar.google.com/calendar/ical/.../basic.ics"
+                      value={newFeedUrl}
+                      onChange={(e) => setNewFeedUrl(e.target.value)}
+                      className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3 py-2 text-xs font-mono text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-1">
+                  <button
+                    type="submit"
+                    disabled={isAddingFeed || !newFeedName.trim() || !newFeedUrl.trim()}
+                    className="px-4 py-2 rounded-xl bg-[var(--ink)] text-[var(--paper)] text-xs font-bold transition-transform active:scale-95 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {isAddingFeed ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Sincronizando...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Vincular y Sincronizar</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+
+              {/* Lista de Calendarios Vinculados */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-black uppercase tracking-wider text-[var(--ink)]">
+                  Calendarios configurados ({feeds.length})
+                </h4>
+
+                {feeds.length === 0 ? (
+                  <div className="p-6 rounded-2xl bg-[var(--paper)] border border-dashed border-[var(--border)] text-center space-y-2">
+                    <Calendar className="w-8 h-8 text-[var(--muted)] mx-auto opacity-40" />
+                    <p className="text-xs font-bold text-[var(--ink)]">No tienes calendarios vinculados aún</p>
+                    <p className="text-[11px] text-[var(--muted)] max-w-md mx-auto leading-relaxed">
+                      En Google Calendar, ve a Configuración de tu calendario &gt; &quot;Integrar el calendario&quot; y copia la &quot;Dirección secreta en formato iCal&quot;. Pégala arriba para importar tus clases y turnos.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {feeds.map((feed) => {
+                      const isSyncing = syncingFeedId === feed.id;
+                      const typeLabel =
+                        feed.type === 'fixed_blocks'
+                          ? 'Bloques fijos'
+                          : feed.type === 'sg_meetings'
+                          ? 'Reuniones SG'
+                          : 'Ignorar';
+
+                      const typeColor =
+                        feed.type === 'fixed_blocks'
+                          ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
+                          : feed.type === 'sg_meetings'
+                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                          : 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/20';
+
+                      return (
+                        <div
+                          key={feed.id}
+                          className="p-3.5 rounded-2xl bg-[var(--paper)] border border-[var(--border)] flex items-center justify-between gap-3 transition-colors hover:border-[var(--ink)]/40"
+                        >
+                          <div className="space-y-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-xs text-[var(--ink)] truncate">
+                                {feed.name}
+                              </span>
+                              <span
+                                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${typeColor}`}
+                              >
+                                {typeLabel}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-3 text-[11px] text-[var(--muted)]">
+                              <span>
+                                {typeof feed.eventCount === 'number'
+                                  ? `${feed.eventCount} eventos`
+                                  : 'Sin sincronizar'}
+                              </span>
+                              {feed.lastSyncedAt && (
+                                <>
+                                  <span>·</span>
+                                  <span>
+                                    Última sincr: {new Date(feed.lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => handleSyncFeed(feed)}
+                              disabled={isSyncing || isSyncingAll}
+                              title="Volver a sincronizar este calendario"
+                              className="p-2 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--ink)] transition-colors cursor-pointer disabled:opacity-50"
+                            >
+                              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteFeed(feed.id, feed.name)}
+                              title="Eliminar calendario y sus eventos"
+                              className="p-2 rounded-xl bg-[var(--surface)] hover:bg-rose-500/10 hover:text-rose-600 border border-[var(--border)] text-[var(--muted)] transition-colors cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: NUBE Y AUTENTICACIÓN SUPABASE */}
           {activeTab === 'cloud' && (
             <div className="space-y-5">
               <div className="p-4 rounded-2xl bg-[var(--paper)] border border-[var(--border)] flex items-center justify-between">

@@ -169,13 +169,20 @@ export function useSemesterData() {
     return acc;
   }, {});
 
+  // Filtrado de bloques por socio activo: el horario de Leon solo afecta los huecos de Leon
+  const activeMemberId = profile?.id || (typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.ACTIVE_USER_ID) : null);
+
+  const activeScheduleBlocks = scheduleBlocks.filter((b) => !b.memberId || b.memberId === activeMemberId);
+
   return {
     profile,
+    activeMemberId,
     semester,
     allSemesters,
     subjects,
     subjectsMap,
     scheduleBlocks,
+    activeScheduleBlocks,
     assignments,
     exams,
     attendance,

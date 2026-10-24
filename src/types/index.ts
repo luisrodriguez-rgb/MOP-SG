@@ -68,6 +68,20 @@ export interface ScheduleBlock extends Partial<ImportedEventMetadata> {
   startTime: string; // "08:00" formato 24h
   endTime: string;   // "10:00" formato 24h
   location?: string; // Salón / Aula
+  memberId?: string; // Socio asignado (Leon, Dani, Ángel)
+  title?: string;    // Nombre descriptivo del bloque (ej. "Clase de Robótica", "Turno Monitoría")
+}
+
+export type CalendarFeedType = 'fixed_blocks' | 'sg_meetings' | 'ignore';
+
+export interface CalendarFeedConfig {
+  id: string;
+  memberId: string;
+  name: string;
+  url: string;
+  type: CalendarFeedType;
+  lastSyncedAt?: string;
+  eventCount?: number;
 }
 
 export type EventType = 'class' | 'study' | 'assignment' | 'exam' | 'personal' | 'routine';

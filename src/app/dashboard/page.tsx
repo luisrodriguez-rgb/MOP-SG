@@ -15,7 +15,7 @@ export default function DashboardPage() {
   const {
     subjects,
     subjectsMap,
-    scheduleBlocks,
+    activeScheduleBlocks,
     assignments,
     exams,
     routines,
@@ -57,7 +57,7 @@ export default function DashboardPage() {
           (UNA SOLA RESPUESTA · ÚNICO BOTÓN ROJO "EMPEZAR")
          ═════════════════════════════════════════════════════════════ */}
       <DecisionHeroCard
-        classes={scheduleBlocks}
+        classes={activeScheduleBlocks}
         subjectsMap={subjectsMap}
         routines={routines}
         assignments={assignments}
@@ -71,7 +71,7 @@ export default function DashboardPage() {
         {/* Columna 1: Horario semanal interactivo con bloques y huecos libres */}
         <div className="lg:col-span-6">
           <WeeklyScheduleWidget
-            classes={scheduleBlocks}
+            classes={activeScheduleBlocks}
             subjectsMap={subjectsMap}
             routines={routines}
           />

@@ -106,8 +106,8 @@ export function WeeklyScheduleWidget({
       result.push({
         id: `class-${c.id}`,
         type: 'class',
-        title: sub?.name || 'Bloque fijo',
-        subtitle: `${c.location || 'Campus'} · ${sub?.code || ''}`,
+        title: c.title || sub?.name || 'Bloque fijo',
+        subtitle: `${c.location || 'Presencial'}${sub?.code ? ` · ${sub.code}` : ''}`,
         day: c.dayOfWeek,
         startHourFraction: startOffset,
         durationHours: duration,
