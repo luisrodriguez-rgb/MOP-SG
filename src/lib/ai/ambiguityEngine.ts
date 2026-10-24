@@ -92,5 +92,20 @@ export function detectDateAmbiguities(text: string, baseDate: Date = new Date())
     return { resolvedDate: dateStr, ambiguities };
   }
 
+  // Caso día de la semana: "para el jueves", "el martes", "martes", "este viernes"
+  const dayOfWeekMatch = norm.match(/(?:para\s+el|para|el|este)?\s*\b(lunes|martes|miercoles|jueves|viernes|sabado|domingo)\b/);
+  if (dayOfWeekMatch && !otroDayMatch) {
+    const dayName = dayOfWeekMatch[1];
+    const targetDayIndex = DAY_NAMES.indexOf(dayName);
+    const currentDay = baseDate.getDay();
+    let daysUntilNext = (targetDayIndex - currentDay + 7) % 7;
+    const d = new Date(baseDate);
+    d.setDate(d.getDate() + daysUntilNext);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return { resolvedDate: `${year}-${month}-${day}`, ambiguities };
+  }
+
   return { ambiguities };
 }

@@ -5,7 +5,7 @@ import { SubjectContext } from '@/lib/ai/preprocessor';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { rawText, enrolledSubjects = [], baseDate } = body;
+    const { rawText, enrolledSubjects = [], members = [], baseDate } = body;
 
     if (!rawText || typeof rawText !== 'string' || !rawText.trim()) {
       return NextResponse.json(
@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
     const result = await provider.extractInboxItems({
       rawText: rawText.trim(),
       enrolledSubjects: enrolledSubjects as SubjectContext[],
+      members,
       baseDate: baseDate ? new Date(baseDate) : new Date(),
     });
 

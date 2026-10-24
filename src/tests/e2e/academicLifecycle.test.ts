@@ -149,7 +149,7 @@ END:VCALENDAR`;
   const assignments: Assignment[] = [];
 
   for (const item of inboxItems) {
-    if (item.type === 'exam') {
+    if (item.type === 'exam' || item.type === 'hito') {
       exams.push({
         id: 'exam-1',
         subjectId: item.matchedSubjectId || Object.keys(subjectsMap)[0],
@@ -158,7 +158,7 @@ END:VCALENDAR`;
         weight: item.weight || 20,
         source: 'ai_inbox',
       });
-    } else if (item.type === 'assignment') {
+    } else if (item.type === 'assignment' || item.type === 'entregable') {
       assignments.push({
         id: 'asg-1',
         subjectId: item.matchedSubjectId || Object.keys(subjectsMap)[0],

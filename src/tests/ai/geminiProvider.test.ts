@@ -33,8 +33,8 @@ async function testGeminiProvider() {
     sourceText: item.sourceText,
   });
 
-  if (item.type !== 'exam') {
-    throw new Error(`Expected exam, got ${item.type}`);
+  if (item.type !== 'exam' && item.type !== 'hito') {
+    throw new Error(`Expected exam or hito, got ${item.type}`);
   }
 
   console.log('✓ GeminiProvider graceful fallback to deterministic preprocessor passed successfully');

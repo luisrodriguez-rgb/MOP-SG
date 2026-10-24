@@ -1,4 +1,4 @@
-import { InboxItem } from './schemas';
+import { InboxItem, mapSGTypeToInternal } from './schemas';
 
 /**
  * Motor de Confianza Determinístico
@@ -17,30 +17,34 @@ export function computeItemConfidence(
     score -= 20;
   }
 
-  // 2. Materia
+  // 2. Área / Materia
   if (isSubjectKnown && item.matchedSubjectId) {
     score += 25;
-  } else if (item.subjectName) {
-    score += 10;
+  } else if (item.area || item.subjectName) {
+    score += 15;
   } else {
-    score -= 20;
+    score -= 15;
   }
 
-  // 3. Ponderación
-  if (item.type === 'exam') {
-    if (item.weight !== null && item.weight > 0) {
+  // 3. Responsable asignado (en SG suma claridad operativa)
+  if (item.assigneeId) {
+    score += 15;
+  }
+
+  // 4. Ponderación / Hitos
+  const internal = item.internalType || mapSGTypeToInternal(item.type);
+  if (internal === 'exam' || item.type === 'hito') {
+    if (item.weight !== null && item.weight !== undefined && item.weight > 0) {
       score += 15;
-    } else {
-      score -= 10;
     }
   }
 
-  // 4. Hora
+  // 5. Hora
   if (item.startTime && /^\d{2}:\d{2}$/.test(item.startTime)) {
     score += 10;
   }
 
-  // 5. Ambigüedades detectadas
+  // 6. Ambigüedades detectadas
   if (item.ambiguities && item.ambiguities.length > 0) {
     score -= item.ambiguities.length * 20;
   }
@@ -49,9 +53,9 @@ export function computeItemConfidence(
   const normalizedScore = Math.max(0, Math.min(100, score));
 
   let confidence: 'high' | 'medium' | 'low' = 'low';
-  if (normalizedScore >= 85) {
+  if (normalizedScore >= 75) {
     confidence = 'high';
-  } else if (normalizedScore >= 60) {
+  } else if (normalizedScore >= 50) {
     confidence = 'medium';
   }
 

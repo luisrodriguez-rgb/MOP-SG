@@ -23,7 +23,7 @@ import { CustomSelect } from '@/components/ui/CustomSelect';
 
 export function InboxModal() {
   const { isInboxOpen, closeInbox } = useUIStore();
-  const { subjects, refreshData } = useSemesterData();
+  const { subjects, members, refreshData } = useSemesterData();
 
   const [rawText, setRawText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -39,6 +39,12 @@ export function InboxModal() {
     code: s.code,
   }));
 
+  const membersContext = members.map((m) => ({
+    id: m.id,
+    name: m.name,
+    role: m.role,
+  }));
+
   const handleProcess = async () => {
     if (!rawText.trim()) return;
     setIsProcessing(true);
@@ -52,6 +58,7 @@ export function InboxModal() {
         body: JSON.stringify({
           rawText: rawText.trim(),
           enrolledSubjects: enrolledContext,
+          members: membersContext,
           baseDate: new Date().toISOString(),
         }),
       });
@@ -70,7 +77,7 @@ export function InboxModal() {
     }
 
     // 2. Fallback determinístico directo en cliente
-    const fallback = preprocessInboxText(rawText.trim(), enrolledContext, new Date());
+    const fallback = preprocessInboxText(rawText.trim(), enrolledContext, new Date(), membersContext);
     setExtractedItems(fallback);
     setSourceEngine('preprocessor');
     setIsProcessing(false);
@@ -93,14 +100,20 @@ export function InboxModal() {
       for (const item of extractedItems) {
         let subjectId = item.matchedSubjectId;
 
-        // Si no está asignado pero hay áreas, vincular a la primera o crear
+        // Si no está asignado pero hay áreas, vincular a la primera
         if (!subjectId && subjects.length > 0) {
           subjectId = subjects[0].id;
         }
 
         if (!subjectId) continue;
 
-        if (item.type === 'exam') {
+        const isExamOrMilestone = item.type === 'exam' || item.type === 'hito';
+        const isAssignmentOrDeliverable =
+          item.type === 'assignment' ||
+          item.type === 'entregable' ||
+          item.type === 'reunion';
+
+        if (isExamOrMilestone) {
           await db.exams.add({
             id: `exam_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
             subjectId,
@@ -108,18 +121,22 @@ export function InboxModal() {
             date: item.date ? `${item.date} ${item.startTime || '08:00'}` : new Date().toISOString(),
             weight: item.weight || 20,
             topics: item.description ? [item.description] : [],
+            assigneeId: item.assigneeId || undefined,
+            assigneeName: item.assigneeName || undefined,
             source: 'ai_inbox',
           });
-        } else if (item.type === 'assignment') {
+        } else if (isAssignmentOrDeliverable) {
           await db.assignments.add({
             id: `asg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
             subjectId,
             title: item.title,
-            description: item.sourceText,
+            description: item.description || item.sourceText,
             dueDate: item.date ? `${item.date} ${item.startTime || '23:59'}` : new Date().toISOString(),
             priority: 'high',
-            estimatedMinutes: 60,
+            estimatedMinutes: item.estimatedMinutes || 60,
             status: 'pending',
+            assigneeId: item.assigneeId || undefined,
+            assigneeName: item.assigneeName || undefined,
             source: 'ai_inbox',
           });
         }
@@ -270,12 +287,22 @@ export function InboxModal() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span
                             className={`text-[10px] font-mono font-black uppercase px-2 py-0.5 rounded-md ${
-                              item.type === 'exam'
+                              item.type === 'exam' || item.type === 'hito'
                                 ? 'bg-red-500/10 text-red-600 dark:text-red-400'
+                                : item.type === 'reunion'
+                                ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                                : item.type === 'bloque_fijo'
+                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
                                 : 'bg-[var(--surface)] text-[var(--ink)] border border-[var(--border)]'
                             }`}
                           >
-                            {item.type === 'exam' ? 'Hito' : 'Tarea'}
+                            {item.type === 'exam' || item.type === 'hito'
+                              ? 'Hito'
+                              : item.type === 'reunion'
+                              ? 'Reunión'
+                              : item.type === 'bloque_fijo'
+                              ? 'Bloque fijo'
+                              : 'Entregable'}
                           </span>
 
                           <span
@@ -366,10 +393,17 @@ export function InboxModal() {
                         <div>
                           <h3 className="text-sm font-bold text-[var(--ink)]">{item.title}</h3>
                           <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--muted)] mt-1 font-mono">
-                            {item.subjectName && (
+                            {item.assigneeName && (
+                              <div className="flex items-center gap-1 text-[var(--ink)] font-semibold">
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--surface-raised)] border border-[var(--border)]">
+                                  👤 {item.assigneeName}
+                                </span>
+                              </div>
+                            )}
+                            {(item.area || item.subjectName) && (
                               <div className="flex items-center gap-1 text-[var(--ink-secondary)]">
                                 <BookOpen className="w-3 h-3" />
-                                <span>{item.subjectName}</span>
+                                <span>{item.area || item.subjectName}</span>
                               </div>
                             )}
                             {item.date && (
@@ -383,6 +417,11 @@ export function InboxModal() {
                                 <Clock className="w-3 h-3 text-[var(--muted)]" />
                                 <span>{item.startTime}</span>
                               </div>
+                            )}
+                            {item.estimatedMinutes && (
+                              <span className="px-1.5 py-0.5 rounded bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--muted)] text-[11px]">
+                                {item.estimatedMinutes} min
+                              </span>
                             )}
                             {item.weight !== null && item.weight !== undefined && (
                               <span className="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-[11px]">
