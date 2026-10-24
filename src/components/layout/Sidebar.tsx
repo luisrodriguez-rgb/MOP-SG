@@ -34,7 +34,7 @@ export function Sidebar() {
     { href: '/timeline', label: 'Línea de Semanas', icon: Layers },
   ];
 
-  const studentName = profile?.name || 'Leo';
+  const studentName = profile?.name || 'Leon';
   const studentProgram = profile?.program || 'Seamos Genios · Playtest';
   const initials = studentName
     .split(' ')
