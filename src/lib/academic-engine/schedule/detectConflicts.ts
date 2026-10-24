@@ -21,7 +21,7 @@ export function detectConflicts({
       dayOfWeek: c.dayOfWeek,
       start: timeToMinutes(c.startTime),
       end: timeToMinutes(c.endTime),
-      title: subjectsMap[c.subjectId]?.name || 'Clase',
+      title: subjectsMap[c.subjectId]?.name || 'Bloque fijo',
       timeStr: `${c.startTime} – ${c.endTime}`,
       type: 'class' as const,
     })),

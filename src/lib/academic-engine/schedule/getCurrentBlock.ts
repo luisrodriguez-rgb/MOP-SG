@@ -78,7 +78,7 @@ export function getCurrentBlock({
         currentClass: {
           id: c.id,
           subjectId: c.subjectId,
-          name: subject?.name || 'Clase',
+          name: subject?.name || 'Bloque fijo',
           code: subject?.code || '',
           color: subject?.color || '#3F3F46',
           location: c.location,
@@ -88,7 +88,7 @@ export function getCurrentBlock({
         },
         nextBlock: nextClass
           ? {
-              title: subjectsMap[nextClass.subjectId]?.name || 'Clase',
+              title: subjectsMap[nextClass.subjectId]?.name || 'Bloque fijo',
               startTime: nextClass.startTime,
               location: nextClass.location,
               type: 'class',
@@ -146,7 +146,7 @@ export function getCurrentBlock({
         },
         nextBlock: nextClass
           ? {
-              title: subjectsMap[nextClass.subjectId]?.name || 'Clase',
+              title: subjectsMap[nextClass.subjectId]?.name || 'Bloque fijo',
               startTime: nextClass.startTime,
               location: nextClass.location,
               type: 'class',
@@ -163,7 +163,7 @@ export function getCurrentBlock({
     status: 'off_hours',
     nextBlock: nextClass
       ? {
-          title: subjectsMap[nextClass.subjectId]?.name || 'Clase',
+          title: subjectsMap[nextClass.subjectId]?.name || 'Bloque fijo',
           startTime: nextClass.startTime,
           location: nextClass.location,
           type: 'class',

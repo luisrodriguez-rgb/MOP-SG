@@ -52,7 +52,7 @@ export function calculateDailyAvailability({
       start: timeToMinutes(c.startTime),
       end: timeToMinutes(c.endTime),
       category: 'BLOCKED' as const,
-      reason: 'Clase',
+      reason: 'Bloque fijo',
     })),
     ...todayRoutines.map((r) => ({
       start: timeToMinutes(r.startTime),

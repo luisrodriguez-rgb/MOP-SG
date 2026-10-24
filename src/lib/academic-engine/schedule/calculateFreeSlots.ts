@@ -27,7 +27,7 @@ export function calculateFreeSlots({
     .map((c) => ({
       start: timeToMinutes(c.startTime),
       end: timeToMinutes(c.endTime),
-      title: 'Clase',
+      title: 'Bloque fijo',
       isClass: true,
     }));
 

@@ -8,6 +8,7 @@ import {
   RiskEvaluation,
 } from '@/types';
 import { timeToMinutes, minutesToTime } from '../utils/timeHelpers';
+import { LABELS } from '@/lib/labels';
 
 export interface StudyPlannerInput {
   subjectsMap: Record<string, Subject>;
@@ -230,10 +231,10 @@ export function planStudyGaps(input: StudyPlannerInput): StudyRecommendation[] {
     const endDate = new Date(`${slot.date}T${endTimeStr}:00`);
 
     const subject = subjectsMap[bestTarget.subjectId];
-    const subjectName = subject?.name || 'Materia';
+    const subjectName = subject?.name || LABELS.area;
 
     const reason = bestTarget.type === 'exam'
-      ? `Parcial en ${Math.ceil(bestTarget.daysRemaining)} días (${bestTarget.weight}% de peso). Hueco ideal de ${sessionDuration}m.`
+      ? LABELS.formatMilestonePlanReason(Math.ceil(bestTarget.daysRemaining), bestTarget.weight ?? 0, sessionDuration)
       : `Entrega pendiente de ${bestTarget.title} en ${Math.ceil(bestTarget.daysRemaining)} días.`;
 
     const reasonCodes: RecommendationReasonCode[] = [];
