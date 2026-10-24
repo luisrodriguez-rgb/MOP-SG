@@ -196,8 +196,62 @@ export function extractEstimatedMinutes(
   return defaultEstimatedMinutesForType(type);
 }
 
+const COMMON_CONJUGATIONS_TO_INFINITIVE: Record<string, string> = {
+  edita: 'Editar',
+  editar: 'Editar',
+  revisa: 'Revisar',
+  revisar: 'Revisar',
+  disena: 'Diseñar',
+  diseña: 'Diseñar',
+  diseñar: 'Diseñar',
+  prepara: 'Preparar',
+  preparar: 'Preparar',
+  arregla: 'Arreglar',
+  arreglar: 'Arreglar',
+  crea: 'Crear',
+  crear: 'Crear',
+  haz: 'Hacer',
+  hace: 'Hacer',
+  hacer: 'Hacer',
+  sube: 'Subir',
+  subir: 'Subir',
+  graba: 'Grabar',
+  grabar: 'Grabar',
+  corrige: 'Corregir',
+  corregir: 'Corregir',
+  escribe: 'Escribir',
+  escribir: 'Escribir',
+  prueba: 'Probar',
+  probar: 'Probar',
+  publica: 'Publicar',
+  publicar: 'Publicar',
+  envia: 'Enviar',
+  envía: 'Enviar',
+  enviar: 'Enviar',
+  organiza: 'Organizar',
+  organizar: 'Organizar',
+  coordina: 'Coordinar',
+  coordinar: 'Coordinar',
+  llama: 'Llamar',
+  llamar: 'Llamar',
+  contacta: 'Contactar',
+  contactar: 'Contactar',
+  actualiza: 'Actualizar',
+  actualizar: 'Actualizar',
+  termina: 'Terminar',
+  terminar: 'Terminar',
+  monta: 'Montar',
+  montar: 'Montar',
+  soluciona: 'Solucionar',
+  solucionar: 'Solucionar',
+  ajusta: 'Ajustar',
+  ajustar: 'Ajustar',
+  redacta: 'Redactar',
+  redactar: 'Redactar',
+};
+
 /**
- * Limpia y normaliza el título para entregables
+ * Limpia y normaliza el título para entregables, usando el verbo en infinitivo
  */
 function extractDeliverableTitle(sentence: string): string {
   let clean = sentence
@@ -210,6 +264,18 @@ function extractDeliverableTitle(sentence: string): string {
   const memberPrefix = clean.match(/^(?:Leon|Dani|Ángel|Angel|Leo)\s+(?:se encarga de\s+)?(.+)/i);
   if (memberPrefix) {
     clean = memberPrefix[1].trim();
+  }
+
+  // Normalizar primera palabra al infinitivo ("Edita" -> "Editar", "Revisa" -> "Revisar")
+  const firstWordMatch = clean.match(/^([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)\b/);
+  if (firstWordMatch) {
+    const rawWord = firstWordMatch[1];
+    const key = rawWord.toLowerCase();
+    const normalizedKey = key.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const infinitive = COMMON_CONJUGATIONS_TO_INFINITIVE[key] || COMMON_CONJUGATIONS_TO_INFINITIVE[normalizedKey];
+    if (infinitive) {
+      clean = `${infinitive}${clean.slice(rawWord.length)}`;
+    }
   }
 
   if (clean.length > 0) {

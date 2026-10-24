@@ -23,6 +23,9 @@ function testInboxPreprocessor() {
     estimatedMinutes: item1.estimatedMinutes,
   });
   if (item1.type !== 'entregable') throw new Error(`SG 1 expected type 'entregable', got ${item1.type}`);
+  if (item1.title !== 'Editar el video del Playtest') {
+    throw new Error(`SG 1 expected title in infinitive 'Editar el video del Playtest', got '${item1.title}'`);
+  }
   if (item1.assigneeId !== 'member-leon' || item1.assigneeName !== 'Leon') {
     throw new Error(`SG 1 expected assignee Leon ('member-leon'), got ${item1.assigneeName} (${item1.assigneeId})`);
   }
@@ -35,12 +38,12 @@ function testInboxPreprocessor() {
   if (item1.estimatedMinutes !== 60) {
     throw new Error(`SG 1 expected 60 estimated minutes, got ${item1.estimatedMinutes}`);
   }
-  console.log('✓ SG Test 1 passed: "Leon edita el video del Playtest para el jueves"');
+  console.log('✓ SG Test 1 passed: "Leon edita el video del Playtest para el jueves" -> "Editar el video del Playtest"');
 
-  // SG Test 2: "Reunión con la incubadora martes 3pm"
-  console.log('\n--- Testing SG Scenario 2: Reunión Incubadora ---');
+  // SG Test 2: "Reunión con la incubadora martes 3pm" (hora futura respecto a baseDate)
+  console.log('\n--- Testing SG Scenario 2: Reunión Incubadora (futuro en el mismo día) ---');
   const rawSg2 = 'Reunión con la incubadora martes 3pm';
-  const baseSg2 = new Date(2026, 9, 20); // Martes 20 Octubre 2026
+  const baseSg2 = new Date(2026, 9, 20, 10, 0, 0); // Martes 20 Octubre 2026 a las 10:00 am
   const itemsSg2 = preprocessInboxText(rawSg2, undefined, baseSg2);
   if (itemsSg2.length !== 1) throw new Error(`SG 2 expected 1 item, got ${itemsSg2.length}`);
   const item2 = itemsSg2[0];
@@ -83,6 +86,9 @@ function testInboxPreprocessor() {
     estimatedMinutes: item3.estimatedMinutes,
   });
   if (item3.type !== 'entregable') throw new Error(`SG 3 expected type 'entregable', got ${item3.type}`);
+  if (item3.title !== 'Revisar el bug del login') {
+    throw new Error(`SG 3 expected title in infinitive 'Revisar el bug del login', got '${item3.title}'`);
+  }
   if (item3.assigneeId !== 'member-dani' || item3.assigneeName !== 'Dani') {
     throw new Error(`SG 3 expected assignee Dani ('member-dani'), got ${item3.assigneeName} (${item3.assigneeId})`);
   }
@@ -95,7 +101,23 @@ function testInboxPreprocessor() {
   if (item3.estimatedMinutes !== 60) {
     throw new Error(`SG 3 expected 60 estimated minutes, got ${item3.estimatedMinutes}`);
   }
-  console.log('✓ SG Test 3 passed: "Dani revisa el bug del login hoy"');
+  console.log('✓ SG Test 3 passed: "Dani revisa el bug del login hoy" -> "Revisar el bug del login"');
+
+  // SG Test 4: "Reunión con la incubadora martes 3pm" cuando ya son las 5pm del martes (hora ya pasó hoy)
+  console.log('\n--- Testing SG Scenario 4: "Martes 3pm" cuando hoy es martes 5pm (hora ya pasó) ---');
+  const baseSg4 = new Date(2026, 9, 20, 17, 0, 0); // Martes 20 Octubre 2026 a las 5:00 pm (17:00)
+  const itemsSg4 = preprocessInboxText('Reunión con la incubadora martes 3pm', undefined, baseSg4);
+  if (itemsSg4.length !== 1) throw new Error(`SG 4 expected 1 item, got ${itemsSg4.length}`);
+  const item4 = itemsSg4[0];
+  console.log('SG Item 4:', {
+    title: item4.title,
+    date: item4.date,
+    startTime: item4.startTime,
+  });
+  if (item4.date !== '2026-10-27') {
+    throw new Error(`SG 4 expected date 2026-10-27 (próximo martes), got ${item4.date}`);
+  }
+  console.log('✓ SG Test 4 passed: "martes 3pm" a las 5pm pasa correctamente al próximo martes 27 de octubre');
 
   // ═════════════════════════════════════════════════════════════
   // 2. Compatibilidad con mensajes compuestos

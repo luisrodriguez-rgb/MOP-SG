@@ -92,6 +92,33 @@ export function detectDateAmbiguities(text: string, baseDate: Date = new Date())
     return { resolvedDate: dateStr, ambiguities };
   }
 
+function parseTextMinutes(raw: string): number | null {
+  const n = raw.toLowerCase();
+  // 14:30
+  const colon = n.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/);
+  if (colon) {
+    return parseInt(colon[1], 10) * 60 + parseInt(colon[2], 10);
+  }
+  // 3pm, 2:30 pm
+  const ampm = n.match(/\b([1-9]|1[0-2])(?::([0-5]\d))?\s*(am|pm)\b/);
+  if (ampm) {
+    let h = parseInt(ampm[1], 10);
+    const m = ampm[2] ? parseInt(ampm[2], 10) : 0;
+    const isPm = ampm[3] === 'pm';
+    if (isPm && h < 12) h += 12;
+    if (!isPm && h === 12) h = 0;
+    return h * 60 + m;
+  }
+  // a las 15 / a las 3
+  const aLas = n.match(/a\s+las\s+([1-9]|1\d|2[0-3])\b/);
+  if (aLas) {
+    let h = parseInt(aLas[1], 10);
+    if (h >= 1 && h <= 6) h += 12;
+    return h * 60;
+  }
+  return null;
+}
+
   // Caso día de la semana: "para el jueves", "el martes", "martes", "este viernes"
   const dayOfWeekMatch = norm.match(/(?:para\s+el|para|el|este)?\s*\b(lunes|martes|miercoles|jueves|viernes|sabado|domingo)\b/);
   if (dayOfWeekMatch && !otroDayMatch) {
@@ -99,6 +126,17 @@ export function detectDateAmbiguities(text: string, baseDate: Date = new Date())
     const targetDayIndex = DAY_NAMES.indexOf(dayName);
     const currentDay = baseDate.getDay();
     let daysUntilNext = (targetDayIndex - currentDay + 7) % 7;
+
+    // Si el día mencionado coincide con hoy (daysUntilNext === 0) y la hora especificada ya pasó hoy,
+    // se agenda para el próximo ciclo semanal (+7 días)
+    if (daysUntilNext === 0) {
+      const eventMinutes = parseTextMinutes(text);
+      const currentMinutes = baseDate.getHours() * 60 + baseDate.getMinutes();
+      if (eventMinutes !== null && eventMinutes < currentMinutes) {
+        daysUntilNext = 7;
+      }
+    }
+
     const d = new Date(baseDate);
     d.setDate(d.getDate() + daysUntilNext);
     const year = d.getFullYear();

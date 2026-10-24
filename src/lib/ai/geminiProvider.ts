@@ -77,7 +77,7 @@ INSTRUCCIONES:
    - 'bloque_fijo': bloques de trabajo recurrente o rutinas fijas.
 2. Para cada elemento extrae:
    - 'type': 'entregable' | 'hito' | 'reunion' | 'bloque_fijo'
-   - 'title': título conciso y claro de la acción.
+   - 'title': título conciso de la acción redactado en modo infinitivo, sin nombres de socios ni verbos conjugados (ejemplo: 'Editar el video del Playtest', 'Revisar el bug del login', 'Reunión con Incubadora').
    - 'area': nombre de una de las 4 áreas operativas de Seamos Genios.
    - 'assigneeId': ID exacto del socio en 'members' (ej: 'member-leon', 'member-dani', 'member-angel') o null si no se menciona responsable.
    - 'assigneeName': nombre del socio responsable o null.
