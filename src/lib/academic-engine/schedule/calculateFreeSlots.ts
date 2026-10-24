@@ -33,6 +33,9 @@ export function calculateFreeSlots({
       if (c.untilDate && dateStr) {
         if (dateStr > c.untilDate) return false;
       }
+      if (c.exdates && dateStr && c.exdates.includes(dateStr)) {
+        return false;
+      }
       return true;
     })
     .map((c) => ({

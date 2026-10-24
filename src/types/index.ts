@@ -72,6 +72,8 @@ export interface ScheduleBlock extends Partial<ImportedEventMetadata> {
   title?: string;    // Nombre descriptivo del bloque (ej. "Clase de Robótica", "Turno Monitoría")
   date?: string;     // Fecha específica YYYY-MM-DD si es evento único puntual (NO recurrente)
   untilDate?: string;// Fecha límite YYYY-MM-DD si es recurrente con regla UNTIL
+  exdates?: string[];// Fechas específicas YYYY-MM-DD donde la serie NO debe ocurrir (cancelaciones o excepciones)
+  recurrenceId?: string; // Fecha YYYY-MM-DD de la ocurrencia original reemplazada si es una excepción
 }
 
 export type CalendarFeedType = 'fixed_blocks' | 'sg_meetings' | 'ignore';
@@ -211,7 +213,11 @@ export interface NormalizedCalendarEvent {
     freq?: string;
     byDay?: string[];
     until?: Date;
+    count?: number;
   };
+  recurrenceId?: string; // Fecha YYYY-MM-DD de la instancia original reemplazada
+  isCancelled?: boolean;  // STATUS: CANCELLED
+  exdates?: string[];     // Fechas YYYY-MM-DD excluidas de la serie
   source: DataSource;
   sourceCalendar?: string;
   suggestedType: EventType;

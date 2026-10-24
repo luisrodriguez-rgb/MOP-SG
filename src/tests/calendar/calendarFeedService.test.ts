@@ -106,11 +106,12 @@ END:VEVENT
 
 END:VCALENDAR`;
 
+  let currentMockIcsContent = realCasesIcs;
   (global as any).fetch = async (url: string, opts: any) => {
     return {
       ok: true,
       status: 200,
-      json: async () => ({ success: true, content: realCasesIcs }),
+      json: async () => ({ success: true, content: currentMockIcsContent }),
     };
   };
 
@@ -332,6 +333,191 @@ END:VCALENDAR`;
     throw new Error(`El jueves 29 a las ${midHour} NO debe estar en clase porque el evento era solo del día 22.`);
   }
   console.log('✓ TEST 5 PASADO: getCurrentBlock reconoce el bloque solo en su fecha exacta.');
+
+  // ═════════════════════════════════════════════════════════════
+  // TEST 6: Serie semanal de los lunes con excepción al miércoles y lunes cancelado
+  // ═════════════════════════════════════════════════════════════
+  console.log('\n--- Test 6: RECURRENCE-ID, EXDATE y STATUS:CANCELLED ---');
+  const exceptionsIcs = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Google Inc//Google Calendar 70.9054//EN
+
+BEGIN:VEVENT
+UID:serie_lunes_excepcion
+SUMMARY:Clase de Estadística Semanal
+LOCATION:Salón 201
+DTSTART:20261019T080000
+DTEND:20261019T100000
+RRULE:FREQ=WEEKLY;BYDAY=MO;UNTIL=20261130T235959
+END:VEVENT
+
+BEGIN:VEVENT
+UID:serie_lunes_excepcion
+RECURRENCE-ID:20261026T080000
+SUMMARY:Clase de Estadística (Excepción en Miércoles)
+LOCATION:Laboratorio 4
+DTSTART:20261028T140000
+DTEND:20261028T160000
+END:VEVENT
+
+BEGIN:VEVENT
+UID:serie_lunes_excepcion
+RECURRENCE-ID:20261102T080000
+SUMMARY:Clase de Estadística Cancelada
+STATUS:CANCELLED
+DTSTART:20261102T080000
+DTEND:20261102T100000
+END:VEVENT
+
+BEGIN:VEVENT
+UID:serie_con_count
+SUMMARY:Taller Semanal Robótica (5 sesiones)
+LOCATION:Makerspace
+DTSTART:20261019T100000
+DTEND:20261019T120000
+RRULE:FREQ=WEEKLY;COUNT=5;BYDAY=MO
+END:VEVENT
+
+END:VCALENDAR`;
+
+  currentMockIcsContent = exceptionsIcs;
+
+  const feedExcepciones: CalendarFeedConfig = {
+    id: 'feed_excepciones_leon',
+    memberId: 'member-leon',
+    name: 'Excepciones y Cancelaciones',
+    url: 'https://calendar.google.com/calendar/ical/leon/exceptions.ics',
+    type: 'fixed_blocks',
+  };
+
+  const syncExcepciones = await calendarFeedService.syncFeed(feedExcepciones, baseNow);
+  if (!syncExcepciones.success) throw new Error(`Excepciones sync failed: ${syncExcepciones.error}`);
+
+  // 1. La serie de los lunes sigue intacta (no fue sobreescrita por la excepción)
+  const serieIntacta = blocksStore.find((b) => b.externalUid === 'serie_lunes_excepcion');
+  if (!serieIntacta) {
+    throw new Error('FALLO TEST 6: La serie semanal de los lunes desapareció o fue sobreescrita.');
+  }
+  if (serieIntacta.dayOfWeek !== 1 || serieIntacta.date !== undefined) {
+    throw new Error('FALLO TEST 6: La serie de los lunes debe mantenerse semanal (sin date específico).');
+  }
+  if (!serieIntacta.exdates || !serieIntacta.exdates.includes('2026-10-26') || !serieIntacta.exdates.includes('2026-11-02')) {
+    throw new Error(`FALLO TEST 6: La serie debe contener exdates ['2026-10-26', '2026-11-02'], got ${JSON.stringify(serieIntacta.exdates)}`);
+  }
+  console.log('✓ Serie semanal de los lunes intacta con exdates:', serieIntacta.exdates);
+
+  // 2. El miércoles se bloquea con la excepción puntual
+  const excepcionMiercoles = blocksStore.find((b) => b.externalUid?.includes('serie_lunes_excepcion_2026-10-26'));
+  if (!excepcionMiercoles) {
+    throw new Error('FALLO TEST 6: La excepción del miércoles no se guardó con id propio.');
+  }
+  if (excepcionMiercoles.dayOfWeek !== 3 || excepcionMiercoles.date !== '2026-10-28') {
+    throw new Error(`FALLO TEST 6: Excepción debe ser miércoles 2026-10-28, got ${excepcionMiercoles.dayOfWeek} ${excepcionMiercoles.date}`);
+  }
+
+  // Comprobar bloqueo del miércoles en tiempo real y en huecos libres
+  const blockMiercoles28 = getCurrentBlock({
+    dayOfWeek: 3,
+    currentTime: '14:30',
+    classes: blocksStore,
+    subjectsMap: {
+      'area-admin-incubadora': {
+        id: 'area-admin-incubadora',
+        semesterId: 'sem_sg',
+        name: 'Administración & Incubadora',
+        code: 'ADM-INC',
+        credits: 3,
+        color: '#10b981',
+        maxAbsences: 4,
+        passingGrade: 3.0,
+      },
+    },
+    dateStr: '2026-10-28',
+  });
+  if (blockMiercoles28.status !== 'in_class') {
+    throw new Error(`FALLO TEST 6: El miércoles 28 a las 14:30 debe estar bloqueado ('in_class'), got ${blockMiercoles28.status}`);
+  }
+  console.log('✓ TEST 6 PASADO: El miércoles 28 se bloquea correctamente de 14:00 a 16:00.');
+
+  // 3. El lunes de la excepción (26 de octubre) queda LIBRE
+  const blockLunes26 = getCurrentBlock({
+    dayOfWeek: 1,
+    currentTime: '08:30',
+    classes: blocksStore,
+    subjectsMap: {},
+    dateStr: '2026-10-26',
+  });
+  if (blockLunes26.status === 'in_class') {
+    throw new Error('FALLO TEST 6: El lunes 26 debía quedar libre porque la clase se movió al miércoles.');
+  }
+  console.log('✓ TEST 6 PASADO: El lunes de la excepción (26 oct) queda libre.');
+
+  // 4. El lunes cancelado (2 de noviembre) queda LIBRE
+  const blockLunes02 = getCurrentBlock({
+    dayOfWeek: 1,
+    currentTime: '08:30',
+    classes: blocksStore,
+    subjectsMap: {},
+    dateStr: '2026-11-02',
+  });
+  if (blockLunes02.status === 'in_class') {
+    throw new Error('FALLO TEST 6: El lunes 2 de noviembre debía quedar libre porque fue cancelado (STATUS: CANCELLED).');
+  }
+  console.log('✓ TEST 6 PASADO: El lunes cancelado (2 nov) queda libre.');
+
+  // 5. Un lunes normal no excluido (ej. 9 de noviembre) sigue bloqueado normalmente
+  const blockLunes09 = getCurrentBlock({
+    dayOfWeek: 1,
+    currentTime: '08:30',
+    classes: blocksStore,
+    subjectsMap: {},
+    dateStr: '2026-11-09',
+  });
+  if (blockLunes09.status !== 'in_class') {
+    throw new Error('FALLO TEST 6: El lunes 9 de noviembre normal debe seguir bloqueado por la serie semanal.');
+  }
+  console.log('✓ TEST 6 PASADO: Los lunes normales de la serie siguen bloqueados.');
+
+  // ═════════════════════════════════════════════════════════════
+  // TEST 7: Series con COUNT en vez de UNTIL
+  // ═════════════════════════════════════════════════════════════
+  console.log('\n--- Test 7: Serie recurrente con COUNT (5 sesiones) ---');
+  const countBlock = blocksStore.find((b) => b.externalUid === 'serie_con_count');
+  if (!countBlock) {
+    throw new Error('FALLO TEST 7: No se encontró el bloque con regla COUNT.');
+  }
+  if (!countBlock.untilDate) {
+    throw new Error('FALLO TEST 7: Se esperaba untilDate calculado a partir de COUNT.');
+  }
+  if (countBlock.untilDate !== '2026-11-16') {
+    throw new Error(`FALLO TEST 7: untilDate esperado '2026-11-16', got ${countBlock.untilDate}`);
+  }
+  console.log('✓ TEST 7 PASADO: untilDate calculado exactamente a partir de COUNT=5:', countBlock.untilDate);
+
+  // El 16 de noviembre está bloqueado
+  const blockLunes16 = getCurrentBlock({
+    dayOfWeek: 1,
+    currentTime: '10:30',
+    classes: blocksStore,
+    subjectsMap: {},
+    dateStr: '2026-11-16',
+  });
+  if (blockLunes16.status !== 'in_class') {
+    throw new Error('FALLO TEST 7: El lunes 16 de noviembre (última sesión del COUNT) debe estar bloqueado.');
+  }
+
+  // El 23 de noviembre ya superó el COUNT, por tanto debe quedar libre
+  const blockLunes23 = getCurrentBlock({
+    dayOfWeek: 1,
+    currentTime: '10:30',
+    classes: blocksStore,
+    subjectsMap: {},
+    dateStr: '2026-11-23',
+  });
+  if (blockLunes23.status === 'in_class') {
+    throw new Error('FALLO TEST 7: El lunes 23 de noviembre debía quedar libre por haber terminado las 5 sesiones.');
+  }
+  console.log('✓ TEST 7 PASADO: La serie se libera automáticamente después de la última sesión calculada por COUNT.');
 
   console.log('\nALL CALENDAR FEED REAL-CASE TESTS PASSED PERFECTLY! 🚀\n');
 }

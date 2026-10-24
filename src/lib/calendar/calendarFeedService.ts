@@ -137,39 +137,65 @@ export const calendarFeedService = {
       const startOfToday = new Date(baseNow.getFullYear(), baseNow.getMonth(), baseNow.getDate(), 0, 0, 0, 0);
       const maxFutureDate = new Date(startOfToday.getTime() + 60 * 24 * 60 * 60 * 1000); // +60 días
 
+      // Mapear fechas excluidas (EXDATE y RECURRENCE-ID) para cada serie recurrente
+      const seriesExdatesMap = new Map<string, Set<string>>();
+      const registerExdate = (uid: string, dateStr: string) => {
+        if (!seriesExdatesMap.has(uid)) {
+          seriesExdatesMap.set(uid, new Set());
+        }
+        seriesExdatesMap.get(uid)!.add(dateStr);
+      };
+
+      for (const ev of events) {
+        if (ev.exdates && ev.exdates.length > 0) {
+          for (const d of ev.exdates) {
+            registerExdate(ev.uid, d);
+          }
+        }
+        if (ev.recurrenceId) {
+          registerExdate(ev.uid, ev.recurrenceId);
+        }
+      }
+
+      const getExdatesForSeries = (uid: string): string[] => {
+        const result = new Set<string>();
+        const direct = seriesExdatesMap.get(uid);
+        if (direct) {
+          for (const d of direct) result.add(d);
+        }
+        const baseUid = uid.split('_')[0];
+        if (baseUid !== uid) {
+          const fromBase = seriesExdatesMap.get(baseUid);
+          if (fromBase) {
+            for (const d of fromBase) result.add(d);
+          }
+        }
+        return Array.from(result);
+      };
+
       const existingBlocks = await db.scheduleBlocks.toArray();
       let processedCount = 0;
 
       for (const ev of events) {
-        const isRecurring = Boolean(ev.recurrence);
-        let blockDate: string | undefined = undefined;
-        let blockUntilDate: string | undefined = undefined;
-
-        if (isRecurring) {
-          // Evento recurrente: si tiene UNTIL y ya venció antes de hoy, descartar
-          if (ev.recurrence?.until) {
-            if (ev.recurrence.until < startOfToday) {
-              continue;
+        // A. Si el evento fue cancelado (STATUS: CANCELLED)
+        if (ev.isCancelled) {
+          // Si era una excepción previa que se canceló, eliminarla del almacenamiento local
+          if (ev.recurrenceId) {
+            const cancelledUid = `${ev.uid}_${ev.recurrenceId}`;
+            const oldExceptionBlock = existingBlocks.find(
+              (b) => b.externalUid === cancelledUid && b.memberId === feed.memberId
+            );
+            if (oldExceptionBlock) {
+              await db.scheduleBlocks.delete(oldExceptionBlock.id);
             }
-            blockUntilDate = formatLocalDate(ev.recurrence.until);
           }
-          blockDate = undefined; // Se repite semanalmente
-        } else {
-          // Evento único: descartar si terminó antes de hoy o si está a más de 60 días en el futuro
-          if (ev.end < startOfToday) {
-            continue;
-          }
-          if (ev.start > maxFutureDate) {
-            continue;
-          }
-          blockDate = formatLocalDate(ev.start);
-          blockUntilDate = undefined;
+          // El día ya quedó registrado en seriesExdatesMap para que la serie no bloquee
+          continue;
         }
 
-        // Determinar título y ubicación según el tipo de feed
+        // Determinar formato de título y ubicación según el tipo de feed
         let titleFormatted = ev.title;
         let locationFormatted = ev.location || 'Presencial / Turno';
-
         if (feed.type === 'sg_meetings') {
           titleFormatted =
             ev.title.toLowerCase().startsWith('reunión') || ev.title.toLowerCase().startsWith('reunion')
@@ -178,7 +204,107 @@ export const calendarFeedService = {
           locationFormatted = ev.location || 'Reunión SG';
         }
 
-        // Buscar coincidencia para desduplicación
+        // B. Excepción de una serie recurrente (tiene RECURRENCE-ID)
+        // Se guarda como bloque puntual con fecha, con id propio (uid + recurrence-id), sin tocar la serie semanal
+        if (ev.recurrenceId) {
+          if (ev.end < startOfToday || ev.start > maxFutureDate) {
+            continue;
+          }
+
+          const exceptionUid = `${ev.uid}_${ev.recurrenceId}`;
+          const blockDate = formatLocalDate(ev.start);
+
+          const match = existingBlocks.find(
+            (b) => b.externalUid === exceptionUid && b.memberId === feed.memberId
+          );
+
+          if (match) {
+            await db.scheduleBlocks.update(match.id, {
+              startTime: ev.startTimeStr,
+              endTime: ev.endTimeStr,
+              dayOfWeek: ev.dayOfWeek || match.dayOfWeek || 1,
+              location: locationFormatted,
+              title: titleFormatted,
+              date: blockDate,
+              untilDate: undefined,
+              recurrenceId: ev.recurrenceId,
+            });
+          } else {
+            const newBlock: ScheduleBlock = {
+              id: `block_ics_${feed.id}_${exceptionUid}`,
+              subjectId: SG_ADMIN_INCUBATOR_AREA_ID,
+              dayOfWeek: ev.dayOfWeek || 1,
+              startTime: ev.startTimeStr,
+              endTime: ev.endTimeStr,
+              location: locationFormatted,
+              source: 'ics',
+              externalUid: exceptionUid,
+              externalCalendarId: feed.id,
+              memberId: feed.memberId,
+              title: titleFormatted,
+              date: blockDate,
+              untilDate: undefined,
+              recurrenceId: ev.recurrenceId,
+            };
+            await db.scheduleBlocks.add(newBlock);
+          }
+          processedCount++;
+          continue;
+        }
+
+        // C. Serie recurrente semanal (tiene recurrence y NO tiene recurrenceId)
+        if (ev.recurrence) {
+          if (ev.recurrence.until && ev.recurrence.until < startOfToday) {
+            continue;
+          }
+
+          const blockUntilDate = ev.recurrence.until ? formatLocalDate(ev.recurrence.until) : undefined;
+          const blockExdates = getExdatesForSeries(ev.uid);
+
+          const match = existingBlocks.find(
+            (b) => b.externalUid === ev.uid && b.memberId === feed.memberId
+          );
+
+          if (match) {
+            await db.scheduleBlocks.update(match.id, {
+              startTime: ev.startTimeStr,
+              endTime: ev.endTimeStr,
+              dayOfWeek: ev.dayOfWeek || match.dayOfWeek || 1,
+              location: locationFormatted,
+              title: titleFormatted,
+              date: undefined, // Se repite semanalmente
+              untilDate: blockUntilDate,
+              exdates: blockExdates.length > 0 ? blockExdates : undefined,
+            });
+          } else {
+            const newBlock: ScheduleBlock = {
+              id: `block_ics_${feed.id}_${ev.uid}`,
+              subjectId: SG_ADMIN_INCUBATOR_AREA_ID,
+              dayOfWeek: ev.dayOfWeek || 1,
+              startTime: ev.startTimeStr,
+              endTime: ev.endTimeStr,
+              location: locationFormatted,
+              source: 'ics',
+              externalUid: ev.uid,
+              externalCalendarId: feed.id,
+              memberId: feed.memberId,
+              title: titleFormatted,
+              date: undefined,
+              untilDate: blockUntilDate,
+              exdates: blockExdates.length > 0 ? blockExdates : undefined,
+            };
+            await db.scheduleBlocks.add(newBlock);
+          }
+          processedCount++;
+          continue;
+        }
+
+        // D. Evento único puntual (sin recurrencia ni recurrenceId)
+        if (ev.end < startOfToday || ev.start > maxFutureDate) {
+          continue;
+        }
+
+        const blockDate = formatLocalDate(ev.start);
         const match = existingBlocks.find(
           (b) => b.externalUid === ev.uid && b.memberId === feed.memberId
         );
@@ -191,11 +317,11 @@ export const calendarFeedService = {
             location: locationFormatted,
             title: titleFormatted,
             date: blockDate,
-            untilDate: blockUntilDate,
+            untilDate: undefined,
           });
         } else {
           const newBlock: ScheduleBlock = {
-            id: `block_ics_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+            id: `block_ics_${feed.id}_${ev.uid}`,
             subjectId: SG_ADMIN_INCUBATOR_AREA_ID,
             dayOfWeek: ev.dayOfWeek || 1,
             startTime: ev.startTimeStr,
@@ -207,7 +333,7 @@ export const calendarFeedService = {
             memberId: feed.memberId,
             title: titleFormatted,
             date: blockDate,
-            untilDate: blockUntilDate,
+            untilDate: undefined,
           };
           await db.scheduleBlocks.add(newBlock);
         }

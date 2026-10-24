@@ -27,6 +27,26 @@ export function inferEventType(title: string, description?: string, isRecurring:
 }
 
 /**
+ * Formatea Date a "YYYY-MM-DD" en hora local
+ */
+export function formatLocalDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+/**
+ * Convierte un ICAL.Time a string "YYYY-MM-DD"
+ */
+export function icalTimeToDateStr(icalTime: ICAL.Time): string {
+  if (icalTime.isDate) {
+    return `${icalTime.year}-${String(icalTime.month).padStart(2, '0')}-${String(icalTime.day).padStart(2, '0')}`;
+  }
+  return formatLocalDate(icalTime.toJSDate());
+}
+
+/**
  * Convierte un ICAL.Time a objeto Date de JavaScript
  */
 function icalTimeToDate(icalTime: ICAL.Time): Date {
@@ -90,6 +110,32 @@ export function parseIcsCalendar(
         const location = event.location || '';
         const isRecurring = event.isRecurring();
 
+        // 1. Estado de cancelación (STATUS: CANCELLED)
+        const statusProp = vevent.getFirstPropertyValue('status');
+        const isCancelled = statusProp ? statusProp.toString().toUpperCase() === 'CANCELLED' : false;
+
+        // 2. RECURRENCE-ID (indica excepción de una ocurrencia específica de una serie)
+        let recurrenceIdStr: string | undefined = undefined;
+        if (event.recurrenceId) {
+          recurrenceIdStr = icalTimeToDateStr(event.recurrenceId);
+        }
+
+        // 3. EXDATE (fechas de exclusión explícitas)
+        const exdateProps = vevent.getAllProperties('exdate');
+        const exdates: string[] = [];
+        for (const p of exdateProps) {
+          try {
+            const vals = p.getValues();
+            for (const v of vals) {
+              if (v) {
+                exdates.push(icalTimeToDateStr(v as ICAL.Time));
+              }
+            }
+          } catch (err) {
+            console.warn('Error parseando propiedad exdate:', err);
+          }
+        }
+
         const startDate = icalTimeToDate(event.startDate);
         const endDate = icalTimeToDate(event.endDate);
 
@@ -100,17 +146,40 @@ export function parseIcsCalendar(
 
         let recurrence: NormalizedCalendarEvent['recurrence'] = undefined;
 
-        if (isRecurring) {
+        if (isRecurring && !recurrenceIdStr) {
           const rruleProp = vevent.getFirstProperty('rrule');
           if (rruleProp) {
             const rrule = rruleProp.getFirstValue() as ICAL.Recur;
             const byDay = rrule.parts?.BYDAY ? (Array.isArray(rrule.parts.BYDAY) ? rrule.parts.BYDAY : [rrule.parts.BYDAY]) : undefined;
-            const until = rrule.until ? icalTimeToDate(rrule.until) : undefined;
+            let until = rrule.until ? icalTimeToDate(rrule.until) : undefined;
+            const count = rrule.count || undefined;
+
+            // Para series con COUNT en vez de UNTIL, calcular la fecha de fin iterando
+            if (count && count > 0 && !until) {
+              try {
+                const iter = rrule.iterator(event.startDate);
+                let currentOccur = iter.next();
+                let step = 0;
+                let lastOccur = currentOccur;
+                while (currentOccur && step < Math.min(count, 500)) {
+                  step++;
+                  lastOccur = currentOccur;
+                  if (step >= count) break;
+                  currentOccur = iter.next();
+                }
+                if (lastOccur) {
+                  until = icalTimeToDate(lastOccur);
+                }
+              } catch (err) {
+                console.warn('Error calculando fecha de fin para COUNT en RRULE:', err);
+              }
+            }
 
             recurrence = {
               freq: rrule.freq,
               byDay,
               until,
+              count,
             };
 
             // Si tiene múltiples días en BYDAY (ej. Lunes y Miércoles), generamos eventos por cada día
@@ -129,6 +198,9 @@ export function parseIcsCalendar(
                     startTimeStr,
                     endTimeStr,
                     recurrence,
+                    recurrenceId: recurrenceIdStr,
+                    isCancelled,
+                    exdates: exdates.length > 0 ? exdates : undefined,
                     source: 'ics',
                     sourceCalendar: options.sourceCalendar,
                     suggestedType,
@@ -151,6 +223,9 @@ export function parseIcsCalendar(
           startTimeStr,
           endTimeStr,
           recurrence,
+          recurrenceId: recurrenceIdStr,
+          isCancelled,
+          exdates: exdates.length > 0 ? exdates : undefined,
           source: 'ics',
           sourceCalendar: options.sourceCalendar,
           suggestedType,

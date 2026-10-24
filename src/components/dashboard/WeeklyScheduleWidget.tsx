@@ -127,6 +127,11 @@ export function WeeklyScheduleWidget({
         const matchingDay = weekDays.find((w) => w.dayNum === c.dayOfWeek);
         if (matchingDay && matchingDay.dateStr > c.untilDate) return;
       }
+      // Si tiene fechas excluidas (exdates) en la serie, no renderizar ese día
+      if (c.exdates && c.exdates.length > 0) {
+        const matchingDay = weekDays.find((w) => w.dayNum === c.dayOfWeek);
+        if (matchingDay && c.exdates.includes(matchingDay.dateStr)) return;
+      }
 
       const sub = subjectsMap[c.subjectId];
       const startOffset = timeToGridOffset(c.startTime);

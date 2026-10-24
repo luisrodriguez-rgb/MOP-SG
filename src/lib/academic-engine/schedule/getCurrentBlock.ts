@@ -74,6 +74,7 @@ export function getCurrentBlock({
       if (c.dayOfWeek !== dayOfWeek) return false;
       if (c.date && c.date !== todayDateStr) return false;
       if (c.untilDate && todayDateStr > c.untilDate) return false;
+      if (c.exdates && c.exdates.includes(todayDateStr)) return false;
       return true;
     })
     .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
