@@ -56,7 +56,7 @@ export function SlotDecisionModal({
         if (task.priority === 'high') priorityScore += 40;
         if (task.priority === 'medium') priorityScore += 20;
 
-        // Bonificación si hay un parcial cercano
+        // Bonificación si hay un hito cercano
         let examNotice = '';
         if (relatedExam) {
           const daysToExam = Math.ceil(
@@ -195,7 +195,7 @@ export function SlotDecisionModal({
 
                     {!fitsInSlot && (
                       <div className="text-[10px] text-amber-700 dark:text-amber-300 bg-amber-500/10 px-2 py-1 rounded-md">
-                        Esta entrega requiere más de {formatMinutesHuman(slot.durationMinutes)}. Puedes avanzar un bloque parcial.
+                        Esta entrega requiere más de {formatMinutesHuman(slot.durationMinutes)}. Puedes avanzar un bloque preliminar.
                       </div>
                     )}
                   </div>

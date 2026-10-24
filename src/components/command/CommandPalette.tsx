@@ -60,7 +60,7 @@ export function CommandPalette() {
     {
       id: 'calendar',
       title: 'Sincronizar Calendario (.ICS, Google, Outlook)',
-      subtitle: 'Importa tus clases desde calendarios externos o descarga .ics',
+      subtitle: 'Importa tus bloques fijos desde calendarios externos o descarga .ics',
       icon: Calendar,
       color: 'text-[var(--ink)] bg-[var(--surface-raised)] border border-[var(--border)]',
       action: () => { closeCommandPalette(); openCalendarModal(); },
@@ -100,7 +100,7 @@ export function CommandPalette() {
     {
       id: 'nav-schedule',
       title: 'Ir a Horario Semanal',
-      subtitle: 'Ver la cuadrícula de clases y huecos libres',
+      subtitle: 'Ver la cuadrícula de bloques fijos y disponibilidad',
       icon: BookOpen,
       color: 'text-[var(--ink)] bg-[var(--surface-raised)] border border-[var(--border)]',
       action: () => { closeCommandPalette(); router.push('/schedule'); },
@@ -168,7 +168,7 @@ export function CommandPalette() {
 
         {/* Footer */}
         <div className="p-3 bg-[var(--paper)] border-t border-[var(--border)] flex items-center justify-between text-[11px] text-[var(--muted)] font-mono">
-          <span>Mi Semestre Intelligence</span>
+          <span>MOP-SG Intelligence</span>
           <span>Navega con ⌘K o flechas</span>
         </div>
       </div>

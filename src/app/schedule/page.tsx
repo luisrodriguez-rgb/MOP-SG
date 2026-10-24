@@ -36,7 +36,7 @@ export default function SchedulePage() {
             Horario Semanal Inteligente
           </h1>
           <p className="text-xs text-[var(--muted)] mt-1">
-            Visualiza tus clases universitarias y descubre tus <strong className="text-[#16a34a] dark:text-[#4ade80]">huecos libres</strong> de estudio calculados automáticamente.
+            Visualiza tus bloques operativos y descubre tus <strong className="text-[#16a34a] dark:text-[#4ade80]">espacios libres</strong> de trabajo calculados automáticamente.
           </p>
         </div>
       </div>

@@ -545,7 +545,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                             <input
                               type="email"
                               required
-                              placeholder="tu.correo@u.icesi.edu.co"
+                              placeholder="contacto@seamosgenios.com"
                               value={authEmail}
                               onChange={(e) => setAuthEmail(e.target.value)}
                               className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"

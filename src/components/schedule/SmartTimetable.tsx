@@ -169,7 +169,7 @@ export function SmartTimetable({
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>('all');
   const [showSaturday, setShowSaturday] = useState<boolean>(false);
 
-  // Modal Contextual de Nivel 3 (Ficha de Clase) y Modal de Decisión de Hueco
+  // Modal Contextual de Nivel 3 (Ficha de Bloque) y Modal de Decisión de Hueco
   const [selectedSlotForDecision, setSelectedSlotForDecision] = useState<FreeSlotDecisionData | null>(null);
   const [selectedClassForDetail, setSelectedClassForDetail] = useState<{
     block: ScheduleBlock;
@@ -226,17 +226,17 @@ export function SmartTimetable({
     return list;
   }, [showSaturday]);
 
-  // Filtrar clases según materia
+  // Filtrar bloques según área
   const filteredClasses = useMemo(() => {
     if (selectedSubjectFilter === 'all') return classes;
     return classes.filter((c) => c.subjectId === selectedSubjectFilter);
   }, [classes, selectedSubjectFilter]);
 
-  // Opciones de selector estilizado de materias con color y código
+  // Opciones de selector estilizado de áreas con color y código
   const subjectSelectOptions: CustomSelectOption[] = useMemo(() => [
     {
       value: 'all',
-      label: 'Todas las materias',
+      label: 'Todas las áreas',
       badge: String(Object.keys(subjectsMap).length),
     },
     ...Object.values(subjectsMap).map((sub) => ({
@@ -403,7 +403,7 @@ export function SmartTimetable({
                   : 'text-[var(--muted)] hover:text-[var(--ink)]'
               }`}
             >
-              Clases
+              Bloques fijos
             </button>
             <button
               onClick={() => setTypeFilter('slots')}
@@ -693,7 +693,7 @@ export function SmartTimetable({
                           });
                         })()}
 
-                      {/* 3. BLOQUES DE CLASE (Nivel 1 con borde temático + Altura adaptativa) */}
+                      {/* 3. BLOQUES FIJOS (Nivel 1 con borde temático + Altura adaptativa) */}
                       {typeFilter !== 'slots' &&
                         typeFilter !== 'routines' &&
                         dayClasses.map((c) => {
@@ -703,7 +703,7 @@ export function SmartTimetable({
                             c.endTime
                           );
 
-                          // Inasistencias de la materia para el tooltip Nivel 2
+                          // Asistencias del área para el tooltip Nivel 2
                           const subAbsences = attendance.filter(
                             (a) => a.subjectId === c.subjectId && a.status === 'absent'
                           ).length;
@@ -734,7 +734,7 @@ export function SmartTimetable({
                                   <div>
                                     <div className="flex items-center justify-between">
                                       <span className="font-mono text-[9px] font-bold text-[var(--ink)] uppercase tracking-wide">
-                                        {subject?.code || 'CLASE'}
+                                        {subject?.code || 'BLOQUE'}
                                       </span>
                                       <span className="font-mono text-[10px] text-[var(--muted)] font-semibold">
                                         {c.startTime}
@@ -1004,7 +1004,7 @@ export function SmartTimetable({
                     });
                   })()}
 
-                {/* Clases en Vista Día */}
+                {/* Bloques en Vista Día */}
                 {typeFilter !== 'slots' &&
                   typeFilter !== 'routines' &&
                   filteredClasses
@@ -1034,7 +1034,7 @@ export function SmartTimetable({
                           <div>
                             <div className="flex items-center justify-between">
                               <span className="font-mono text-xs font-bold text-[var(--ink)] uppercase tracking-wide">
-                                {subject?.code || 'CLASE'}
+                                {subject?.code || 'BLOQUE'}
                               </span>
                               <span className="font-mono text-xs text-[var(--muted)] font-semibold">
                                 {c.startTime} – {c.endTime}
@@ -1168,7 +1168,7 @@ export function SmartTimetable({
                                 </span>
                               </div>
                               <h4 className="text-sm font-bold text-[var(--ink)] mt-0.5">
-                                {subject?.name || 'Clase'}
+                                {subject?.name || 'Bloque fijo'}
                               </h4>
                               {c.location && (
                                 <div className="flex items-center gap-1 text-[11px] text-[var(--muted)] mt-1">
@@ -1265,7 +1265,7 @@ export function SmartTimetable({
       )}
 
       {/* ========================================================= */}
-      {/* MODAL 1: Ficha Contextual de Clase (Nivel 3)              */}
+      {/* MODAL 1: Ficha Contextual de Bloque (Nivel 3)              */}
       {/* ========================================================= */}
       {selectedClassForDetail && (
         <ClassDetailModal

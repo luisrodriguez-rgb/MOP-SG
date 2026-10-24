@@ -42,7 +42,7 @@ export function FocusCompletionModal() {
         });
       }
 
-      // 3. Si fue parcial y había tarea vinculada, ajustar tiempo estimado restante
+      // 3. Si fue hito y había tarea vinculada, ajustar tiempo estimado restante
       if (selectedOutcome === 'partial' && focusCompletionData.taskId) {
         const all = await assignmentRepository.getAll();
         const task = all.find((t) => t.id === focusCompletionData.taskId);

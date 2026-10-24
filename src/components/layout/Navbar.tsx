@@ -142,13 +142,13 @@ export function Navbar() {
             </div>
             <div>
               <div className="font-extrabold text-base tracking-tight text-white flex items-center gap-1.5">
-                Mi Semestre
+                MOP-SG
                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-raised)] text-[var(--muted)] border border-[var(--border)] font-semibold uppercase">
                   OS Estudiantil
                 </span>
               </div>
               <div className="text-[11px] text-slate-400 font-mono flex items-center gap-2">
-                <span>{semester?.name || 'Semestre 2026-2'}</span>
+                <span>{semester?.name || 'Lanzamiento Playtest'}</span>
                 {metrics && (
                   <span className="text-emerald-400 font-medium">
                     Temporada · {metrics.progressPercentage}% de avance
@@ -209,7 +209,7 @@ export function Navbar() {
           <button
             onClick={openImporter}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--ink)] hover:opacity-90 text-white text-xs font-semibold shadow-xs transition-all"
-            title="Importar horario de universidad"
+            title="Importar horario y disponibilidad"
           >
             <Upload className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Importar</span>

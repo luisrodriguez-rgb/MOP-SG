@@ -18,7 +18,7 @@ export function EditClassModal() {
   const [location, setLocation] = useState('');
   const [subjectId, setSubjectId] = useState('');
 
-  // Edición directa y completa de la materia
+  // Edición directa y completa del área
   const [subjectName, setSubjectName] = useState('');
   const [subjectCode, setSubjectCode] = useState('');
   const [subjectNrc, setSubjectNrc] = useState('');
@@ -116,7 +116,7 @@ export function EditClassModal() {
     await subjectRepository.save(updatedSubject);
     targetSubId = updatedSubject.id;
 
-    // Guardar bloque de clase
+    // Guardar bloque operativo
     const block: ScheduleBlock = {
       id: editingScheduleBlock ? editingScheduleBlock.id : `block-${Date.now()}`,
       subjectId: targetSubId,
@@ -134,7 +134,7 @@ export function EditClassModal() {
 
   const handleDeleteBlock = async () => {
     if (!editingScheduleBlock) return;
-    if (confirm('¿Eliminar esta clase del horario semanal?')) {
+    if (confirm('¿Eliminar este bloque del horario semanal?')) {
       await scheduleRepository.delete(editingScheduleBlock.id);
       await refreshData();
       window.dispatchEvent(new CustomEvent('semester-data-updated'));
@@ -145,7 +145,7 @@ export function EditClassModal() {
   const handleDeleteFullSubject = async () => {
     if (!subjectId) return;
     const name = subjectName || 'esta área';
-    if (confirm(`¿Eliminar COMPLETAMENTE el área "${name}" y todas sus clases asociadas?`)) {
+    if (confirm(`¿Eliminar COMPLETAMENTE el área "${name}" y todos sus bloques asociados?`)) {
       if (editingScheduleBlock) {
         await scheduleRepository.delete(editingScheduleBlock.id);
       }

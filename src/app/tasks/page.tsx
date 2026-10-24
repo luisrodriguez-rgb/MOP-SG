@@ -206,7 +206,7 @@ export default function TasksPage() {
             </h3>
             <p className="text-xs text-[var(--muted)] mt-1">
               {assignments.length === 0
-                ? 'Comienza añadiendo tus pendientes académicos del semestre.'
+                ? 'Comienza añadiendo tus entregables de la temporada.'
                 : 'Intenta ajustando los filtros de búsqueda.'}
             </p>
             <button

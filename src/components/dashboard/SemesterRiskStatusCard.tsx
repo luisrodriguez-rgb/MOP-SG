@@ -31,7 +31,7 @@ export function SemesterRiskStatusCard({ overallRisk = 'Medio' }: SemesterRiskSt
         </div>
         <div>
           <div className="text-xs font-bold text-[var(--ink)]">
-            Estado del semestre
+            Estado de la temporada
           </div>
           <div className="text-[11px] text-[var(--muted)] mt-0.5">
             Riesgo general:{' '}

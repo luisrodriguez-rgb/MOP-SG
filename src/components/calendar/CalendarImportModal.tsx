@@ -47,13 +47,13 @@ export function CalendarImportModal() {
       setErrorMessage(null);
       const events = parseIcsCalendar(icsText, { sourceCalendar: sourceName });
       if (events.length === 0) {
-        setErrorMessage('No se encontraron eventos o clases válidas en el archivo.');
+        setErrorMessage('No se encontraron eventos o bloques válidos en el archivo.');
         return;
       }
 
       setParsedEvents(events);
 
-      // Calcular deduplicación preliminar para clases
+      // Calcular deduplicación preliminar para bloques
       let toCreate = 0;
       let toUpdate = 0;
       let toSkip = 0;
@@ -133,19 +133,19 @@ export function CalendarImportModal() {
     setIsLoading(true);
 
     try {
-      // 1. Asegurar o emparejar materias
+      // 1. Asegurar o emparejar áreas
       const existingSubList = [...subjects];
 
       for (const ev of parsedEvents) {
         if (ev.suggestedType === 'class') {
-          // Buscar materia existente por título o código
+          // Buscar área existente por título o código
           let targetSubject = existingSubList.find((s) =>
             ev.title.toLowerCase().includes(s.name.toLowerCase()) ||
             s.name.toLowerCase().includes(ev.title.toLowerCase())
           );
 
           if (!targetSubject) {
-            // Crear materia automáticamente
+            // Crear área automáticamente
             const newSub: Subject = {
               id: `sub_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
               semesterId: semester?.id || 'sem_active',
@@ -229,7 +229,7 @@ export function CalendarImportModal() {
 
   const handleExport = () => {
     const icsContent = generateIcsCalendar({
-      semesterName: semester?.name || 'Mi Semestre',
+      semesterName: semester?.name || 'Temporada SG',
       subjectsMap,
       blocks: scheduleBlocks,
       exams,
@@ -295,7 +295,7 @@ export function CalendarImportModal() {
             }`}
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Exportar Semestre</span>
+            <span>Exportar Temporada</span>
           </button>
         </div>
 
@@ -371,7 +371,7 @@ export function CalendarImportModal() {
               <div>
                 <h3 className="text-base font-bold text-[var(--ink)]">Exportar Horario a tus Dispositivos</h3>
                 <p className="text-xs text-[var(--muted)] mt-1 max-w-sm mx-auto">
-                  Descarga un archivo universal .ics con tus clases recurrentes, salones y parciales agendados para abrirlos en tu celular.
+                  Descarga un archivo universal .ics con tus bloques fijos e hitos agendados para abrirlos en tu calendario.
                 </p>
               </div>
               <button

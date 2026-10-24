@@ -76,7 +76,7 @@ export function QuickScheduleImporterModal() {
                 : 'text-[var(--muted)] hover:text-[var(--ink)]'
             }`}
           >
-            Plantilla Icesi (1 Clic)
+            Plantilla Operación SG (1 Clic)
           </button>
           <button
             onClick={() => setActiveTab('text')}

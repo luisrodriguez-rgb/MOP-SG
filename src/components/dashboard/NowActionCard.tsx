@@ -15,7 +15,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { CustomSelect, CustomSelectOption } from '@/components/ui/CustomSelect';
 
 const NOW_SIMULATED_TIME_OPTIONS: CustomSelectOption[] = [
-  { value: '07:30', label: '07:30', sublabel: 'En Clase' },
+  { value: '07:30', label: '07:30', sublabel: 'En Bloque' },
   { value: '09:15', label: '09:15', sublabel: 'Hueco Mañana' },
   { value: '12:30', label: '12:30', sublabel: 'Almuerzo' },
   { value: '16:20', label: '16:20', sublabel: 'Hueco Libre 1h 40m' },
@@ -101,7 +101,7 @@ export function NowActionCard({
     const relatedExam = exams.find((e) => e.subjectId === top.subjectId);
     let reason = 'Vence próximamente y requiere avance prioritario.';
     if (relatedExam) {
-      reason = `Porque tienes el parcial de ${subject?.name || 'la materia'} en pocos días y requiere preparación.`;
+      reason = `Porque tienes el hito de ${subject?.name || 'el área'} en pocos días y requiere preparación.`;
     }
 
     return {
@@ -133,7 +133,7 @@ export function NowActionCard({
         recommendedTask.task.id
       );
     } else {
-      startFocusSession('Sesión de Estudio Libre', 'Auto-estudio', 45);
+      startFocusSession('Sesión de Enfoque Libre', 'Auto-enfoque', 45);
     }
   };
 
@@ -197,7 +197,7 @@ export function NowActionCard({
               <span>1. AHORA</span>
               {currentBlockResult.status === 'in_class' && (
                 <span className="px-2 py-0.5 rounded-full bg-[var(--surface-raised)] text-[var(--ink)] border border-[var(--border)] text-[10px] font-bold">
-                  EN CLASE
+                  EN BLOQUE
                 </span>
               )}
               {currentBlockResult.status === 'in_free_slot' && (
@@ -217,7 +217,7 @@ export function NowActionCard({
               )}
             </div>
 
-            {/* ESTADO EN CLASE */}
+            {/* ESTADO EN BLOQUE */}
             {currentBlockResult.status === 'in_class' && currentBlockResult.currentClass && (
               <div className="mt-4">
                 <div className="text-xl font-black text-[var(--ink)] tracking-tight leading-snug">
@@ -310,7 +310,7 @@ export function NowActionCard({
                   Fuera de Jornada
                 </div>
                 <p className="text-xs text-[var(--muted)] mt-2">
-                  No hay clases activas en este horario. Buen momento para descansar o adelantar con calma.
+                  No hay bloques fijos activos en este horario. Buen momento para descansar o adelantar con calma.
                 </p>
               </div>
             )}
@@ -391,11 +391,11 @@ export function NowActionCard({
               </span>
             </div>
 
-            {/* Siguiente clase de hoy */}
+            {/* Siguiente bloque de hoy */}
             {currentBlockResult.nextBlock ? (
               <div className="mt-4 p-3 rounded-xl bg-[var(--paper)] border border-[var(--border)]">
                 <div className="text-[10px] font-mono uppercase text-[var(--muted)]">
-                  Siguiente clase de hoy ({currentBlockResult.nextBlock.startTime})
+                  Siguiente bloque de hoy ({currentBlockResult.nextBlock.startTime})
                 </div>
                 <div className="text-xs font-bold text-[var(--ink)] mt-0.5">
                   {currentBlockResult.nextBlock.title}
@@ -409,7 +409,7 @@ export function NowActionCard({
               </div>
             ) : (
               <div className="mt-4 p-2.5 rounded-xl bg-[var(--paper)] border border-[var(--border)] text-[11px] text-[var(--muted)]">
-                No tienes más clases programadas hoy.
+                No tienes más bloques fijos programados hoy.
               </div>
             )}
 

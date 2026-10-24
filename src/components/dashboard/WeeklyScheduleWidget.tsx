@@ -91,11 +91,11 @@ export function WeeklyScheduleWidget({
     return Math.max(0.6, (mTotal2 - mTotal1) / 60);
   };
 
-  // Bloques reales de clase, rutinas y huecos libres
+  // Bloques reales fijos, rutinas y disponibilidad
   const displayBlocks: DisplayBlock[] = useMemo(() => {
     const result: DisplayBlock[] = [];
 
-    // 1. Mapear clases de la base de datos
+    // 1. Mapear bloques de la base de datos
     classes.forEach((c) => {
       const sub = subjectsMap[c.subjectId];
       const startOffset = timeToGridOffset(c.startTime);
@@ -106,7 +106,7 @@ export function WeeklyScheduleWidget({
       result.push({
         id: `class-${c.id}`,
         type: 'class',
-        title: sub?.name || 'Clase',
+        title: sub?.name || 'Bloque fijo',
         subtitle: `${c.location || 'Campus'} · ${sub?.code || ''}`,
         day: c.dayOfWeek,
         startHourFraction: startOffset,
@@ -194,19 +194,19 @@ export function WeeklyScheduleWidget({
             Horario semanal
           </h3>
           <span className="text-[10px] font-mono font-bold text-[var(--muted)] ml-1 bg-[var(--surface-raised)] dark:bg-[var(--surface-raised)] px-2 py-0.5 rounded-full border border-[var(--border)] dark:border-[var(--border)]">
-            {uniqueSubjectsCount} {uniqueSubjectsCount === 1 ? 'materia' : 'materias'} · {classes.length} {classes.length === 1 ? 'bloque' : 'bloques'}
+            {uniqueSubjectsCount} {uniqueSubjectsCount === 1 ? 'área' : 'áreas'} · {classes.length} {classes.length === 1 ? 'bloque' : 'bloques'}
           </span>
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Botón rápido para añadir clase */}
+          {/* Botón rápido para añadir bloque */}
           <button
             onClick={() => openEditClass()}
             className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold transition-all shadow-2xs cursor-pointer"
-            title="Añadir clase al horario"
+            title="Añadir bloque fijo al horario"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Clase</span>
+            <span>Bloque</span>
           </button>
 
           {/* Toggle Semana / Día */}
@@ -323,7 +323,7 @@ export function WeeklyScheduleWidget({
                     />
                   ))}
 
-                  {/* Renderizar bloques de clase, rutinas y huecos libres */}
+                  {/* Renderizar bloques fijos, rutinas y disponibilidad */}
                   {dayBlocks.map((block) => {
                     const topPct = (block.startHourFraction / totalGridHours) * 100;
                     const heightPct = (block.durationHours / totalGridHours) * 100;
@@ -398,7 +398,7 @@ export function WeeklyScheduleWidget({
                           borderColor: block.colorBorder,
                           color: block.colorText,
                         }}
-                        title="Clic para editar esta clase o materia"
+                        title="Clic para editar este bloque o área"
                       >
                         <div className="text-[10px] font-black leading-tight truncate flex items-center justify-between">
                           <span className="truncate">{block.title}</span>

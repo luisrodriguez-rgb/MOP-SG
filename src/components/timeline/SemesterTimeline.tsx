@@ -55,7 +55,7 @@ export function SemesterTimeline({
   const [userSelectedWeek, setUserSelectedWeek] = useState<number | null>(null);
   const selectedWeek = userSelectedWeek ?? currentWeekNumber;
 
-  // Resetear selección manual si cambia el semestre
+  // Resetear selección manual si cambia la temporada
   useEffect(() => {
     setUserSelectedWeek(null);
   }, [semester?.id]);
@@ -132,13 +132,13 @@ export function SemesterTimeline({
           <div>
             <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-white/80 font-bold">
               <Layers className="w-4 h-4" />
-              <span>Hoja de Ruta del Semestre</span>
+              <span>Hoja de Ruta de la Temporada</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
               Línea de {totalWeeks} Semanas
             </h2>
             <p className="text-xs text-white/90 mt-1 max-w-xl">
-              Visualiza en qué punto del semestre te encuentras y anticípate a las semanas de mayor densidad de entregas y parciales.
+              Visualiza en qué punto de la temporada te encuentras y anticípate a las semanas de mayor densidad de entregables e hitos.
             </p>
           </div>
 
@@ -175,14 +175,14 @@ export function SemesterTimeline({
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div>
             <h3 className="text-sm font-bold text-[var(--ink)]">
-              Explorar Semanas del Semestre
+              Explorar Semanas de la Temporada
             </h3>
             <span className="text-xs text-[var(--muted)] font-mono">
               Haz clic en una semana para ver sus hitos y compromisos
             </span>
           </div>
 
-          {/* Control interactivo para aumentar o mermar semanas del semestre */}
+          {/* Control interactivo para aumentar o mermar semanas de la temporada */}
           <div className="flex items-center gap-2 bg-[var(--paper)] px-3 py-1.5 rounded-xl border border-[var(--border)]">
             <span className="text-xs text-[var(--muted)] font-mono font-medium">Duración:</span>
             <div className="flex items-center gap-1.5">
@@ -190,7 +190,7 @@ export function SemesterTimeline({
                 onClick={() => handleUpdateTotalWeeks(Math.max(8, totalWeeks - 1))}
                 disabled={totalWeeks <= 8}
                 className="w-6 h-6 rounded-lg bg-[var(--surface)] text-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] font-black text-xs flex items-center justify-center transition-colors cursor-pointer border border-[var(--border)] disabled:opacity-30 disabled:cursor-not-allowed shadow-2xs"
-                title="Reducir 1 semana al semestre"
+                title="Reducir 1 semana a la temporada"
               >
                 -
               </button>
@@ -201,7 +201,7 @@ export function SemesterTimeline({
                 onClick={() => handleUpdateTotalWeeks(Math.min(24, totalWeeks + 1))}
                 disabled={totalWeeks >= 24}
                 className="w-6 h-6 rounded-lg bg-[var(--surface)] text-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] font-black text-xs flex items-center justify-center transition-colors cursor-pointer border border-[var(--border)] disabled:opacity-30 disabled:cursor-not-allowed shadow-2xs"
-                title="Aumentar 1 semana al semestre"
+                title="Aumentar 1 semana a la temporada"
               >
                 +
               </button>

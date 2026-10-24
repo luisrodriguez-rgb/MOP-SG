@@ -88,7 +88,7 @@ export function AttendanceModal() {
                 Control de Asistencias y Faltas
               </h3>
               <p className="text-xs text-[var(--muted)]">
-                Registro por clase: suma asistencias o registra faltas con radar preventivo
+                Registro por bloque: suma asistencias o registra faltas con radar preventivo
               </p>
             </div>
           </div>
@@ -203,7 +203,7 @@ export function AttendanceModal() {
                       <button
                         onClick={() => handleAddPresent(sub.id)}
                         className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
-                        title="Registrar clase asistida hoy"
+                        title="Registrar sesión cumplida hoy"
                       >
                         <CheckCircle className="w-3.5 h-3.5" />
                         <span>Asistí</span>

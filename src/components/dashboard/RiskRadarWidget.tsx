@@ -71,7 +71,7 @@ export function RiskRadarWidget({
     return evaluatedSubjects.filter((s) => s.status !== 'ESTABLE').length;
   }, [evaluatedSubjects]);
 
-  // Progressive Disclosure: si hay materia prioritaria, destacar esa primero
+  // Progressive Disclosure: si hay área prioritaria, destacar esa primero
   const { visibleItems, hiddenItems } = useMemo(() => {
     if (!prioritySubjectId) {
       return { visibleItems: evaluatedSubjects, hiddenItems: [] };
@@ -269,7 +269,7 @@ export function RiskRadarWidget({
                   onClick={() => setIsExpanded(false)}
                   className="w-full py-1 text-[11px] font-mono text-[var(--muted)] hover:text-[var(--ink)] dark:hover:text-white flex items-center justify-center gap-1 cursor-pointer transition-colors"
                 >
-                  <span>Colapsar materias estables</span>
+                  <span>Colapsar áreas estables</span>
                   <ChevronUp className="w-3 h-3" />
                 </button>
               </div>
@@ -278,15 +278,15 @@ export function RiskRadarWidget({
         )}
       </div>
 
-      {/* Síntesis de Salud del Semestre (Anclada limpiamente abajo sin hueco blanco vacío) */}
+      {/* Síntesis de Salud de la Temporada */}
       <div className="mt-3 pt-3 border-t border-[var(--border)]">
         <div className="p-3 rounded-xl bg-[var(--surface-raised)] dark:bg-[var(--surface-raised)] border border-[var(--border)] dark:border-[var(--border)] flex items-center justify-between text-xs">
           <div>
             <div className="font-bold text-[var(--ink)]">
-              Salud del semestre
+              Salud de la temporada
             </div>
             <div className="text-[11px] text-[var(--muted)] mt-0.5">
-              {subjects.length} {subjects.length === 1 ? 'materia' : 'materias'} ·{' '}
+              {subjects.length} {subjects.length === 1 ? 'área' : 'áreas'} ·{' '}
               {atRiskCount === 0
                 ? 'Todo en orden'
                 : `${atRiskCount} ${atRiskCount === 1 ? 'requiere' : 'requieren'} atención`}

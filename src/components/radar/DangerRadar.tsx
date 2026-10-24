@@ -24,7 +24,7 @@ export function DangerRadar({
 }: DangerRadarProps) {
   const [filterMemberId, setFilterMemberId] = useState<string>('all');
 
-  // Calcular riesgo para cada materia de forma determinística
+  // Calcular riesgo para cada área de forma determinística
   const evaluatedRisks = useMemo(() => {
     return subjects
       .map((subject) => {
@@ -127,7 +127,7 @@ export function DangerRadar({
           </div>
         )}
 
-        {/* Diagnóstico clave de la materia de mayor riesgo */}
+        {/* Diagnóstico clave del área de mayor riesgo */}
         {highestRisk && highestRisk.level !== 'ESTABLE' && (
           <div className="mt-5 p-4 rounded-xl bg-[#fef2f2] dark:bg-[#200505] border border-[#fecaca] dark:border-[#7f1d1d] flex items-start gap-3">
             <div className="p-2 rounded-lg bg-[#fee2e2] dark:bg-[#390909] text-[#dc2626] dark:text-[#f87171] mt-0.5">
@@ -138,7 +138,7 @@ export function DangerRadar({
                 Atención Inmediata Requerida: {highestRisk.subjectName}
               </div>
               <p className="text-xs text-[var(--ink-secondary)] mt-0.5">
-                Es actualmente tu materia con mayor presión académica debido a:{' '}
+                Es actualmente el área con mayor presión operativa debido a:{' '}
                 <span className="font-semibold text-[#dc2626] dark:text-[#f87171]">
                   {highestRisk.reasons.join(' ')}
                 </span>
