@@ -27,16 +27,15 @@ export function Sidebar() {
 
   const navItems = [
     { href: '/dashboard', label: '¿Qué hago ahora?', icon: Home },
-    { href: '/schedule', label: 'Horario Semanal', icon: Calendar },
-    { href: '/tasks', label: 'Tareas', icon: ListTodo },
-    { href: '/exams', label: 'Evaluaciones', icon: CheckSquare },
-    { href: '/radar', label: 'Radar de Riesgo', icon: AlertTriangle },
+    { href: '/schedule', label: 'Semana & Disponibilidad', icon: Calendar },
+    { href: '/tasks', label: 'Entregables por Área', icon: ListTodo },
+    { href: '/exams', label: 'Hitos & Playtest', icon: CheckSquare },
+    { href: '/radar', label: 'Radar de Atrasos', icon: AlertTriangle },
     { href: '/timeline', label: 'Línea de Semanas', icon: Layers },
-    { href: '/balance', label: 'Balance Académico', icon: GraduationCap },
   ];
 
-  const studentName = profile?.name || 'Diego Rodríguez';
-  const studentProgram = profile?.program || 'Ingeniería de Sistemas';
+  const studentName = profile?.name || 'Leo';
+  const studentProgram = profile?.program || 'Seamos Genios · Playtest';
   const initials = studentName
     .split(' ')
     .slice(0, 2)
@@ -45,21 +44,21 @@ export function Sidebar() {
     .toUpperCase();
 
   return (
-    <aside className="hidden md:flex w-64 shrink-0 bg-[#0c102a] dark:bg-[#070919] text-white flex-col justify-between border-r border-[#1e2348] h-screen sticky top-0 overflow-y-auto transition-colors z-40 select-none">
+    <aside className="hidden md:flex w-64 shrink-0 bg-[#0A0A0A] text-[#F4F4F5] flex-col justify-between border-r border-[#27272A] h-screen sticky top-0 overflow-y-auto transition-colors z-40 select-none">
       <div>
-        {/* Logo Superior MI SEMESTRE | ICESI */}
-        <div className="p-6 pb-5 flex items-center gap-3 border-b border-[#1b2046]/50">
+        {/* Logo Superior MOP-SG | SEAMOS GENIOS */}
+        <div className="p-6 pb-5 flex items-center gap-3 border-b border-[#27272A]">
           <img
             src="/icon.png"
-            alt="MI SEMESTRE | ICESI"
-            className="w-9 h-9 object-contain drop-shadow-md"
+            alt="MOP-SG | SEAMOS GENIOS"
+            className="w-8 h-8 object-contain drop-shadow-md rounded-lg"
           />
           <div>
-            <div className="font-black text-sm tracking-wider text-white flex items-center gap-1.5">
-              MI SEMESTRE <span className="text-[#656cf5] font-black">|</span>
+            <div className="font-black text-sm tracking-wider text-white flex items-center gap-1.5 uppercase font-sans">
+              MOP-SG <span className="text-[#BB271A] font-black">|</span>
             </div>
-            <div className="text-[10px] font-mono tracking-widest text-[#7a85b8] uppercase font-bold">
-              ICESI
+            <div className="text-[10px] font-mono tracking-widest text-[#A1A1AA] uppercase font-bold">
+              SEAMOS GENIOS
             </div>
           </div>
         </div>
@@ -74,29 +73,29 @@ export function Sidebar() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                   active
-                    ? 'bg-[#2b31a8] text-white shadow-md shadow-[#1b2046]/60 font-bold'
-                    : 'text-[#8b96c8] hover:text-white hover:bg-white/5'
+                    ? 'bg-[#18181B] text-white border border-[#27272A] font-bold shadow-xs'
+                    : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${active ? 'text-white' : 'text-[#6b76ad]'}`} />
+                <Icon className={`w-4 h-4 ${active ? 'text-[#BB271A]' : 'text-[#71717A]'}`} />
                 <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Sección "MI SEMESTRE" & Multi-Semestre Switcher */}
+        {/* Sección "MOP-SG" & Temporada Activa */}
         <div className="px-4 pt-4">
-          <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-[#636f9e] font-bold pb-2">
-            <span>MI SEMESTRE</span>
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-[#71717A] font-bold pb-2">
+            <span>TEMPORADA</span>
             <button
               onClick={openCareerSwitchModal}
-              className="text-[#8e98ec] hover:text-white transition-colors cursor-pointer"
-              title="Cambiar carrera o plantilla oficial"
+              className="text-[#BB271A] hover:underline transition-colors cursor-pointer"
+              title="Cambiar temporada o configuración"
             >
-              + Cambiar
+              + Ajustes
             </button>
           </div>
           
@@ -109,24 +108,24 @@ export function Sidebar() {
                 options={allSemesters.map((s) => ({
                   value: s.id,
                   label: s.name,
-                  badge: s.isActive ? 'Activo' : undefined,
+                  badge: s.isActive ? 'Activa' : undefined,
                 }))}
-                buttonClassName="bg-[#141838] border-[#202758] text-white hover:border-[#656cf5]"
-                menuClassName="bg-[#141838] border-[#202758] text-white"
+                buttonClassName="bg-[#161616] border-[#27272A] text-white hover:border-[#3F3F46]"
+                menuClassName="bg-[#161616] border-[#27272A] text-white"
               />
             ) : (
               <div
                 onClick={openCareerSwitchModal}
-                className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#141838]/60 hover:bg-[#191f48] border border-[#202758] transition-all cursor-pointer group"
+                className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#161616] hover:bg-[#202020] border border-[#27272A] transition-all cursor-pointer group"
               >
-                <div className="w-6 h-6 rounded-lg bg-[#252ab8]/40 border border-[#3b41d0]/50 flex items-center justify-center text-[#8e97ff] text-[11px] font-mono font-bold">
-                  S
+                <div className="w-6 h-6 rounded-lg bg-[#27272A] border border-[#3F3F46] flex items-center justify-center text-[#BB271A] text-[11px] font-mono font-bold">
+                  SG
                 </div>
                 <div className="min-w-0 text-left">
-                  <div className="text-xs font-bold text-white group-hover:text-[#8e97ff] transition-colors truncate">
-                    {semester?.name || 'Semestre 2026-2'}
+                  <div className="text-xs font-bold text-white group-hover:text-[#FAFAFA] transition-colors truncate">
+                    {semester?.name || 'Playtest Noviembre 2026'}
                   </div>
-                  <div className="text-[10px] text-[#7a85b8] font-mono truncate">
+                  <div className="text-[10px] text-[#A1A1AA] font-mono truncate">
                     {studentProgram}
                   </div>
                 </div>
@@ -137,41 +136,41 @@ export function Sidebar() {
       </div>
 
       {/* Pie de Usuario y Branding */}
-      <div className="p-3 border-t border-[#1b2046]/50 space-y-3">
+      <div className="p-3 border-t border-[#27272A] space-y-3">
         {/* Tarjeta Usuario */}
         <div
           onClick={openProfile}
-          className="flex items-center justify-between p-2 rounded-xl bg-[#141838]/80 hover:bg-[#191f48] border border-[#202758] transition-all cursor-pointer group"
+          className="flex items-center justify-between p-2 rounded-xl bg-[#161616] hover:bg-[#202020] border border-[#27272A] transition-all cursor-pointer group"
         >
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1e2380] to-[#3a42d8] border border-[#525bf4]/40 text-white font-black text-xs flex items-center justify-center shadow-xs shrink-0">
+            <div className="w-8 h-8 rounded-full bg-[#27272A] border border-[#3F3F46] text-white font-black text-xs flex items-center justify-center shadow-xs shrink-0">
               {initials}
             </div>
             <div className="min-w-0">
-              <div className="text-xs font-bold text-white group-hover:text-[#8e97ff] transition-colors truncate">
+              <div className="text-xs font-bold text-white transition-colors truncate">
                 {studentName}
               </div>
-              <div className="text-[10px] text-[#7a85b8] font-mono truncate">
+              <div className="text-[10px] text-[#A1A1AA] font-mono truncate">
                 {studentProgram}
               </div>
             </div>
           </div>
-          <Settings className="w-4 h-4 text-[#6b76ad] group-hover:text-white transition-colors shrink-0" />
+          <Settings className="w-4 h-4 text-[#71717A] group-hover:text-white transition-colors shrink-0" />
         </div>
 
-        {/* Footer MI SEMESTRE | ICESI */}
-        <div className="px-2 pt-1 flex items-center gap-2 text-[#56618e]">
+        {/* Footer MOP-SG | SEAMOS GENIOS */}
+        <div className="px-2 pt-1 flex items-center gap-2 text-[#71717A]">
           <img
             src="/icon.png"
-            alt="MI SEMESTRE | ICESI"
-            className="w-4 h-4 object-contain opacity-80"
+            alt="MOP-SG | SEAMOS GENIOS"
+            className="w-4 h-4 object-contain opacity-80 rounded"
           />
           <div>
-            <div className="text-[10px] font-bold font-mono tracking-wider uppercase text-[#6f7aa8]">
-              MI SEMESTRE <span className="text-[9px] font-normal opacity-70">| ICESI</span>
+            <div className="text-[10px] font-bold font-mono tracking-wider uppercase text-[#A1A1AA]">
+              MOP-SG <span className="text-[9px] font-normal opacity-70">| SEAMOS GENIOS</span>
             </div>
-            <div className="text-[9px] text-[#56618e] font-sans">
-              Tu semestre, en tus manos.
+            <div className="text-[9px] text-[#71717A] font-sans">
+              Operación ejecutiva sin fricción.
             </div>
           </div>
         </div>

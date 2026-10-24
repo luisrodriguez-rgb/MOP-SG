@@ -14,40 +14,39 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Mi Semestre | Sistema Operativo Personal del Semestre',
+  title: 'MOP-SG | Mi Operación Personal — Seamos Genios',
   description:
-    'Tu centro de control académico inteligente: horario visual interactivo, disponibilidad real en huecos libres, radar de riesgo académico y auto-organización.',
-  applicationName: 'Mi Semestre',
-  authors: [{ name: 'Luis Felipe Rodríguez' }],
+    'Sistema operativo ejecutivo para la gestión de tiempo, hitos de lanzamiento, entregables por área y radar de atrasos de Seamos Genios.',
+  applicationName: 'MOP-SG',
+  authors: [{ name: 'Seamos Genios' }],
   generator: 'Next.js',
   keywords: [
-    'horario universitario',
-    'organizador semestral',
-    'estudio universitario',
-    'radar de riesgo académico',
-    'icesi',
-    'disponibilidad de tiempo',
-    'pomodoro',
+    'seamos genios',
+    'operación ejecutiva',
+    'playtest',
+    'gestor de entregas',
+    'radar de atrasos',
+    'disponibilidad real',
   ],
-  creator: 'Luis Felipe Rodríguez',
+  creator: 'Seamos Genios',
   manifest: '/manifest.json',
   icons: {
     icon: '/icon.png',
     apple: '/icon.png',
   },
   openGraph: {
-    title: 'Mi Semestre — Sistema Operativo Personal del Semestre',
+    title: 'MOP-SG — Mi Operación Personal',
     description:
-      'No es solo un horario. Es el mapa inteligente de tu tiempo, entregas, parciales y progreso académico en tiempo real.',
-    siteName: 'Mi Semestre',
+      'Control de decisiones, tiempo libre real, hitos del Playtest y radar de cuellos de botella para Seamos Genios.',
+    siteName: 'MOP-SG',
     locale: 'es_CO',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Mi Semestre — Sistema Operativo Personal del Semestre',
+    title: 'MOP-SG — Mi Operación Personal',
     description:
-      'Horario interactivo, cálculo de disponibilidad real en huecos y radar de salud académica.',
+      'Control de decisiones, tiempo libre real, hitos del Playtest y radar de cuellos de botella para Seamos Genios.',
   },
   robots: {
     index: true,
