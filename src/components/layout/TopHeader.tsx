@@ -87,7 +87,7 @@ export function TopHeader() {
       })
     : { currentWeek: 6, totalWeeks: 16, progressPercentage: 37, daysRemaining: 68 };
 
-  const studentName = profile?.name || 'Estudiante';
+  const studentName = profile?.name || 'Socio SG';
   const initials = studentName
     .split(' ')
     .slice(0, 2)
@@ -120,7 +120,7 @@ export function TopHeader() {
           {/* Barra de Progreso de la Temporada */}
           <div className="hidden sm:flex items-center gap-3 text-xs">
             <div className="text-[11px] font-bold text-[var(--ink)]">
-              Semana {metrics.currentWeek} de {metrics.totalWeeks}
+              Avance de temporada ({metrics.progressPercentage}%)
             </div>
             <div className="w-24 bg-[var(--surface)] border border-[var(--border)] h-1.5 rounded-full overflow-hidden">
               <div

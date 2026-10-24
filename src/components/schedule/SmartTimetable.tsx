@@ -429,7 +429,7 @@ export function SmartTimetable({
 
           <div className="h-4 w-px bg-[var(--border)] hidden md:block" />
 
-          {/* Selector de Materias */}
+          {/* Selector de Áreas */}
           <CustomSelect
             value={selectedSubjectFilter}
             onChange={setSelectedSubjectFilter}
@@ -454,10 +454,10 @@ export function SmartTimetable({
           <button
             onClick={() => openEditClass()}
             className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] font-bold transition-all shadow-xs cursor-pointer active:scale-95"
-            title="Añadir clase al horario"
+            title="Añadir bloque fijo al horario"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>+ Clase</span>
+            <span>+ Bloque fijo</span>
           </button>
 
           <button
@@ -741,7 +741,7 @@ export function SmartTimetable({
                                       </span>
                                     </div>
                                     <div className="font-bold text-xs text-[var(--ink)] mt-1 leading-snug line-clamp-2">
-                                      {subject?.name || 'Materia'}
+                                      {subject?.name || 'Área'}
                                     </div>
                                   </div>
 
@@ -762,7 +762,7 @@ export function SmartTimetable({
                                   <div>
                                     <div className="flex items-center justify-between gap-1">
                                       <span className="font-bold text-[11px] text-[var(--ink)] truncate">
-                                        {subject?.name || 'Materia'}
+                                        {subject?.name || 'Área'}
                                       </span>
                                       <span className="font-mono text-[9px] text-[var(--muted)] shrink-0">
                                         {c.startTime}
@@ -782,7 +782,7 @@ export function SmartTimetable({
                               ) : (
                                 <div className="flex items-center justify-between gap-1 text-[11px] h-full">
                                   <span className="font-bold text-[var(--ink)] truncate">
-                                    {subject?.name || 'Materia'}
+                                    {subject?.name || 'Área'}
                                   </span>
                                   <span className="font-mono text-[9px] text-[var(--muted)] shrink-0">
                                     {c.startTime}
@@ -1041,7 +1041,7 @@ export function SmartTimetable({
                               </span>
                             </div>
                             <div className="font-black text-sm text-[var(--ink)] mt-1">
-                              {subject?.name || 'Materia'}
+                              {subject?.name || 'Área'}
                             </div>
                           </div>
 

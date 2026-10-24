@@ -72,10 +72,10 @@ export function GeneralProgressCard({
         {/* Resumen semana */}
         <div>
           <div className="text-sm font-black text-[#0f1330] dark:text-white">
-            Semana {currentWeek} de {totalWeeks}
+            Avance de temporada ({Math.round(progressPercentage)}%)
           </div>
           <div className="text-xs text-[#626c96] dark:text-[#8b95c2] mt-0.5 font-medium">
-            {currentWeek} de {totalWeeks} semanas completadas
+            {currentWeek} de {totalWeeks} semanas transcurridas
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@ export function GeneralProgressCard({
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2.5 text-[#505a88] dark:text-[#949ecb] font-medium">
             <Layers3 className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
-            <span>Materias</span>
+            <span>Áreas operativas</span>
           </div>
           <span className="font-mono font-bold text-[#0f1330] dark:text-white">
             {totalSubjectsCount} / {totalSubjectsCount}
@@ -105,7 +105,7 @@ export function GeneralProgressCard({
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2.5 text-[#505a88] dark:text-[#949ecb] font-medium">
             <Calendar className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
-            <span>Parciales próximos</span>
+            <span>Hitos próximos</span>
           </div>
           <span className="font-mono font-bold text-[#0f1330] dark:text-white">
             {upcomingExamsCount}

@@ -79,7 +79,7 @@ export function Navbar() {
   const navLinks = [
     { href: '/dashboard', label: '¿Qué hago ahora?', icon: Clock },
     { href: '/schedule', label: 'Horario Inteligente', icon: Calendar },
-    { href: '/radar', label: 'Radar de Riesgo', icon: AlertTriangle },
+    { href: '/radar', label: 'Radar de Atrasos', icon: AlertTriangle },
     { href: '/timeline', label: 'Línea de Semanas', icon: Layers },
   ];
 
@@ -151,7 +151,7 @@ export function Navbar() {
                 <span>{semester?.name || 'Semestre 2026-2'}</span>
                 {metrics && (
                   <span className="text-emerald-400 font-medium">
-                    Semana {metrics.currentWeek}/{metrics.totalWeeks} · {metrics.progressPercentage}%
+                    Temporada · {metrics.progressPercentage}% de avance
                   </span>
                 )}
               </div>
@@ -200,10 +200,10 @@ export function Navbar() {
           <button
             onClick={openAddExam}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 text-xs font-semibold transition-all"
-            title="Añadir Parcial o Examen"
+            title="Añadir Hito o Entrega"
           >
             <Calendar className="w-3.5 h-3.5 text-[var(--muted)]" />
-            <span className="hidden sm:inline">Parcial</span>
+            <span className="hidden sm:inline">Hito</span>
           </button>
 
           <button

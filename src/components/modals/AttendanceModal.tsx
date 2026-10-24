@@ -100,11 +100,11 @@ export function AttendanceModal() {
           </button>
         </div>
 
-        {/* Lista de Materias */}
+        {/* Lista de Áreas */}
         <div className="mt-4 space-y-3.5">
           {subjects.length === 0 ? (
             <div className="text-center py-8 text-xs text-[var(--muted)]">
-              No tienes materias registradas aún. Agrega una clase para llevar el control.
+              No tienes áreas registradas aún. Agrega un bloque fijo para llevar el control.
             </div>
           ) : (
             subjects.map((sub) => {

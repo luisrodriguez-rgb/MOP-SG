@@ -120,7 +120,7 @@ export function RiskRadarWidget({
         <div className="flex items-center gap-2">
           <Target className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
           <h3 className="text-sm font-bold text-[#0f1330] dark:text-white tracking-tight">
-            Radar de Riesgo
+            Radar de Atrasos
           </h3>
           <span className="text-[10px] font-mono font-bold text-[#626c96] dark:text-[#8b95c2] ml-1 bg-[#f0f3fa] dark:bg-[#141838] px-2 py-0.5 rounded-full border border-[#e2e6f2] dark:border-[#1e2552]">
             {subjects.length} áreas
@@ -170,15 +170,15 @@ export function RiskRadarWidget({
         </div>
       )}
 
-      {/* Lista de Materias con Indicador Vertical - Con Progressive Disclosure */}
+      {/* Lista de Áreas con Indicador Vertical - Con Progressive Disclosure */}
       <div className="mt-3 space-y-2 flex-1 overflow-y-auto max-h-[380px] pr-0.5">
         {evaluatedSubjects.length === 0 ? (
           <div className="text-center py-6 text-xs text-[#626c96] dark:text-[#8b95c2]">
-            No hay materias matriculadas para evaluar.
+            No hay áreas operativas para evaluar.
           </div>
         ) : (
           <>
-            {/* Materias visibles (prioridad de enfoque en primer ingreso) */}
+            {/* Áreas visibles (prioridad de enfoque en primer ingreso) */}
             {visibleItems.map((item) => (
               <Link
                 key={item.id}
@@ -217,19 +217,19 @@ export function RiskRadarWidget({
               </Link>
             ))}
 
-            {/* Toggle de Progressive Disclosure para materias estables */}
+            {/* Toggle de Progressive Disclosure para áreas estables */}
             {hiddenItems.length > 0 && !isExpanded && (
               <button
                 type="button"
                 onClick={() => setIsExpanded(true)}
                 className="w-full py-2.5 px-3 rounded-xl bg-[#f0f3fa] dark:bg-[#141838] hover:bg-[#e4ebf8] dark:hover:bg-[#192048] text-xs font-semibold text-[#3b43a8] dark:text-[#8e98ec] flex items-center justify-center gap-1.5 transition-all cursor-pointer border border-[#e2e6f2] dark:border-[#1e2552] mt-1"
               >
-                <span>Ver las otras {hiddenItems.length} materias estables</span>
+                <span>Ver las otras {hiddenItems.length} áreas estables</span>
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
             )}
 
-            {/* Materias desplegadas */}
+            {/* Áreas desplegadas */}
             {hiddenItems.length > 0 && isExpanded && (
               <div className="space-y-2 pt-1 border-t border-[#f0f3fa] dark:border-[#181d42]">
                 {hiddenItems.map((item) => (

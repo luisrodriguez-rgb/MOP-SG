@@ -70,8 +70,8 @@ export function SmartOnboardingModal() {
   const [zeroProfile, setZeroProfile] = useState({
     name: '',
     studentCode: '',
-    university: 'Universidad Icesi',
-    program: 'Ingeniería',
+    university: 'Seamos Genios',
+    program: 'Operaciones',
     semesterNumber: 1,
   });
 
@@ -217,8 +217,8 @@ export function SmartOnboardingModal() {
   const handleFinishZero = async () => {
     setIsProcessing(true);
     await startFreshEmptySemester({
-      name: zeroProfile.name || 'Estudiante',
-      studentCode: zeroProfile.studentCode || 'A00400100',
+      name: zeroProfile.name || 'Socio SG',
+      studentCode: zeroProfile.studentCode || 'SG-LEO',
       university: zeroProfile.university,
       program: zeroProfile.program,
       semesterNumber: zeroProfile.semesterNumber,
@@ -286,7 +286,7 @@ export function SmartOnboardingModal() {
               }`}
             >
               <Layers className="w-4 h-4 text-emerald-400" />
-              <span>Plantillas Oficiales Icesi</span>
+              <span>Plantillas Oficiales</span>
             </button>
             <button
               onClick={() => setActiveTab('zero')}
@@ -385,7 +385,7 @@ export function SmartOnboardingModal() {
                   </label>
                   <button
                     onClick={() => {
-                      setPastedText(`UNIVERSIDAD ICESI\nSISTEMA DE REGISTRO ACADÉMICO - RRBANBALACA\nBalance académico del estudiante\nEstudiante: A00123456 - ESTUDIANTE EJEMPLO\nPrograma: ING - Ingeniería Industrial\nSemestre: 4\nCohorte: 202510\nPromedio: 4.35\nMaterias matriculadas:\n11373 Estadística Aplicada II 04\n05359 Optimización 04\n11239 Electricidad y Laboratorio 04`);
+                      setPastedText(`SEAMOS GENIOS\nOPERACIONES GENERALES\nResumen de Bloques y Entregas\nResponsable: SG-LEO - Socio de Operaciones\nRol: Operaciones y Video\nTemporada: Lanzamiento Playtest\nÁreas configuradas:\nSG-OPS Operaciones y Logística\nSG-MKT Marketing y Crecimiento\nSG-DEV Desarrollo de Producto`);
                     }}
                     className="text-[11px] font-mono text-[var(--ink)] hover:underline cursor-pointer"
                   >
@@ -452,7 +452,7 @@ export function SmartOnboardingModal() {
                   </div>
                   <div>
                     <div className="text-base font-black text-[var(--ink)]">
-                      {ingestResult.summary.subjectsCount} materias
+                      {ingestResult.summary.subjectsCount} áreas
                     </div>
                     <div className="text-[11px] text-[var(--muted)]">Consolidadas y listas</div>
                   </div>
@@ -482,7 +482,7 @@ export function SmartOnboardingModal() {
                           : 'text-amber-700 dark:text-amber-300'
                       }`}
                     >
-                      {ingestResult.summary.scheduleBlocksCount} clases
+                      {ingestResult.summary.scheduleBlocksCount} bloques
                     </div>
                     <div
                       className={`text-[11px] ${
@@ -504,7 +504,7 @@ export function SmartOnboardingModal() {
                   </div>
                   <div>
                     <div className="text-base font-black text-[var(--ink)] truncate max-w-[140px]">
-                      {ingestResult.data.student?.name || 'Estudiante'}
+                      {ingestResult.data.student?.name || 'Socio SG'}
                     </div>
                     <div className="text-[11px] text-[var(--muted)] font-mono">
                       {ingestResult.data.student?.studentCode || 'Perfil detectado'}
@@ -531,8 +531,8 @@ export function SmartOnboardingModal() {
                       </div>
                       <p className="text-xs text-[var(--muted)] mt-1">
                         {ingestResult.summary.scheduleBlocksCount > 0
-                          ? 'Tus clases y materias ya están vinculadas. Puedes además enriquecer tus parciales y rutinas de estudio en 1 clic.'
-                          : 'Tu balance tiene las materias pero no las horas de clase de Banner. Puedes autocompletar horarios, salones y parciales al instante.'}
+                          ? 'Tus bloques y áreas ya están vinculados. Puedes además enriquecer tus hitos y rutinas de trabajo en 1 clic.'
+                          : 'Tu balance tiene las áreas pero no las horas de trabajo. Puedes autocompletar horarios y entregas al instante.'}
                       </p>
                     </div>
                   </div>
@@ -591,7 +591,7 @@ export function SmartOnboardingModal() {
                         ℹ Evaluaciones: No encontradas en la evidencia cargada
                       </strong>
                       <span className="text-[11px] text-[var(--muted)]">
-                        Mi Semestre no inventa parciales ficticios. Podrás registrar tus entregas y exámenes más adelante o cargar el syllabus de cada materia.
+                        El sistema no inventa hitos ficticios. Podrás registrar tus entregas y fechas clave más adelante.
                       </span>
                     </div>
                   </div>
@@ -677,13 +677,13 @@ export function SmartOnboardingModal() {
                   <>
                     <Check className="w-5 h-5" />
                     <span>
-                      ¡Semestre guardado! ({commitResult?.created.subjects || ingestResult.summary.subjectsCount} materias, {commitResult?.created.scheduleBlocks || ingestResult.summary.scheduleBlocksCount} clases)
+                      ¡Temporada guardada! ({commitResult?.created.subjects || ingestResult.summary.subjectsCount} áreas, {commitResult?.created.scheduleBlocks || ingestResult.summary.scheduleBlocksCount} bloques)
                     </span>
                   </>
                 ) : (
                   <>
                     <Check className="w-5 h-5" />
-                    <span>Empezar mi semestre</span>
+                    <span>Empezar operación</span>
                   </>
                 )}
               </button>
@@ -696,7 +696,7 @@ export function SmartOnboardingModal() {
           {activeTab === 'templates' && (
             <div className="space-y-4 animate-in fade-in duration-200">
               <div className="text-xs text-[var(--muted)]">
-                Selecciona tu programa académico para cargar al instante tus materias, horarios, laboratorios y parciales calibrados:
+                Selecciona tu plantilla para cargar al instante tus áreas, horarios y bloques calibrados:
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -723,7 +723,7 @@ export function SmartOnboardingModal() {
                       </p>
 
                       <div className="mt-3 pt-3 border-t border-[var(--border)] flex flex-wrap items-center gap-2 text-[10px] font-mono text-[var(--muted)]">
-                        <span>{tmpl.subjects.length} materias</span>
+                        <span>{tmpl.subjects.length} áreas</span>
                         <span>·</span>
                         <span>{tmpl.scheduleBlocks.length} bloques</span>
                         <span>·</span>
@@ -779,7 +779,7 @@ export function SmartOnboardingModal() {
                     1
                   </span>
                   <span className={zeroStep === 1 ? 'text-[var(--ink)]' : 'text-[var(--muted)]'}>
-                    Perfil Estudiante
+                    Perfil del Equipo
                   </span>
                 </div>
                 <div className="w-8 h-[1px] bg-[var(--border)]" />
@@ -792,7 +792,7 @@ export function SmartOnboardingModal() {
                     2
                   </span>
                   <span className={zeroStep === 2 ? 'text-[var(--ink)]' : 'text-[var(--muted)]'}>
-                    Tus Materias
+                    Tus Áreas
                   </span>
                 </div>
                 <div className="w-8 h-[1px] bg-[var(--border)]" />
@@ -818,24 +818,24 @@ export function SmartOnboardingModal() {
                       <label className="font-bold text-[var(--ink)] block mb-1">Nombre Completo *</label>
                       <input
                         type="text"
-                        placeholder="Ej. Luis Felipe Rodríguez"
+                        placeholder="Ej. Leo Rodríguez"
                         value={zeroProfile.name}
                         onChange={(e) => setZeroProfile({ ...zeroProfile, name: e.target.value })}
                         className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-bold focus:outline-none focus:border-[var(--ink)]"
                       />
                     </div>
                     <div>
-                      <label className="font-bold text-[var(--ink)] block mb-1">Código Estudiantil *</label>
+                      <label className="font-bold text-[var(--ink)] block mb-1">Identificador SG *</label>
                       <input
                         type="text"
-                        placeholder="Ej. A00414805"
+                        placeholder="Ej. SG-LEO"
                         value={zeroProfile.studentCode}
                         onChange={(e) => setZeroProfile({ ...zeroProfile, studentCode: e.target.value })}
                         className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--ink)]"
                       />
                     </div>
                     <div>
-                      <label className="font-bold text-[var(--ink)] block mb-1">Universidad</label>
+                      <label className="font-bold text-[var(--ink)] block mb-1">Organización</label>
                       <input
                         type="text"
                         value={zeroProfile.university}
@@ -844,10 +844,10 @@ export function SmartOnboardingModal() {
                       />
                     </div>
                     <div>
-                      <label className="font-bold text-[var(--ink)] block mb-1">Carrera / Programa</label>
+                      <label className="font-bold text-[var(--ink)] block mb-1">Rol / Especialidad</label>
                       <input
                         type="text"
-                        placeholder="Ej. Ingeniería de Sistemas"
+                        placeholder="Ej. Operaciones & Diseño"
                         value={zeroProfile.program}
                         onChange={(e) => setZeroProfile({ ...zeroProfile, program: e.target.value })}
                         className="w-full p-2.5 rounded-xl border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] font-medium focus:outline-none focus:border-[var(--ink)]"
@@ -860,18 +860,18 @@ export function SmartOnboardingModal() {
                     disabled={!zeroProfile.name.trim()}
                     className="mt-4 w-full py-3 px-4 rounded-xl bg-[var(--ink)] hover:opacity-90 disabled:opacity-50 text-[var(--paper)] text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <span>Siguiente: Configurar Materias</span>
+                    <span>Siguiente: Configurar Áreas</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               )}
 
-              {/* PASO 2: MATERIAS */}
+              {/* PASO 2: ÁREAS */}
               {zeroStep === 2 && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-[var(--ink)]">
-                      Añade las materias que matriculaste este semestre:
+                      Añade las áreas operativas de trabajo:
                     </span>
                     <button
                       onClick={() =>
@@ -890,7 +890,7 @@ export function SmartOnboardingModal() {
                       }
                       className="text-xs font-mono text-[var(--ink)] font-bold flex items-center gap-1 hover:underline cursor-pointer"
                     >
-                      <Plus className="w-3.5 h-3.5" /> Añadir Materia
+                      <Plus className="w-3.5 h-3.5" /> Añadir Área
                     </button>
                   </div>
 
@@ -904,7 +904,7 @@ export function SmartOnboardingModal() {
                         <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                           <input
                             type="text"
-                            placeholder="Nombre de Materia *"
+                            placeholder="Nombre del Área *"
                             value={sub.name}
                             onChange={(e) => {
                               const copy = [...zeroSubjects];
@@ -971,7 +971,7 @@ export function SmartOnboardingModal() {
               {zeroStep === 3 && (
                 <div className="space-y-4">
                   <div className="text-xs font-bold text-[var(--ink)]">
-                    Indica los días y horas de clase para cada materia:
+                    Indica los días y horas de clase para cada área:
                   </div>
 
                   <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
@@ -982,7 +982,7 @@ export function SmartOnboardingModal() {
                       >
                         <div className="text-xs font-bold text-[var(--ink)] flex items-center gap-2">
                           <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: sub.color }} />
-                          <span>{sub.name || `Materia ${idx + 1}`}</span>
+                          <span>{sub.name || `Área ${idx + 1}`}</span>
                         </div>
 
                         {sub.blocks.map((block, bIdx) => (

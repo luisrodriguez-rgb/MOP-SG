@@ -33,7 +33,7 @@ export function QuickScheduleImporterModal() {
     // Ej: "Cálculo / Lunes 07:00-09:00 / Salón 204"
     if (!pastedText.trim()) return;
 
-    // Por defecto aseguramos que las materias base existan
+    // Por defecto aseguramos que las áreas base existan
     await subjectRepository.bulkSave(mockSubjects);
     await scheduleRepository.bulkSave(mockScheduleBlocks);
     setIsSuccess(true);
@@ -54,8 +54,8 @@ export function QuickScheduleImporterModal() {
               <Upload className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[var(--ink)]">Importar Horario del Semestre</h3>
-              <p className="text-xs text-[var(--muted)]">Configura todas tus materias y salones en segundos</p>
+              <h3 className="text-lg font-bold text-[var(--ink)]">Importar Bloques de la Temporada</h3>
+              <p className="text-xs text-[var(--muted)]">Configura todas tus áreas de trabajo y bloques en segundos</p>
             </div>
           </div>
           <button
@@ -97,10 +97,10 @@ export function QuickScheduleImporterModal() {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-bold text-sm text-[var(--ink)]">
-                    Ingeniería de Sistemas · Semestre 5
+                    Operaciones Seamos Genios · Temporada Playtest
                   </div>
                   <div className="text-xs text-[var(--muted)] mt-0.5">
-                    5 Materias: Cálculo, Física, Álgebra, Estructuras de Datos, Inglés
+                    5 Áreas: Operaciones, Finanzas, Marketing, Diseño, Desarrollo
                   </div>
                 </div>
                 <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">

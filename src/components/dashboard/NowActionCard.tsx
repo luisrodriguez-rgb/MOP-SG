@@ -343,7 +343,7 @@ export function NowActionCard({
             {recommendedTask ? (
               <div className="mt-4 space-y-3">
                 <div className="text-xs font-mono font-bold text-[#a0a0ff]">
-                  {recommendedTask.subject?.name || 'Materia'}
+                  {recommendedTask.subject?.name || 'Área'}
                 </div>
 
                 <div className="text-xl font-black text-white tracking-tight leading-snug">
@@ -417,13 +417,13 @@ export function NowActionCard({
             {nearestExam ? (
               <div className="mt-4 space-y-2">
                 <div className="text-[10px] font-mono font-bold text-rose-600 dark:text-rose-400 uppercase">
-                  Parcial Más Próximo
+                  Hito Más Próximo
                 </div>
                 <div className="text-sm font-bold text-[var(--ink)] tracking-tight">
                   {nearestExam.exam.title}
                 </div>
                 <div className="text-xs text-[var(--muted)]">
-                  {subjectsMap[nearestExam.exam.subjectId]?.name || 'Materia'}
+                  {subjectsMap[nearestExam.exam.subjectId]?.name || 'Área'}
                 </div>
                 <div className="flex items-center gap-2 pt-1">
                   <span className="text-xs px-2.5 py-0.5 rounded-md font-mono font-bold bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/20">

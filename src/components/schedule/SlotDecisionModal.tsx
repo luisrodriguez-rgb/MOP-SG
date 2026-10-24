@@ -64,7 +64,7 @@ export function SlotDecisionModal({
           );
           if (daysToExam >= 0 && daysToExam <= 7) {
             priorityScore += 50 - daysToExam * 5;
-            examNotice = `Parcial próximo (${daysToExam === 0 ? 'Hoy' : `en ${daysToExam} días`})`;
+            examNotice = `Hito próximo (${daysToExam === 0 ? 'Hoy' : `en ${daysToExam} días`})`;
           }
         }
 
@@ -132,7 +132,7 @@ export function SlotDecisionModal({
         <div className="mt-5 space-y-4">
           <div className="text-xs font-bold text-[var(--ink)] uppercase tracking-wide flex items-center gap-1.5">
             <Zap className="w-3.5 h-3.5 text-amber-500" />
-            <span>Mi Semestre recomienda para este espacio:</span>
+            <span>Recomendación operativa para este espacio:</span>
           </div>
 
           {recommendations.length === 0 ? (
@@ -143,7 +143,7 @@ export function SlotDecisionModal({
           ) : (
             <div className="space-y-2.5">
               {recommendations.slice(0, 3).map(({ task, subject, examNotice, fitsInSlot }, idx) => {
-                const subjectName = subject?.name || 'Materia';
+                const subjectName = subject?.name || 'Área';
                 return (
                   <div
                     key={task.id}

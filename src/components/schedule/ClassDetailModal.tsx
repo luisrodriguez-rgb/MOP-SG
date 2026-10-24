@@ -111,7 +111,7 @@ export function ClassDetailModal({
         className="w-full max-w-xl rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xl overflow-hidden relative transition-colors max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Cabecera temática con el color de la materia */}
+        {/* Cabecera temática con el color del área */}
         <div
           className="p-6 text-white relative overflow-hidden"
           style={{
@@ -134,7 +134,7 @@ export function ClassDetailModal({
 
           <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider opacity-90">
             <BookOpen className="w-4 h-4" />
-            <span>{subject.code || 'MATERIA'}</span>
+            <span>{subject.code || 'ÁREA'}</span>
             {subject.nrc && <span>· NRC {subject.nrc}</span>}
             <span>· {subject.credits} Créditos</span>
           </div>
@@ -212,7 +212,7 @@ export function ClassDetailModal({
 
             {isAtRisk && !isDanger && (
               <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-2">
-                Atención: Te queda solo {Math.max(0, maxAbsences - currentAbsences)} falta antes de perder la materia por inasistencia.
+                Atención: Te queda solo {Math.max(0, maxAbsences - currentAbsences)} inasistencia antes de superar el límite de este bloque.
               </p>
             )}
             {isDanger && (
@@ -252,18 +252,18 @@ export function ClassDetailModal({
             </div>
           </div>
 
-          {/* Próximas Evaluaciones / Parciales */}
+          {/* Próximas Entregas / Hitos */}
           <div>
             <div className="flex items-center justify-between mb-2.5">
               <span className="text-xs font-bold uppercase tracking-wider text-[var(--ink)] flex items-center gap-1.5">
                 <GraduationCap className="w-4 h-4 text-[var(--ink)]" />
-                Próximas Evaluaciones ({subjectExams.length})
+                Próximos Hitos ({subjectExams.length})
               </span>
             </div>
 
             {subjectExams.length === 0 ? (
               <div className="p-3 rounded-xl bg-[var(--paper)] border border-[var(--border)] text-xs text-[var(--muted)] text-center">
-                No hay evaluaciones registradas para esta materia.
+                No hay hitos registrados para esta área.
               </div>
             ) : (
               <div className="space-y-2">
@@ -305,7 +305,7 @@ export function ClassDetailModal({
 
             {subjectTasks.length === 0 ? (
               <div className="p-3 rounded-xl bg-[var(--paper)] border border-[var(--border)] text-xs text-[var(--muted)] text-center">
-                No tienes tareas pendientes en esta materia. ¡Excelente!
+                No tienes tareas pendientes en esta área. ¡Excelente!
               </div>
             ) : (
               <div className="space-y-2">

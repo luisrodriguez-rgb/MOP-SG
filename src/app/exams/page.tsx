@@ -65,13 +65,13 @@ export default function ExamsPage() {
           </div>
           <div>
             <h1 className="text-lg font-black text-[var(--ink)] tracking-tight flex items-center gap-2">
-              <span>Evaluaciones y Parciales</span>
+              <span>Hitos y Entregas Clave</span>
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-[var(--paper)] text-[var(--ink)] border border-[var(--border)]">
                 {exams.length} programados
               </span>
             </h1>
             <p className="text-xs text-[var(--muted)]">
-              Calendario semestral de parciales, entregas de proyecto y quices con ponderación
+              Cronograma operativo de hitos, entregas clave y lanzamientos
             </p>
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function ExamsPage() {
           className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold transition-all shadow-sm cursor-pointer self-start sm:self-auto active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          <span>Nuevo Parcial</span>
+          <span>Nuevo Hito</span>
         </button>
       </div>
 
@@ -94,7 +94,7 @@ export default function ExamsPage() {
             options={[
               {
                 value: 'all',
-                label: 'Todas las materias',
+                label: 'Todas las áreas',
                 badge: String(subjects.length),
               },
               ...subjects.map((sub) => ({
@@ -114,7 +114,7 @@ export default function ExamsPage() {
           <Search className="w-3.5 h-3.5 text-[var(--muted)] absolute left-3 top-2.5" />
           <input
             type="text"
-            placeholder="Buscar por tema o materia..."
+            placeholder="Buscar por tema o área..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--ink)] transition-colors"
@@ -122,16 +122,16 @@ export default function ExamsPage() {
         </div>
       </div>
 
-      {/* Grid de Parciales */}
+      {/* Grid de Hitos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredExams.length === 0 ? (
           <div className="col-span-full text-center py-12 rounded-2xl bg-white dark:bg-[#0f1330] border border-[#e2e6f2] dark:border-[#1c224b] p-6">
             <Calendar className="w-10 h-10 text-[var(--muted)] mx-auto mb-2" />
             <h3 className="text-sm font-bold text-[#0f1330] dark:text-white">
-              No hay evaluaciones programadas
+              No hay hitos programados
             </h3>
             <p className="text-xs text-[#626c96] dark:text-[#8b95c2] mt-1">
-              Programa tus parciales para que el radar preventivo calcule los días restantes.
+              Registra hitos y entregas para que el Radar de Atrasos calcule la presión de tiempo.
             </p>
             <button
               onClick={openAddExam}
@@ -274,15 +274,15 @@ export default function ExamsPage() {
                   <button
                     onClick={() =>
                       startFocusSession(
-                        `Estudio: ${exam.title}`,
-                        sub?.name || 'Parcial',
+                        `Foco: ${exam.title}`,
+                        sub?.name || 'Hito',
                         50
                       )
                     }
                     className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
                   >
                     <Sparkles className="w-3 h-3 text-amber-300" />
-                    <span>Sesión de Estudio</span>
+                    <span>Bloque de Enfoque</span>
                   </button>
                 </div>
               </div>

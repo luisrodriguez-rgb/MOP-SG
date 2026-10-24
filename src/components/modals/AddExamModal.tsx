@@ -140,10 +140,10 @@ export function AddExamModal() {
             </div>
             <div>
               <h3 className="text-base font-black text-[var(--ink)]">
-                {editingExam ? 'Editar Evaluación o Parcial' : 'Nuevo Parcial o Evaluación'}
+                {editingExam ? 'Editar Hito o Entrega Clave' : 'Nuevo Hito o Entrega Clave'}
               </h3>
               <p className="text-[11px] text-[var(--muted)]">
-                Establece fecha exacta, aula, ponderación y requerimientos para el radar
+                Establece fecha exacta, ponderación y requerimientos para el Radar de Atrasos
               </p>
             </div>
           </div>
@@ -156,17 +156,17 @@ export function AddExamModal() {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          {/* Título de la evaluación */}
+          {/* Título del hito */}
           <div>
             <label className="block text-xs font-bold text-[var(--ink)] mb-1">
-              Nombre de la evaluación <span className="text-rose-500">*</span>
+              Nombre del hito o entrega <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ej: Parcial 2: Teorema de Stokes y Divergencia"
+              placeholder="Ej: Lanzamiento Playtest v1 o Entrega de Video"
               className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] focus:ring-2 focus:ring-[var(--ink)]/15 transition-all"
             />
           </div>
@@ -174,7 +174,7 @@ export function AddExamModal() {
           {/* Área vinculada y Responsable */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-[var(--ink)] mb-1">Área / Materia</label>
+              <label className="block text-xs font-bold text-[var(--ink)] mb-1">Área Operativa</label>
               <CustomSelect
                 className="w-full"
                 value={subjectId || subjects[0]?.id || ''}
@@ -352,7 +352,7 @@ export function AddExamModal() {
               className="w-full py-2.5 rounded-xl bg-[var(--ink)] hover:opacity-90 text-[var(--paper)] text-xs font-bold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>{editingExam ? 'Guardar Cambios de la Evaluación' : 'Registrar Parcial en Radar'}</span>
+              <span>{editingExam ? 'Guardar Cambios del Hito' : 'Registrar Hito en Radar'}</span>
             </button>
           </div>
         </form>

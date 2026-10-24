@@ -182,7 +182,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
     const parsed: ParsedAcademicData = {
       student: {
-        name: 'Estudiante',
+        name: 'Socio SG',
         university: shared.u,
         program: shared.c,
         semesterNumber: shared.s,
@@ -277,14 +277,14 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
       if (!result.data.subjects || result.data.subjects.length === 0) {
         setErrorMsg(
-          'No logramos detectar materias en el texto pegado. Prueba pegando los códigos de tu horario o usa la plantilla oficial en 1 clic.'
+          'No logramos detectar áreas en el texto pegado. Prueba pegando los códigos de tu horario o usa la plantilla oficial en 1 clic.'
         );
         setIsProcessing(false);
         return;
       }
 
       result.data.student = {
-        name: studentName.trim() || result.data.student?.name || 'Estudiante',
+        name: studentName.trim() || result.data.student?.name || 'Socio SG',
         university,
         program,
         semesterNumber,
@@ -335,7 +335,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
     const parsed: ParsedAcademicData = {
       student: {
-        name: studentName.trim() || tmpl.profile.name || 'Estudiante',
+        name: studentName.trim() || tmpl.profile.name || 'Socio SG',
         university,
         program: tmpl.profile.program || program,
         semesterNumber: tmpl.semesterNumber || semesterNumber,
@@ -390,7 +390,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
         const urgentExam = {
           id: `exam-urgent-${Date.now()}`,
           subjectId: selectedUrgentSubjectId,
-          title: `Primer Parcial: ${targetSubject?.name || 'Evaluación Clave'}`,
+          title: `Primer Hito: ${targetSubject?.name || 'Entrega Clave'}`,
           date: examDate,
           weight: 25,
           location: 'Aula Principal',
@@ -847,7 +847,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
 
                         <div className="text-right shrink-0 hidden sm:block">
                           <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
-                            {currentTemplate.subjects.length} materias
+                            {currentTemplate.subjects.length} áreas
                           </span>
                         </div>
                       </div>
@@ -856,11 +856,11 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                         {currentTemplate.description}
                       </p>
 
-                      {/* Lista dinámica de materias oficiales de ESTA carrera */}
+                      {/* Lista dinámica de áreas operativas de ESTA plantilla */}
                       <div className="space-y-1.5 pt-1">
                         <div className="text-[11px] font-mono text-[#8b95c2] uppercase font-bold tracking-wider flex items-center justify-between">
-                          <span>Materias oficiales que se cargarán:</span>
-                          <span className="text-[10px] text-white/50">{currentTemplate.scheduleBlocks.length} bloques con salón Icesi</span>
+                          <span>Áreas operativas que se cargarán:</span>
+                          <span className="text-[10px] text-white/50">{currentTemplate.scheduleBlocks.length} bloques configurados</span>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto pr-1">
                           {currentTemplate.subjects.map((sub) => (
@@ -905,7 +905,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                         className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 font-bold text-xs text-white flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer active:scale-98"
                       >
                         <Sparkles className="w-4 h-4 text-emerald-200" />
-                        <span>Cargar Plan de {currentTemplate.name} ({currentTemplate.subjects.length} materias)</span>
+                        <span>Cargar Plan de {currentTemplate.name} ({currentTemplate.subjects.length} áreas)</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -929,11 +929,11 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                   : `¡Semestre Configurado con Éxito!`}
               </span>
               <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
-                Analizamos tu semestre en{' '}
-                <span className="text-[#a0a8ff]">Universidad Icesi</span>
+                Analizamos tu operación en{' '}
+                <span className="text-[var(--accent)]">Seamos Genios</span>
               </h2>
               <p className="text-xs sm:text-sm text-[#94a3b8]">
-                Cruzamos tus {ingestResult.data.subjects.length} materias con tu disponibilidad real en campus:
+                Cruzamos tus {ingestResult.data.subjects.length} áreas operativas con tu disponibilidad de trabajo:
               </p>
             </div>
 
@@ -965,10 +965,10 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                 </div>
               </div>
 
-              {/* Materias Detectadas */}
+              {/* Áreas Detectadas */}
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#7a85b8] block mb-2">
-                  Tus Materias Matriculadas
+                  Tus Áreas Operativas
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {ingestResult.data.subjects.map((s) => (
@@ -984,7 +984,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
               </div>
             </div>
 
-            {/* PREGUNTA CLAVE PARA ACTIVAR EL RADAR DE RIESGO */}
+            {/* PREGUNTA CLAVE PARA ACTIVAR EL RADAR DE ATRASOS */}
             <div className="bg-[#0c102a]/85 backdrop-blur-2xl border border-amber-500/40 rounded-3xl p-6 space-y-4 shadow-xl">
               <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
@@ -992,10 +992,10 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white">
-                    ¿Cuál es el parcial o entrega que más te preocupa?
+                    ¿Cuál es el hito o entrega que más te preocupa?
                   </h3>
                   <p className="text-xs text-[#8b95c2]">
-                    Activará el Radar de Riesgo con 4h de estudio sugerido y guiará tu centro de decisiones.
+                    Activará el Radar de Atrasos con bloques de enfoque sugeridos y guiará tu centro de decisiones.
                   </p>
                 </div>
               </div>

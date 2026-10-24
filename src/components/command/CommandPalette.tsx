@@ -75,8 +75,8 @@ export function CommandPalette() {
     },
     {
       id: 'exam',
-      title: 'Nuevo Parcial o Evaluación',
-      subtitle: 'Agrega un examen con ponderación porcentual',
+      title: 'Nuevo Hito o Entrega Clave',
+      subtitle: 'Agrega un hito con ponderación porcentual y fecha',
       icon: CheckCircle2,
       color: 'text-amber-500 bg-amber-500/10',
       action: () => { closeCommandPalette(); openAddExam(); },

@@ -306,7 +306,7 @@ export function SemesterTimeline({
           <div>
             <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--muted)] mb-3 flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-[var(--ink)]" />
-              Parciales y Exámenes
+              Hitos y Entregas Clave
             </h5>
 
             {currentWeekMilestones.exams.length > 0 ? (
@@ -320,7 +320,7 @@ export function SemesterTimeline({
                     >
                       <div>
                         <span className="text-[10px] font-bold font-mono text-[var(--ink)] uppercase">
-                          {sub?.name || 'Materia'}
+                          {sub?.name || 'Área'}
                         </span>
                         <div className="text-xs font-bold text-[var(--ink)] mt-0.5">
                           {ex.title}
@@ -335,7 +335,7 @@ export function SemesterTimeline({
               </div>
             ) : (
               <div className="p-4 rounded-xl bg-[var(--paper)] border border-[var(--border)] text-xs text-[var(--muted)]">
-                Sin exámenes agendados esta semana.
+                Sin hitos agendados esta semana.
               </div>
             )}
           </div>
@@ -358,7 +358,7 @@ export function SemesterTimeline({
                     >
                       <div>
                         <span className="text-[10px] font-bold font-mono text-[var(--ink)] uppercase">
-                          {sub?.name || 'Materia'}
+                          {sub?.name || 'Área'}
                         </span>
                         <div className="text-xs font-bold text-[var(--ink)] mt-0.5">
                           {t.title}

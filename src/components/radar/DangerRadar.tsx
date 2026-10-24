@@ -57,7 +57,7 @@ export function DangerRadar({
               <span>Semáforo de Operación & Salud de Áreas</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-[var(--ink)] tracking-tight mt-1">
-              Radar de Riesgo & Cuellos de Botella
+              Radar de Atrasos & Cuellos de Botella
             </h2>
             <p className="text-xs text-[var(--muted)] mt-1 max-w-xl">
               Análisis cuantitativo de proximidad de hitos, sobrecarga de entregables y déficit de tiempo libre real. Cero adivinanzas, puras métricas ejecutables.
@@ -148,7 +148,7 @@ export function DangerRadar({
         )}
       </div>
 
-      {/* Grid de Materias */}
+      {/* Grid de Áreas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {evaluatedRisks.map((risk) => (
           <RiskCard key={risk.subjectId} risk={risk} />

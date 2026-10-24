@@ -93,7 +93,7 @@ export function InboxModal() {
       for (const item of extractedItems) {
         let subjectId = item.matchedSubjectId;
 
-        // Si no está asignado pero hay materias, vincular a la primera o crear
+        // Si no está asignado pero hay áreas, vincular a la primera o crear
         if (!subjectId && subjects.length > 0) {
           subjectId = subjects[0].id;
         }
@@ -191,7 +191,7 @@ export function InboxModal() {
                     handleProcess();
                   }
                 }}
-                placeholder="Ej: 'Parcial de Anatomía el próximo jueves a las 7am vale 30%' o 'Taller de Vías Metabólicas para mañana a las 11pm'..."
+                placeholder="Ej: 'Hito de Lanzamiento el próximo jueves a las 7am vale 30%' o 'Sprint de Producto para mañana a las 11pm'..."
                 rows={2}
                 className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-2xl p-3.5 pr-24 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--ink)] transition-colors resize-none font-sans leading-relaxed"
               />
@@ -218,7 +218,7 @@ export function InboxModal() {
             <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
               <span className="text-[10px] text-[var(--muted)] font-mono">Ejemplos:</span>
               {[
-                'Parcial el próximo jueves 7am vale 25%',
+                'Hito el próximo jueves 7am vale 25%',
                 'Taller en parejas para este viernes 11pm',
                 'Quiz sorpresa mañana a las 9am',
               ].map((chip) => (
@@ -275,7 +275,7 @@ export function InboxModal() {
                                 : 'bg-[var(--surface)] text-[var(--ink)] border border-[var(--border)]'
                             }`}
                           >
-                            {item.type === 'exam' ? 'Parcial' : 'Tarea'}
+                            {item.type === 'exam' ? 'Hito' : 'Tarea'}
                           </span>
 
                           <span
@@ -322,11 +322,11 @@ export function InboxModal() {
                             />
                           </div>
                           <div>
-                            <label className="text-[10px] text-[var(--muted)] block">Materia</label>
+                            <label className="text-[10px] text-[var(--muted)] block">Área</label>
                             <CustomSelect
                               className="w-full"
                               value={item.matchedSubjectId || ''}
-                              placeholder="Seleccionar materia..."
+                              placeholder="Seleccionar área..."
                               onChange={(val) => {
                                 const selected = subjects.find((s) => s.id === val);
                                 handleUpdateItem(item.id, {

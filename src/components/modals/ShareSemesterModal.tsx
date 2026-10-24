@@ -23,18 +23,18 @@ export function ShareSemesterModal() {
 
   if (!isShareModalOpen) return null;
 
-  // Extraer NRCs o códigos de materias para empaquetar
+  // Extraer códigos de áreas para empaquetar
   const nrcs = subjects.map((s) => {
     const match = s.code.match(/\b\d{5}\b/);
     return match ? match[0] : s.code.replace(/\s+/g, '');
   });
 
   const payload: SharedSemesterPayload = {
-    u: profile?.university || 'Universidad Icesi',
-    c: profile?.program || 'Carrera Universitaria',
-    s: profile?.semesterNumber || 4,
+    u: profile?.university || 'Seamos Genios',
+    c: profile?.program || 'Operaciones SG',
+    s: profile?.semesterNumber || 1,
     nrcs,
-    author: profile?.name ? profile.name.split(' ')[0] : 'Estudiante',
+    author: profile?.name ? profile.name.split(' ')[0] : 'Socio SG',
   };
 
   const shareUrl = generateShareUrl(payload);
@@ -113,12 +113,12 @@ export function ShareSemesterModal() {
             </div>
             <div className="text-right">
               <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
-                {subjects.length} materias
+                {subjects.length} áreas
               </span>
             </div>
           </div>
 
-          {/* Micro-lista de materias incluidas */}
+          {/* Micro-lista de áreas incluidas */}
           <div className="pt-2 border-t border-[var(--border)] flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
             {subjects.map((sub) => (
               <span

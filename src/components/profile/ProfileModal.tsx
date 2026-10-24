@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useUIStore } from '@/stores/uiStore';
 import { profileRepository } from '@/lib/storage';
-import { Profile } from '@/types';
+import { Profile, TeamMember } from '@/types';
 import { defaultProfile, resetDatabaseToCleanSlate } from '@/lib/mockData';
+import { memberRepository } from '@/lib/storage/repositories/memberRepository';
 import { syncService } from '@/lib/supabase/syncService';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import {
@@ -24,7 +25,7 @@ import {
   RefreshCw,
   Save,
   KeyRound,
-  GraduationCap,
+  Users,
 } from 'lucide-react';
 
 interface ProfileModalProps {
@@ -36,11 +37,10 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
   const [activeTab, setActiveTab] = useState<'profile' | 'cloud'>('profile');
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [selectedMemberId, setSelectedMemberId] = useState('');
   const [name, setName] = useState('');
-  const [studentCode, setStudentCode] = useState('');
-  const [university, setUniversity] = useState('Universidad Icesi');
-  const [program, setProgram] = useState('');
-  const [semesterNumber, setSemesterNumber] = useState(1);
+  const [role, setRole] = useState('');
   const [email, setEmail] = useState('');
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -54,13 +54,28 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
   const [syncStatusMsg, setSyncStatusMsg] = useState<{ text: string; isError?: boolean } | null>(null);
 
   const loadProfileData = useCallback(async () => {
-    const current = (await profileRepository.getActiveProfile()) || defaultProfile;
+    const [current, allMembers] = await Promise.all([
+      (await profileRepository.getActiveProfile()) || defaultProfile,
+      memberRepository.getActive()
+    ]);
     setProfile(current);
-    setName(current.name);
-    setStudentCode(current.studentCode);
-    setUniversity(current.university || 'Universidad Icesi');
-    setProgram(current.program);
-    setSemesterNumber(current.semesterNumber);
+    setMembers(allMembers);
+
+    const matched = allMembers.find(
+      (m) => m.name.toLowerCase() === (current.name || '').toLowerCase()
+    );
+    if (matched) {
+      setSelectedMemberId(matched.id);
+      setName(current.name || matched.name);
+      setRole(matched.role);
+    } else if (allMembers.length > 0) {
+      setSelectedMemberId(allMembers[0].id);
+      setName(current.name || allMembers[0].name);
+      setRole(allMembers[0].role);
+    } else {
+      setName(current.name || 'Leon');
+      setRole('Operaciones SG');
+    }
     setEmail(current.email || '');
   }, []);
 
@@ -85,20 +100,37 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
     }
   }, [isProfileOpen, loadProfileData, checkCloudState]);
 
+  const onSelectMember = (memberId: string) => {
+    setSelectedMemberId(memberId);
+    const m = members.find((item) => item.id === memberId);
+    if (m) {
+      setName(m.name);
+      setRole(m.role);
+    }
+  };
+
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     const updated: Profile = {
       ...profile,
-      name: name.trim() || 'Estudiante',
-      studentCode: studentCode.trim() || 'A00123456',
-      university: university.trim() || 'Universidad Icesi',
-      program: program.trim() || 'Pregrado Universitario',
-      semesterNumber: Number(semesterNumber) || 1,
+      name: name.trim() || 'Leon',
       email: email.trim(),
+      studentCode: '',
+      university: 'Seamos Genios',
+      program: role.trim() || 'Operación SG',
+      semesterNumber: 1,
     };
 
     await profileRepository.save(updated);
     await profileRepository.setActiveProfile(updated.id);
+
+    if (selectedMemberId) {
+      await memberRepository.update(selectedMemberId, {
+        name: name.trim(),
+        role: role.trim(),
+      });
+    }
+
     setProfile(updated);
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
@@ -215,10 +247,10 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
             </div>
             <div>
               <h2 className="text-lg font-black text-[var(--ink)] tracking-tight">
-                Perfil del Estudiante y Cuenta
+                Perfil del Equipo & Cuenta
               </h2>
               <p className="text-xs text-[var(--muted)]">
-                Personaliza tus datos académicos o sincroniza tu semestre en la nube
+                Identidad operativa de los socios de Seamos Genios y sincronización
               </p>
             </div>
           </div>
@@ -242,8 +274,8 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                 : 'border-transparent text-[var(--muted)] hover:text-[var(--ink)]'
             }`}
           >
-            <GraduationCap className="w-4 h-4" />
-            <span>Mi Información Académica</span>
+            <Users className="w-4 h-4" />
+            <span>Identidad y Rol SG</span>
           </button>
 
           <button
@@ -264,7 +296,7 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
 
         {/* Contenido Scrolleable */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
-          {/* TAB 1: INFORMACIÓN DEL ESTUDIANTE */}
+          {/* TAB 1: INFORMACIÓN DEL SOCIO / EQUIPO */}
           {activeTab === 'profile' && (
             <form onSubmit={handleSaveProfile} className="space-y-5">
               {/* Tarjeta de Identidad en Vivo */}
@@ -275,21 +307,19 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                   </div>
                   <div>
                     <h3 className="text-base font-black text-[var(--ink)]">
-                      {name || 'Nombre del Estudiante'}
+                      {name || 'Socio SG'}
                     </h3>
                     <div className="flex items-center gap-2 text-xs text-[var(--muted)] font-mono mt-0.5">
                       <span className="text-[var(--ink)] font-bold">
-                        {studentCode || 'A00000000'}
+                        {role || 'Operación SG'}
                       </span>
-                      <span>·</span>
-                      <span>Semestre {semesterNumber}</span>
                     </div>
                   </div>
                 </div>
 
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-mono font-bold uppercase tracking-wider">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  Activo
+                  Socio Activo
                 </span>
               </div>
 
@@ -303,70 +333,51 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
               {/* Formulario de Datos Editables */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="space-y-1.5 sm:col-span-2">
+                  <label className="font-bold text-[var(--ink)]">Socio Asignado de Seamos Genios</label>
+                  <select
+                    value={selectedMemberId}
+                    onChange={(e) => onSelectMember(e.target.value)}
+                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] font-bold focus:outline-none focus:border-[var(--ink)] transition-colors cursor-pointer"
+                  >
+                    {members.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.name} · {m.role}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1.5 sm:col-span-2">
                   <label className="font-bold text-[var(--ink)]">Nombre y Apellidos</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Ej. Juan Pérez"
-                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="font-bold text-[var(--ink)]">Código Estudiantil</label>
-                  <input
-                    type="text"
-                    required
-                    value={studentCode}
-                    onChange={(e) => setStudentCode(e.target.value)}
-                    placeholder="Ej. A00123456"
-                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--ink)] transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="font-bold text-[var(--ink)]">Semestre en Curso</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="14"
-                    value={semesterNumber}
-                    onChange={(e) => setSemesterNumber(parseInt(e.target.value, 10) || 1)}
-                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--ink)] transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="font-bold text-[var(--ink)]">Universidad / Institución</label>
-                  <input
-                    type="text"
-                    value={university}
-                    onChange={(e) => setUniversity(e.target.value)}
-                    placeholder="Ej. Universidad Icesi"
-                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="font-bold text-[var(--ink)]">Programa / Carrera</label>
-                  <input
-                    type="text"
-                    value={program}
-                    onChange={(e) => setProgram(e.target.value)}
-                    placeholder="Ej. Ingeniería de Sistemas"
+                    placeholder="Ej. Leon"
                     className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
                   />
                 </div>
 
                 <div className="space-y-1.5 sm:col-span-2">
-                  <label className="font-bold text-[var(--ink)]">Correo Institucional (Opcional)</label>
+                  <label className="font-bold text-[var(--ink)]">Rol Operativo en Seamos Genios</label>
+                  <input
+                    type="text"
+                    required
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    placeholder="Ej. Administración, Marketing, Diseño & Video"
+                    className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1.5 sm:col-span-2">
+                  <label className="font-bold text-[var(--ink)]">Correo Electrónico (Opcional)</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="usuario@u.icesi.edu.co"
+                    placeholder="contacto@seamosgenios.com"
                     className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--ink)] font-mono focus:outline-none focus:border-[var(--ink)] transition-colors"
                   />
                 </div>

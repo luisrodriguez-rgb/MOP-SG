@@ -106,14 +106,14 @@ export default function TasksPage() {
       {/* Barra de Filtros y Búsqueda */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-xs text-xs transition-colors">
         <div className="flex flex-wrap items-center gap-2">
-          {/* Selector de Materia */}
+          {/* Selector de Área */}
           <CustomSelect
             value={filterSubject}
             onChange={setFilterSubject}
             options={[
               {
                 value: 'all',
-                label: 'Todas las materias',
+                label: 'Todas las áreas',
                 badge: String(subjects.length),
               },
               ...subjects.map((sub) => ({
@@ -188,7 +188,7 @@ export default function TasksPage() {
           <Search className="w-3.5 h-3.5 text-[var(--muted)] absolute left-3 top-2.5" />
           <input
             type="text"
-            placeholder="Buscar por título o materia..."
+            placeholder="Buscar por título o área..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-[var(--paper)] border border-[var(--border)] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--ink)] transition-colors"

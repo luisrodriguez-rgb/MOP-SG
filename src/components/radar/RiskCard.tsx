@@ -65,7 +65,7 @@ export function RiskCard({ risk, onPlanStudy }: RiskCardProps) {
           </div>
         </div>
 
-        {/* Nombre de la Materia */}
+        {/* Nombre del Área */}
         <div className="mt-3.5">
           <h3 className="text-base font-extrabold tracking-tight text-[var(--ink)] flex items-center gap-2">
             <span
@@ -78,13 +78,13 @@ export function RiskCard({ risk, onPlanStudy }: RiskCardProps) {
 
         {/* Grid de 5 Señales Medibles */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4 text-xs font-mono">
-          {/* 1. Parcial */}
+          {/* 1. Hito */}
           <div className="bg-[var(--paper)] p-2.5 rounded-xl border border-[var(--border)]">
-            <span className="text-[var(--muted)] block text-[10px] uppercase font-bold">Parcial</span>
+            <span className="text-[var(--muted)] block text-[10px] uppercase font-bold">Hito</span>
             <span className="font-black text-[var(--ink)] mt-0.5 block">
               {risk.signals.daysUntilExam !== null && risk.signals.daysUntilExam !== undefined
                 ? `${risk.signals.daysUntilExam} días`
-                : 'Sin examen'}
+                : 'Sin hito'}
             </span>
           </div>
 

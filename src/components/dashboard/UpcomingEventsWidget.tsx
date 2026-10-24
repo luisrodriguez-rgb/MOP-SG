@@ -28,10 +28,10 @@ export function UpcomingEventsWidget({ exams: propExams }: UpcomingEventsWidgetP
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-[#3b43a8] dark:text-[#8e98ec]" />
           <h3 className="text-sm font-bold text-[#0f1330] dark:text-white tracking-tight">
-            Próximos exámenes
+            Próximos hitos
           </h3>
           <span className="text-[10px] font-mono font-bold text-[#626c96] dark:text-[#8b95c2] ml-1 bg-[#f0f3fa] dark:bg-[#141838] px-2 py-0.5 rounded-full border border-[#e2e6f2] dark:border-[#1e2552]">
-            {examsList.length} {examsList.length === 1 ? 'parcial' : 'parciales'}
+            {examsList.length} {examsList.length === 1 ? 'hito' : 'hitos'}
           </span>
         </div>
         <Link
@@ -48,14 +48,14 @@ export function UpcomingEventsWidget({ exams: propExams }: UpcomingEventsWidgetP
         {sortedExams.length === 0 ? (
           <div className="text-center py-5">
             <p className="text-xs text-[#626c96] dark:text-[#8b95c2]">
-              No tienes parciales programados aún.
+              No tienes hitos programados aún.
             </p>
             <button
               onClick={openAddExam}
               className="mt-2 text-xs font-bold text-[#3b43a8] dark:text-[#8e98ec] hover:underline inline-flex items-center gap-1 cursor-pointer"
             >
               <Plus className="w-3 h-3" />
-              <span>Añadir primer examen</span>
+              <span>Añadir primer hito</span>
             </button>
           </div>
         ) : (
@@ -96,7 +96,7 @@ export function UpcomingEventsWidget({ exams: propExams }: UpcomingEventsWidgetP
                     </span>
                   </div>
                   <div className="text-[10px] text-[#626c96] dark:text-[#8b95c2] truncate mt-0.5">
-                    {sub?.name || 'Materia'} {timeStr ? `· ${timeStr}` : ''} {exam.location ? `· ${exam.location}` : ''}
+                    {sub?.name || 'Área'} {timeStr ? `· ${timeStr}` : ''} {exam.location ? `· ${exam.location}` : ''}
                   </div>
                 </div>
               </div>
