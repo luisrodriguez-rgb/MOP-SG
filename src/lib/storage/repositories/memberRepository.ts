@@ -2,10 +2,9 @@ import { db } from '../database';
 import { TeamMember } from '@/types';
 
 export const DEFAULT_MEMBERS: TeamMember[] = [
-  { id: 'member-leo', name: 'Leo', role: 'Operaciones & Desarrollo', color: '#3B82F6', active: true },
-  { id: 'member-hermano', name: 'Hermano', role: 'Diseño & Video/Marketing', color: '#EC4899', active: true },
-  { id: 'member-dev', name: 'Socio Dev', role: 'Desarrollo & Soporte', color: '#10B981', active: true },
-  { id: 'member-profe', name: 'Socio Profe', role: 'Docencia & Contenido', color: '#F59E0B', active: true },
+  { id: 'member-leo', name: 'Leo', role: 'Diseño & Video/Marketing', color: '#BB271A', active: true },
+  { id: 'member-luis', name: 'Luis', role: 'Administración, Desarrollo & Soporte', color: '#111729', active: true },
+  { id: 'member-profe', name: 'Socio Profe', role: 'Dirección Académica & Contenido', color: '#B7791F', active: true },
 ];
 
 export const memberRepository = {
@@ -39,8 +38,10 @@ export const memberRepository = {
   },
 
   async seedDefaultMembersIfEmpty(): Promise<void> {
-    const count = await db.members.count();
-    if (count === 0) {
+    const existing = await db.members.toArray();
+    const hasLegacyMembers = existing.some((m) => m.name === 'Hermano' || m.id === 'member-hermano');
+    if (existing.length === 0 || hasLegacyMembers) {
+      await db.members.clear();
       await db.members.bulkPut(DEFAULT_MEMBERS);
     }
   },
