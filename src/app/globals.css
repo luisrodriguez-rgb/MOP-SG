@@ -36,6 +36,7 @@
 
   /* Rojo SG (#BB271A) — Acento sobrio y señal crítica */
   --accent: #BB271A;
+  --accent-hover: #991B1B;
   --red: #BB271A;
   --red-light: #FEE2E2;
   --red-bg: #FEF2F2;
@@ -85,6 +86,7 @@ html.dark {
 
   /* Rojo SG contrastado para fondo oscuro */
   --accent: #DC382D;
+  --accent-hover: #EF4444;
   --red: #DC382D;
   --red-light: #450A0A;
   --red-bg: #260A0A;

@@ -118,12 +118,23 @@ export function DecisionHeroCard({
     }).length;
   }, [subjectsMap, exams, assignments]);
 
-  // Cuenta regresiva al Playtest (Mitad de Noviembre 2026)
-  const daysToPlaytest = useMemo(() => {
-    const playtestDate = new Date('2026-11-18T00:00:00');
-    const diffMs = playtestDate.getTime() - nowTimestamp;
-    return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
-  }, [nowTimestamp]);
+  // Detección dinámica del hito Playtest desde la lista de hitos (exams)
+  const playtestMilestone = useMemo(() => {
+    return exams.find((e) => e.title.toLowerCase().includes('playtest'));
+  }, [exams]);
+
+  const playtestCountdown = useMemo(() => {
+    if (!playtestMilestone || !playtestMilestone.date) return null;
+    const targetDate = new Date(playtestMilestone.date);
+    if (isNaN(targetDate.getTime())) return null;
+    const diffMs = targetDate.getTime() - nowTimestamp;
+    const days = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+    return {
+      days,
+      title: playtestMilestone.title,
+      formattedDate: targetDate.toLocaleDateString('es-CO', { month: 'short', year: 'numeric' }),
+    };
+  }, [playtestMilestone, nowTimestamp]);
 
   const handleStartFocus = () => {
     if (recommendedTask) {
@@ -163,7 +174,7 @@ export function DecisionHeroCard({
          ═════════════════════════════════════════════════════════════ */}
       <div className="py-6 sm:py-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="max-w-2xl space-y-2">
-          <div className="text-xs font-mono font-bold tracking-widest uppercase text-[#BB271A]">
+          <div className="text-xs font-mono font-bold tracking-widest uppercase text-[var(--ink)]">
             {focusSession.isActive ? 'EN EJECUCIÓN' : '¿QUÉ HAGO AHORA?'}
           </div>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[var(--ink)] tracking-tight uppercase leading-tight font-sans">
@@ -203,7 +214,7 @@ export function DecisionHeroCard({
           ) : (
             <button
               onClick={handleStartFocus}
-              className="px-8 py-3.5 rounded-full bg-[#BB271A] hover:bg-[#991B1B] text-white font-black text-xs sm:text-sm tracking-wide shadow-lg shadow-[#BB271A]/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center gap-2"
+              className="px-8 py-3.5 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-black text-xs sm:text-sm tracking-wide shadow-lg shadow-[var(--accent)]/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center gap-2"
             >
               <Play className="w-4 h-4 fill-white" />
               <span>Empezar</span>
@@ -215,7 +226,7 @@ export function DecisionHeroCard({
       {/* ═════════════════════════════════════════════════════════════
           SUB-TIRA DISCRETA: SIGUIENTE · PLAYTEST · RADAR
          ═════════════════════════════════════════════════════════════ */}
-      <div className="pt-5 border-t border-[var(--border)] grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
+      <div className={`pt-5 border-t border-[var(--border)] grid grid-cols-1 ${playtestCountdown ? 'sm:grid-cols-3' : 'sm:grid-cols-2'} gap-3.5 text-xs`}>
         {/* 1. Siguiente en cola */}
         <div className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] space-y-1">
           <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] font-bold flex items-center gap-1.5">
@@ -230,36 +241,38 @@ export function DecisionHeroCard({
           </div>
         </div>
 
-        {/* 2. Cuenta regresiva al Playtest */}
-        <div className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] space-y-1">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] font-bold flex items-center gap-1.5">
-            <Flame className="w-3 h-3 text-[#BB271A]" />
-            <span>Lanzamiento Playtest</span>
+        {/* 2. Cuenta regresiva al Playtest (solo si existe el hito) */}
+        {playtestCountdown && (
+          <div className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] space-y-1">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] font-bold flex items-center gap-1.5">
+              <Flame className="w-3 h-3 text-[var(--ink)]" />
+              <span>Lanzamiento Playtest</span>
+            </div>
+            <div className="font-bold text-[var(--ink)]">
+              Faltan <span className="text-[var(--ink)] font-black">{playtestCountdown.days} días</span> ({playtestCountdown.formattedDate})
+            </div>
+            <div className="text-[11px] text-[var(--muted)] truncate">
+              {playtestCountdown.title}
+            </div>
           </div>
-          <div className="font-bold text-[var(--ink)]">
-            Faltan <span className="text-[#BB271A] font-black">{daysToPlaytest} días</span> (Nov. 2026)
-          </div>
-          <div className="text-[11px] text-[var(--muted)] truncate">
-            Hito clave de Seamos Genios
-          </div>
-        </div>
+        )}
 
         {/* 3. Radar resumido */}
         <div className="p-3.5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] space-y-1">
           <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] font-bold flex items-center justify-between">
             <span className="flex items-center gap-1.5">
-              <Compass className="w-3 h-3" />
+              <Compass className="w-3 h-3 text-[var(--muted)]" />
               <span>Radar de Atrasos</span>
             </span>
-            <Link href="/radar" className="text-[#BB271A] hover:underline font-bold text-[10px]">
+            <Link href="/radar" className="text-[var(--muted)] hover:text-[var(--ink)] hover:underline font-bold text-[10px]">
               Ver detalle →
             </Link>
           </div>
           <div className="font-bold text-[var(--ink)] truncate">
             {criticalAreasCount > 0 ? (
-              <span className="text-[#BB271A] font-black">{criticalAreasCount} área(s) en atención</span>
+              <span className="text-[var(--warn)] font-black">{criticalAreasCount} área(s) en atención</span>
             ) : (
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+              <span className="text-[var(--ok)] font-bold flex items-center gap-1">
                 <CheckCircle className="w-3.5 h-3.5" />
                 <span>Todas las áreas al día</span>
               </span>
