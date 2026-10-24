@@ -18,7 +18,7 @@ import {
 import { useUIStore } from '@/stores/uiStore';
 import { useSemesterData } from '@/hooks/useSemesterData';
 import { calculateSemesterMetrics } from '@/lib/academic-engine';
-import { resetDatabaseToDemo } from '@/lib/mockData';
+import { resetDatabaseToCleanSlate } from '@/lib/mockData';
 import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 
@@ -84,8 +84,8 @@ export function Navbar() {
   ];
 
   const handleResetDemo = async () => {
-    if (confirm('¿Restablecer datos del semestre al estado de demostración?')) {
-      await resetDatabaseToDemo();
+    if (confirm('¿Restablecer datos locales al estado inicial limpio de Seamos Genios?')) {
+      await resetDatabaseToCleanSlate();
       await refreshData();
       window.location.reload();
     }

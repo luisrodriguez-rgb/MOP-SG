@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useUIStore } from '@/stores/uiStore';
 import { profileRepository } from '@/lib/storage';
 import { Profile } from '@/types';
-import { defaultProfile, resetDatabaseToDemo, resetDatabaseToCleanSlate } from '@/lib/mockData';
+import { defaultProfile, resetDatabaseToCleanSlate } from '@/lib/mockData';
 import { syncService } from '@/lib/supabase/syncService';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import {
@@ -107,19 +107,8 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
     window.dispatchEvent(new CustomEvent('semester-data-updated'));
   };
 
-  const handleLoadDemo = async () => {
-    if (confirm('¿Cargar la plantilla demostrativa oficial con materias y horarios de Icesi?')) {
-      await resetDatabaseToDemo();
-      await loadProfileData();
-      onProfileUpdated?.();
-      window.dispatchEvent(new CustomEvent('semester-data-updated'));
-      setSavedSuccess(true);
-      setTimeout(() => setSavedSuccess(false), 3000);
-    }
-  };
-
-  const handleCleanSlate = async () => {
-    if (confirm('¿Deseas reiniciar tu semestre y empezar con un espacio limpio?')) {
+  const handleResetLocalData = async () => {
+    if (confirm('¿Restablecer los datos locales de Seamos Genios? Se limpiarán tareas y se mantendrán las 5 áreas y los 3 socios.')) {
       await resetDatabaseToCleanSlate();
       await loadProfileData();
       onProfileUpdated?.();
@@ -398,35 +387,19 @@ export function ProfileModal({ onProfileUpdated }: ProfileModalProps) {
                   Acciones Rápidas de Espacio de Trabajo
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                <div>
                   <button
                     type="button"
-                    onClick={handleLoadDemo}
-                    className="p-3 rounded-xl bg-[var(--paper)] border border-[var(--border)] hover:bg-[var(--surface-raised)] text-[var(--ink)] font-semibold transition-all flex items-center justify-between cursor-pointer group text-left"
+                    onClick={handleResetLocalData}
+                    className="w-full p-3 rounded-xl bg-[var(--paper)] border border-[var(--border)] hover:bg-[var(--surface-raised)] text-[var(--ink)] font-semibold transition-all flex items-center justify-between cursor-pointer group text-left"
                   >
                     <div>
-                      <div className="font-bold flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
-                        <span>Cargar Plantilla Demo Icesi</span>
+                      <div className="font-bold flex items-center gap-1.5 text-[var(--ink)]">
+                        <RefreshCw className="w-3.5 h-3.5 text-[var(--muted)]" />
+                        <span>Reiniciar datos locales</span>
                       </div>
                       <div className="text-[10px] text-[var(--muted)] mt-0.5">
-                        Materias y horario demostrativo completo
-                      </div>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleCleanSlate}
-                    className="p-3 rounded-xl bg-[var(--paper)] border border-[var(--border)] hover:bg-rose-500/10 hover:border-rose-500/30 text-[var(--ink)] font-semibold transition-all flex items-center justify-between cursor-pointer group text-left"
-                  >
-                    <div>
-                      <div className="font-bold flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
-                        <RefreshCw className="w-3.5 h-3.5" />
-                        <span>Empezar de Cero (Limpio)</span>
-                      </div>
-                      <div className="text-[10px] text-[var(--muted)] mt-0.5">
-                        Vaciar materias para ingresar las mías
+                        Restablecer las 5 áreas operativas de Seamos Genios sin tareas ni hitos
                       </div>
                     </div>
                   </button>

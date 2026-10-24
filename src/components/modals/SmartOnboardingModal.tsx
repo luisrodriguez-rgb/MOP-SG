@@ -385,11 +385,11 @@ export function SmartOnboardingModal() {
                   </label>
                   <button
                     onClick={() => {
-                      setPastedText(`UNIVERSIDAD ICESI\nSISTEMA DE REGISTRO ACADÉMICO - RRBANBALACA\nBalance académico del estudiante\nEstudiante: A00414805 - RODRIGUEZ GURRUTE LUIS ERNESTO\nPrograma: ING - Ingeniería Industrial\nSemestre: 4\nCohorte: 202510\nPromedio: 4.35\nMaterias matriculadas:\n11373 Estadística Aplicada II 04\n05359 Optimización 04\n11239 Electricidad y Laboratorio 04`);
+                      setPastedText(`UNIVERSIDAD ICESI\nSISTEMA DE REGISTRO ACADÉMICO - RRBANBALACA\nBalance académico del estudiante\nEstudiante: A00123456 - ESTUDIANTE EJEMPLO\nPrograma: ING - Ingeniería Industrial\nSemestre: 4\nCohorte: 202510\nPromedio: 4.35\nMaterias matriculadas:\n11373 Estadística Aplicada II 04\n05359 Optimización 04\n11239 Electricidad y Laboratorio 04`);
                     }}
-                    className="text-[11px] font-mono text-[#3b3abf] dark:text-[#a0a0ff] hover:underline cursor-pointer"
+                    className="text-[11px] font-mono text-[var(--ink)] hover:underline cursor-pointer"
                   >
-                    Pegar ejemplo real Icesi
+                    Pegar ejemplo de prueba
                   </button>
                 </div>
                 <textarea
