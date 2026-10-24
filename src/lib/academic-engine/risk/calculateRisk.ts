@@ -65,13 +65,15 @@ export function calculateSubjectRisk({
     }
   }
 
-  // 2. WORKLOAD PRESSURE: Radar de Atrasos (Horas estimadas vs Tiempo libre real)
+  // 2. WORKLOAD PRESSURE: Radar de Atrasos
   const pendingTasks = assignments.filter(
     (a) => a.subjectId === subject.id && a.status !== 'completed'
   );
 
-  // Filtrar tareas que consumen el tiempo libre del miembro evaluado
-  const myTasks = filterMemberId && filterMemberId !== 'all'
+  const isTeamView = filterMemberId === 'all';
+
+  // Filtrar tareas que consumen el tiempo libre del miembro evaluado si es vista individual
+  const myTasks = !isTeamView && filterMemberId
     ? pendingTasks.filter((t) => !t.assigneeId || t.assigneeId === filterMemberId)
     : pendingTasks;
 
@@ -97,34 +99,58 @@ export function calculateSubjectRisk({
     reasons.push(LABELS.formatPendingTasks(pendingTasks.length));
   }
 
-  const otherMemberTasks = pendingTasks.filter(
-    (t) => filterMemberId && filterMemberId !== 'all' && t.assigneeId && t.assigneeId !== filterMemberId
-  );
-  if (otherMemberTasks.length > 0) {
-    reasons.push(`${otherMemberTasks.length} entregable${otherMemberTasks.length > 1 ? 's' : ''} asignado${otherMemberTasks.length > 1 ? 's' : ''} a otros socios del equipo.`);
-  }
+  if (isTeamView) {
+    // VISTA EQUIPO: Medir exclusivamente por cercanía de fecha y urgencia de entregables
+    // No comparar contra los huecos libres de una sola persona
+    const urgentTasks = pendingTasks.filter((t) => {
+      if (!t.dueDate) return false;
+      const due = new Date(t.dueDate);
+      const diffMs = due.getTime() - currentDate.getTime();
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      return diffDays <= 3 && diffDays >= 0;
+    });
 
-  // Comparación proporcional de carga vs disponibilidad real
-  if (loadRatio >= 1.5 && totalEstimatedMinutes > 0) {
-    // Déficit severo: el trabajo supera en más de 50% las horas libres disponibles
-    workloadPressure = 50;
-    reasons.push(LABELS.formatWorkloadExceeds(
-      Math.round(totalEstimatedMinutes / 60),
-      Math.round(availableMinutes / 60)
-    ));
-  } else if (loadRatio >= 1.0 && totalEstimatedMinutes > 0) {
-    // Déficit moderado: el trabajo supera el tiempo libre disponible
-    workloadPressure = 35;
-    reasons.push(LABELS.formatWorkloadExceeds(
-      Math.round(totalEstimatedMinutes / 60),
-      Math.round(availableMinutes / 60)
-    ));
-  } else if (loadRatio >= 0.7 && totalEstimatedMinutes > 0) {
-    // Carga alta pero manejable
-    workloadPressure = 20;
-    reasons.push(`Carga alta (${Math.round(totalEstimatedMinutes / 60)}h estimadas), consume el ${Math.round(loadRatio * 100)}% de tu disponibilidad.`);
-  } else if (totalEstimatedMinutes > 0) {
-    workloadPressure = 10;
+    if (urgentTasks.length > 0) {
+      workloadPressure = Math.min(30, 15 + urgentTasks.length * 5);
+      reasons.push(`${urgentTasks.length} entregable${urgentTasks.length > 1 ? 's' : ''} con fecha límite inminente (≤ 3 días).`);
+    } else if (pendingTasks.length >= 6) {
+      workloadPressure = 20;
+      reasons.push(`Volumen activo alto: ${pendingTasks.length} entregables en curso.`);
+    } else if (pendingTasks.length >= 3) {
+      workloadPressure = 15;
+    } else if (pendingTasks.length >= 1) {
+      workloadPressure = 10;
+    }
+  } else {
+    // VISTA INDIVIDUAL / PERSONAL: Comparación de carga vs disponibilidad real
+    const otherMemberTasks = pendingTasks.filter(
+      (t) => filterMemberId && t.assigneeId && t.assigneeId !== filterMemberId
+    );
+    if (otherMemberTasks.length > 0) {
+      reasons.push(`${otherMemberTasks.length} entregable${otherMemberTasks.length > 1 ? 's' : ''} asignado${otherMemberTasks.length > 1 ? 's' : ''} a otros socios del equipo.`);
+    }
+
+    if (loadRatio >= 1.5 && totalEstimatedMinutes > 0) {
+      // Déficit severo: el trabajo supera en más de 50% las horas libres disponibles
+      workloadPressure = 50;
+      reasons.push(LABELS.formatWorkloadExceeds(
+        Math.round(totalEstimatedMinutes / 60),
+        Math.round(availableMinutes / 60)
+      ));
+    } else if (loadRatio >= 1.0 && totalEstimatedMinutes > 0) {
+      // Déficit moderado: el trabajo supera el tiempo libre disponible
+      workloadPressure = 35;
+      reasons.push(LABELS.formatWorkloadExceeds(
+        Math.round(totalEstimatedMinutes / 60),
+        Math.round(availableMinutes / 60)
+      ));
+    } else if (loadRatio >= 0.7 && totalEstimatedMinutes > 0) {
+      // Carga alta pero manejable
+      workloadPressure = 20;
+      reasons.push(`Carga alta (${Math.round(totalEstimatedMinutes / 60)}h estimadas), consume el ${Math.round(loadRatio * 100)}% de tu disponibilidad.`);
+    } else if (totalEstimatedMinutes > 0) {
+      workloadPressure = 10;
+    }
   }
 
   // 3. ATTENDANCE PRESSURE: Obsoleto para operación empresarial (0 puntos)
