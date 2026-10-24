@@ -81,19 +81,8 @@ export function useSemesterData() {
       setRoutines(allRoutines);
       setMembers(allMembers);
 
-      // Evaluar si requiere onboarding de primera vez
-      const hasOnboardedFlag =
-        typeof window !== 'undefined' &&
-        localStorage.getItem(STORAGE_KEYS.ONBOARDED) === 'true';
-      const hasDemoFlag =
-        typeof window !== 'undefined' &&
-        localStorage.getItem(STORAGE_KEYS.DEMO_MODE) === 'true';
-
-      if (!hasOnboardedFlag && !hasDemoFlag && allSubjects.length === 0) {
-        setNeedsOnboarding(true);
-      } else {
-        setNeedsOnboarding(false);
-      }
+      // En MOP-SG la operacion arranca directamente sin asistente de matricula universitaria
+      setNeedsOnboarding(false);
     } catch (err) {
       console.error('Error loading semester data from Dexie:', err);
     } finally {

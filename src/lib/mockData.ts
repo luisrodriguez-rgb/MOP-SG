@@ -42,29 +42,29 @@ export const demoIcesiProfile: Profile = {
 // PERFIL INICIAL NEUTRAL (Para nuevos estudiantes)
 // ═════════════════════════════════════════════════════════════
 export const defaultProfile: Profile = {
-  id: 'user-estudiante-activo',
-  name: 'Estudiante',
-  studentCode: 'A00123456',
+  id: 'profile-leon-sg',
+  name: 'Leon',
+  studentCode: 'SG-LEON',
   documentId: '',
-  university: 'Universidad Icesi',
-  program: 'Pregrado Universitario',
+  university: 'Seamos Genios',
+  program: 'Startup · Playtest',
   semesterNumber: 1,
-  cohort: '202610',
-  gpa: 4.5,
-  email: '',
+  cohort: '2026-PLAYTEST',
+  gpa: 5.0,
+  email: 'leon@seamosgenios.com',
 };
 
 // ═════════════════════════════════════════════════════════════
-// SEMESTRE ACTIVO: 202620 (Segundo Semestre de 2026 - PRE)
+// OPERACIÓN ACTIVA: SEAMOS GENIOS · PLAYTEST NOV 2026
 // ═════════════════════════════════════════════════════════════
 export const mockSemester: Semester = {
-  id: 'sem-2026-2-pre',
-  userId: 'user-luis-ernesto-rodriguez',
-  name: 'Segundo Semestre De 2026 - PRE',
-  startDate: '2026-08-03',
-  endDate: '2026-11-27',
+  id: 'op-playtest-2026',
+  userId: 'profile-leon-sg',
+  name: 'Lanzamiento Playtest Nov 2026',
+  startDate: '2026-10-01',
+  endDate: '2026-11-30',
   isActive: true,
-  totalWeeks: 16,
+  totalWeeks: 8,
 };
 
 // ═════════════════════════════════════════════════════════════
@@ -273,6 +273,18 @@ const addDays = (d: number) => {
 // EVALUACIONES Y COMPONENTES OFICIALES (Del balance académico)
 // ═════════════════════════════════════════════════════════════
 export const mockExams: Exam[] = [
+  {
+    id: 'milestone-playtest-nov',
+    subjectId: 'sub-optimizacion',
+    title: 'Lanzamiento Playtest Noviembre',
+    date: '2026-11-18T18:00:00',
+    weight: 40,
+    location: 'Seamos Genios · Plataforma',
+    notes: 'Lanzamiento del Playtest interactivo de Seamos Genios',
+    topics: ['Despliegue de plataforma', 'Pruebas de usuario', 'Feedback en vivo'],
+    assigneeId: 'member-dani',
+    assigneeName: 'Dani',
+  },
   // Estadística Aplicada II (20% + 20% + 20% + 20% proyecto)
   {
     id: 'exam-est2-p1',
@@ -491,14 +503,7 @@ export const mockPendingCourses: PendingCourse[] = [
   { code: 'PDP 00134', name: 'Práctica profesional', semester: 9 },
 ];
 
-export async function seedDatabaseIfEmpty(force = false): Promise<boolean> {
-  if (!force && typeof window !== 'undefined') {
-    const isDemo = localStorage.getItem(STORAGE_KEYS.DEMO_MODE) === 'true';
-    if (!isDemo) {
-      return false;
-    }
-  }
-
+export async function seedDatabaseIfEmpty(): Promise<boolean> {
   const existingProfiles = await profileRepository.getAll();
   if (existingProfiles.length === 0) {
     await profileRepository.save(defaultProfile);
