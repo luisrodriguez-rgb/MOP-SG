@@ -1,16 +1,18 @@
 'use client';
 
-import { useMemo } from 'react';
-import { Subject, Exam, Assignment, AttendanceRecord } from '@/types';
+import { useMemo, useState } from 'react';
+import { Subject, Exam, Assignment, AttendanceRecord, TeamMember } from '@/types';
 import { calculateSubjectRisk } from '@/lib/academic-engine';
 import { RiskCard } from './RiskCard';
-import { ShieldAlert, Flame } from 'lucide-react';
+import { ShieldAlert, Flame, Users } from 'lucide-react';
+import { LABELS } from '@/lib/labels';
 
 interface DangerRadarProps {
   subjects: Subject[];
   exams: Exam[];
   assignments: Assignment[];
   attendance: AttendanceRecord[];
+  members?: TeamMember[];
 }
 
 export function DangerRadar({
@@ -18,7 +20,10 @@ export function DangerRadar({
   exams,
   assignments,
   attendance,
+  members = [],
 }: DangerRadarProps) {
+  const [filterMemberId, setFilterMemberId] = useState<string>('all');
+
   // Calcular riesgo para cada materia de forma determinística
   const evaluatedRisks = useMemo(() => {
     return subjects
@@ -29,10 +34,11 @@ export function DangerRadar({
           assignments,
           attendanceRecords: attendance,
           availableStudyMinutesThisWeek: 300,
+          filterMemberId,
         });
       })
       .sort((a, b) => b.riskScore - a.riskScore);
-  }, [subjects, exams, assignments, attendance]);
+  }, [subjects, exams, assignments, attendance, filterMemberId]);
 
   const criticalCount = evaluatedRisks.filter((r) => r.level === 'CRÍTICO').length;
   const attentionCount = evaluatedRisks.filter((r) => r.level === 'ATENCIÓN').length;
@@ -48,13 +54,13 @@ export function DangerRadar({
           <div>
             <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider uppercase text-[#3b3abf] dark:text-[#a0a0ff]">
               <ShieldAlert className="w-4 h-4" />
-              <span>Semáforo de Salud Académica</span>
+              <span>Semáforo de Operación & Salud de Áreas</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-[var(--ink)] tracking-tight mt-1">
-              Radar de Riesgo del Semestre
+              Radar de Riesgo & Cuellos de Botella
             </h2>
             <p className="text-xs text-[var(--muted)] mt-1 max-w-xl">
-              Análisis cuantitativo de proximidad de parciales, sobrecarga de tareas, inasistencias y tiempo disponible. Cero adivinanzas, puras métricas explicables.
+              Análisis cuantitativo de proximidad de hitos, sobrecarga de entregables y déficit de tiempo libre real. Cero adivinanzas, puras métricas ejecutables.
             </p>
           </div>
 
@@ -79,6 +85,47 @@ export function DangerRadar({
             </div>
           </div>
         </div>
+
+        {/* Selector de Miembros de Equipo */}
+        {members.length > 0 && (
+          <div className="mt-5 pt-4 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-[var(--ink)]">
+              <Users className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+              <span>Filtrar por Responsable:</span>
+            </div>
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+              <button
+                type="button"
+                onClick={() => setFilterMemberId('all')}
+                className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  filterMemberId === 'all'
+                    ? 'bg-[#3b3abf] text-white shadow-xs'
+                    : 'bg-[var(--paper)] text-[var(--muted)] hover:text-[var(--ink)] border border-[var(--border)]'
+                }`}
+              >
+                Todo el Equipo
+              </button>
+              {members.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => setFilterMemberId(m.id)}
+                  className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                    filterMemberId === m.id
+                      ? 'bg-[#3b3abf] text-white shadow-xs'
+                      : 'bg-[var(--paper)] text-[var(--muted)] hover:text-[var(--ink)] border border-[var(--border)]'
+                  }`}
+                >
+                  <span
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: m.color || '#3b3abf' }}
+                  />
+                  <span>{m.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Diagnóstico clave de la materia de mayor riesgo */}
         {highestRisk && highestRisk.level !== 'ESTABLE' && (

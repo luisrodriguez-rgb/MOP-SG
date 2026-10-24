@@ -8,6 +8,22 @@ export interface SubjectRiskInputs {
   attendanceRecords?: AttendanceRecord[];
   currentDate?: Date; // Por defecto hoy
   availableStudyMinutesThisWeek?: number;
+  filterMemberId?: string; // Id del miembro para calibrar el déficit de tiempo libre personal
+}
+
+export function inferTaskMinutes(title: string, currentEstimate?: number): number {
+  if (currentEstimate && currentEstimate > 0) return currentEstimate;
+  const t = title.toLowerCase();
+  if (t.includes('video') || t.includes('grab') || t.includes('edit') || t.includes('guion')) {
+    return 180; // 3h para video/edición
+  }
+  if (t.includes('simulacro') || t.includes('pdf') || t.includes('icfes') || t.includes('prueba')) {
+    return 240; // 4h para simulacros
+  }
+  if (t.includes('reunion') || t.includes('mentoria') || t.includes('pitch') || t.includes('admin') || t.includes('b2b')) {
+    return 45; // 45m para reuniones
+  }
+  return 45;
 }
 
 export function calculateSubjectRisk({
@@ -17,6 +33,7 @@ export function calculateSubjectRisk({
   attendanceRecords = [],
   currentDate = new Date(),
   availableStudyMinutesThisWeek = 300, // 5 horas por defecto si no se especifica
+  filterMemberId,
 }: SubjectRiskInputs): RiskEvaluation {
   const reasons: string[] = [];
 
@@ -52,8 +69,14 @@ export function calculateSubjectRisk({
   const pendingTasks = assignments.filter(
     (a) => a.subjectId === subject.id && a.status !== 'completed'
   );
-  const tasksEstimatedMinutes = pendingTasks.reduce(
-    (acc, t) => acc + (t.estimatedMinutes || 45),
+
+  // Filtrar tareas que consumen el tiempo libre del miembro evaluado
+  const myTasks = filterMemberId && filterMemberId !== 'all'
+    ? pendingTasks.filter((t) => !t.assigneeId || t.assigneeId === filterMemberId)
+    : pendingTasks;
+
+  const tasksEstimatedMinutes = myTasks.reduce(
+    (acc, t) => acc + inferTaskMinutes(t.title, t.estimatedMinutes),
     0
   );
 
@@ -72,6 +95,13 @@ export function calculateSubjectRisk({
 
   if (pendingTasks.length > 0) {
     reasons.push(LABELS.formatPendingTasks(pendingTasks.length));
+  }
+
+  const otherMemberTasks = pendingTasks.filter(
+    (t) => filterMemberId && filterMemberId !== 'all' && t.assigneeId && t.assigneeId !== filterMemberId
+  );
+  if (otherMemberTasks.length > 0) {
+    reasons.push(`${otherMemberTasks.length} entregable${otherMemberTasks.length > 1 ? 's' : ''} asignado${otherMemberTasks.length > 1 ? 's' : ''} a otros socios del equipo.`);
   }
 
   // Comparación proporcional de carga vs disponibilidad real

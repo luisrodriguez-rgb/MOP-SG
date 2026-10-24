@@ -4,7 +4,7 @@ import { useSemesterData } from '@/hooks/useSemesterData';
 import { DangerRadar } from '@/components/radar/DangerRadar';
 
 export default function RadarPage() {
-  const { subjects, exams, assignments, attendance, isLoading } = useSemesterData();
+  const { subjects, exams, assignments, attendance, members, isLoading } = useSemesterData();
 
   if (isLoading) {
     return (
@@ -21,6 +21,7 @@ export default function RadarPage() {
         exams={exams}
         assignments={assignments}
         attendance={attendance}
+        members={members}
       />
     </div>
   );

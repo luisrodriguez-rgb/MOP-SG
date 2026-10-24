@@ -5,16 +5,19 @@ import { useUIStore } from '@/stores/uiStore';
 import { useSemesterData } from '@/hooks/useSemesterData';
 import { assignmentRepository } from '@/lib/storage';
 import { Assignment, TaskPriority } from '@/types';
-import { X, PlusCircle, Calendar, Clock, MapPin, FileText, CheckCircle } from 'lucide-react';
+import { X, PlusCircle, Calendar, Clock, MapPin, FileText, CheckCircle, User } from 'lucide-react';
 import { CustomSelect } from '@/components/ui/CustomSelect';
+import { inferTaskMinutes } from '@/lib/academic-engine';
 
 export function AddTaskModal() {
   const { isAddTaskOpen, closeAddTask, editingTask } = useUIStore();
-  const { subjects, refreshData } = useSemesterData();
+  const { subjects, members, refreshData } = useSemesterData();
 
   const [title, setTitle] = useState('');
   const [subjectId, setSubjectId] = useState('');
+  const [assigneeId, setAssigneeId] = useState('');
   const [estimatedMinutes, setEstimatedMinutes] = useState(45);
+  const [hasCustomMinutes, setHasCustomMinutes] = useState(false);
   const [priority, setPriority] = useState<TaskPriority>('medium');
   const [dueDateStr, setDueDateStr] = useState('');
   const [dueTimeStr, setDueTimeStr] = useState('23:59');
@@ -35,7 +38,9 @@ export function AddTaskModal() {
     if (editingTask) {
       setTitle(editingTask.title || '');
       setSubjectId(editingTask.subjectId || subjects[0]?.id || '');
+      setAssigneeId(editingTask.assigneeId || '');
       setEstimatedMinutes(editingTask.estimatedMinutes || 45);
+      setHasCustomMinutes(true);
       setPriority(editingTask.priority || 'medium');
       setLocation(editingTask.location || '');
       setNotes(editingTask.notes || editingTask.description || '');
@@ -55,7 +60,9 @@ export function AddTaskModal() {
     } else {
       setTitle('');
       setSubjectId(subjects[0]?.id || '');
+      setAssigneeId('');
       setEstimatedMinutes(45);
+      setHasCustomMinutes(false);
       setPriority('medium');
       setLocation('');
       setNotes('');
@@ -85,6 +92,8 @@ export function AddTaskModal() {
       ? combinedDate.toISOString()
       : new Date().toISOString();
 
+    const selectedMember = members.find((m) => m.id === assigneeId);
+
     const taskData: Assignment = {
       id: editingTask?.id || `task-${Date.now()}`,
       subjectId: effectiveSubId,
@@ -93,6 +102,8 @@ export function AddTaskModal() {
       priority,
       status: editingTask?.status || 'pending',
       dueDate: dateIso,
+      assigneeId: assigneeId || undefined,
+      assigneeName: selectedMember?.name || undefined,
       location: location.trim() || undefined,
       notes: notes.trim() || undefined,
       description: notes.trim() || undefined,
@@ -150,26 +161,56 @@ export function AddTaskModal() {
               type="text"
               required
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ej: Taller 5 de Derivadas parciales y optimización"
+              onChange={(e) => {
+                const newTitle = e.target.value;
+                setTitle(newTitle);
+                if (!hasCustomMinutes && !editingTask) {
+                  setEstimatedMinutes(inferTaskMinutes(newTitle));
+                }
+              }}
+              placeholder="Ej: Editar video promocional Playtest o Diagramar simulacro PDF"
               className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[#3b3abf] focus:ring-2 focus:ring-[#3b3abf]/15 transition-all"
             />
           </div>
 
-          {/* Materia vinculada */}
-          <div>
-            <label className="block text-xs font-bold text-[var(--ink)] mb-1">Materia</label>
-            <CustomSelect
-              className="w-full"
-              value={subjectId || subjects[0]?.id || ''}
-              onChange={(val) => setSubjectId(val)}
-              options={subjects.map((sub) => ({
-                value: sub.id,
-                label: sub.name,
-                sublabel: sub.code,
-                color: sub.color,
-              }))}
-            />
+          {/* Área vinculada y Responsable */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-[var(--ink)] mb-1">Área</label>
+              <CustomSelect
+                className="w-full"
+                value={subjectId || subjects[0]?.id || ''}
+                onChange={(val) => setSubjectId(val)}
+                options={subjects.map((sub) => ({
+                  value: sub.id,
+                  label: sub.name,
+                  sublabel: sub.code,
+                  color: sub.color,
+                }))}
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[var(--ink)] mb-1 flex items-center gap-1">
+                <User className="w-3.5 h-3.5 text-[#3b3abf] dark:text-[#a0a0ff]" />
+                <span>Responsable</span>
+              </label>
+              <CustomSelect
+                className="w-full"
+                value={assigneeId}
+                onChange={(val) => setAssigneeId(val)}
+                options={[
+                  { value: '', label: 'Sin asignar (Equipo)' },
+                  ...members.map((m) => ({
+                    value: m.id,
+                    label: m.name,
+                    sublabel: m.role,
+                    color: m.color,
+                  })),
+                ]}
+                icon={User}
+              />
+            </div>
           </div>
 
           {/* Tiempo estimado y Salón/Modalidad */}

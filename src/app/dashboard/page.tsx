@@ -26,6 +26,7 @@ export default function DashboardPage() {
     exams,
     routines,
     attendance,
+    members,
     refreshData,
     isLoading,
     needsOnboarding,
@@ -113,6 +114,7 @@ export default function DashboardPage() {
             assignments={assignments}
             exams={exams}
             attendance={attendance}
+            members={members}
           />
         </div>
 

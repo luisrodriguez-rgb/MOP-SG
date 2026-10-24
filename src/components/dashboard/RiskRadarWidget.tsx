@@ -3,15 +3,17 @@
 import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Target, ChevronRight, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
-import { Subject, Assignment, Exam, AttendanceRecord } from '@/types';
+import { Subject, Assignment, Exam, AttendanceRecord, TeamMember } from '@/types';
 import { calculateSubjectRisk } from '@/lib/academic-engine';
 import { STORAGE_KEYS } from '@/lib/storage';
+import { LABELS } from '@/lib/labels';
 
 interface RiskRadarWidgetProps {
   subjects?: Subject[];
   assignments?: Assignment[];
   exams?: Exam[];
   attendance?: AttendanceRecord[];
+  members?: TeamMember[];
 }
 
 export function RiskRadarWidget({
@@ -19,7 +21,9 @@ export function RiskRadarWidget({
   assignments = [],
   exams = [],
   attendance = [],
+  members = [],
 }: RiskRadarWidgetProps) {
+  const [filterMemberId, setFilterMemberId] = useState<string>('all');
   const [prioritySubjectId, setPrioritySubjectId] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -41,6 +45,7 @@ export function RiskRadarWidget({
         exams,
         assignments,
         attendanceRecords: attendance,
+        filterMemberId,
       });
 
       const status = evaluation.level;
@@ -60,7 +65,7 @@ export function RiskRadarWidget({
         detail,
       };
     }).sort((a, b) => b.score - a.score);
-  }, [subjects, assignments, exams, attendance]);
+  }, [subjects, assignments, exams, attendance, filterMemberId]);
 
   const atRiskCount = useMemo(() => {
     return evaluatedSubjects.filter((s) => s.status !== 'ESTABLE').length;
@@ -118,7 +123,7 @@ export function RiskRadarWidget({
             Radar de Riesgo
           </h3>
           <span className="text-[10px] font-mono font-bold text-[#626c96] dark:text-[#8b95c2] ml-1 bg-[#f0f3fa] dark:bg-[#141838] px-2 py-0.5 rounded-full border border-[#e2e6f2] dark:border-[#1e2552]">
-            {subjects.length} materias
+            {subjects.length} áreas
           </span>
         </div>
         <Link
@@ -129,6 +134,41 @@ export function RiskRadarWidget({
           <ArrowRight className="w-3 h-3" />
         </Link>
       </div>
+
+      {/* Filtro por Miembro del Equipo */}
+      {members.length > 0 && (
+        <div className="flex items-center gap-1.5 overflow-x-auto py-2 border-b border-[#f0f3fa] dark:border-[#181d42] no-scrollbar">
+          <button
+            type="button"
+            onClick={() => setFilterMemberId('all')}
+            className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer whitespace-nowrap ${
+              filterMemberId === 'all'
+                ? 'bg-[#3b43a8] text-white shadow-xs'
+                : 'bg-[#f0f3fa] dark:bg-[#141838] text-[#626c96] dark:text-[#8b95c2] hover:text-[#0f1330] dark:hover:text-white'
+            }`}
+          >
+            Todo el Equipo
+          </button>
+          {members.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => setFilterMemberId(m.id)}
+              className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                filterMemberId === m.id
+                  ? 'bg-[#3b43a8] text-white shadow-xs'
+                  : 'bg-[#f0f3fa] dark:bg-[#141838] text-[#626c96] dark:text-[#8b95c2] hover:text-[#0f1330] dark:hover:text-white'
+              }`}
+            >
+              <span
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ backgroundColor: m.color || '#3b43a8' }}
+              />
+              <span>{m.name.split(' ')[0]}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Lista de Materias con Indicador Vertical - Con Progressive Disclosure */}
       <div className="mt-3 space-y-2 flex-1 overflow-y-auto max-h-[380px] pr-0.5">

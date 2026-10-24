@@ -10,6 +10,7 @@ import {
   FixedRoutine,
   Semester,
   Profile,
+  TeamMember,
 } from '@/types';
 import {
   profileRepository,
@@ -20,6 +21,7 @@ import {
   examRepository,
   attendanceRepository,
   routineRepository,
+  memberRepository,
   STORAGE_KEYS,
 } from '@/lib/storage';
 import { seedDatabaseIfEmpty } from '@/lib/mockData';
@@ -34,6 +36,7 @@ export function useSemesterData() {
   const [exams, setExams] = useState<Exam[]>([]);
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [routines, setRoutines] = useState<FixedRoutine[]>([]);
+  const [members, setMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
@@ -41,6 +44,7 @@ export function useSemesterData() {
     try {
       // Auto seed if empty (solo si demo mode está activo)
       await seedDatabaseIfEmpty();
+      await memberRepository.seedDefaultMembersIfEmpty();
 
       const [
         activeProfile,
@@ -52,6 +56,7 @@ export function useSemesterData() {
         allExams,
         allAttendance,
         allRoutines,
+        allMembers,
       ] = await Promise.all([
         profileRepository.getActiveProfile(),
         semesterRepository.getActive(),
@@ -62,6 +67,7 @@ export function useSemesterData() {
         examRepository.getAll(),
         attendanceRepository.getAll(),
         routineRepository.getAll(),
+        memberRepository.getAll(),
       ]);
 
       setProfile(activeProfile || null);
@@ -73,6 +79,7 @@ export function useSemesterData() {
       setExams(allExams);
       setAttendance(allAttendance);
       setRoutines(allRoutines);
+      setMembers(allMembers);
 
       // Evaluar si requiere onboarding de primera vez
       const hasOnboardedFlag =
@@ -184,6 +191,7 @@ export function useSemesterData() {
     exams,
     attendance,
     routines,
+    members,
     isLoading,
     needsOnboarding,
     refreshData: loadData,

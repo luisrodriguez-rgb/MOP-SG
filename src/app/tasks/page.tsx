@@ -17,14 +17,16 @@ import {
   Pencil,
   MapPin,
   FileText,
+  User,
 } from 'lucide-react';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 
 export default function TasksPage() {
-  const { assignments, subjects, subjectsMap, refreshData, isLoading } = useSemesterData();
+  const { assignments, subjects, subjectsMap, members, refreshData, isLoading } = useSemesterData();
   const { openAddTask, openEditTask, startFocusSession } = useUIStore();
 
   const [filterSubject, setFilterSubject] = useState<string>('all');
+  const [filterMember, setFilterMember] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'completed'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -44,13 +46,15 @@ export default function TasksPage() {
 
   const filteredTasks = assignments.filter((task) => {
     if (filterSubject !== 'all' && task.subjectId !== filterSubject) return false;
+    if (filterMember !== 'all' && task.assigneeId !== filterMember) return false;
     if (filterStatus === 'pending' && task.status === 'completed') return false;
     if (filterStatus === 'completed' && task.status !== 'completed') return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const matchTitle = task.title.toLowerCase().includes(q);
       const matchSub = subjectsMap[task.subjectId]?.name.toLowerCase().includes(q) || false;
-      if (!matchTitle && !matchSub) return false;
+      const matchMember = task.assigneeName?.toLowerCase().includes(q) || false;
+      if (!matchTitle && !matchSub && !matchMember) return false;
     }
     return true;
   });
@@ -120,6 +124,27 @@ export default function TasksPage() {
               })),
             ]}
             icon={Filter}
+            buttonClassName="py-1.5"
+          />
+
+          {/* Selector de Responsable */}
+          <CustomSelect
+            value={filterMember}
+            onChange={setFilterMember}
+            options={[
+              {
+                value: 'all',
+                label: 'Todo el equipo',
+                badge: String(assignments.length),
+              },
+              ...members.map((m) => ({
+                value: m.id,
+                label: m.name,
+                sublabel: m.role,
+                color: m.color,
+              })),
+            ]}
+            icon={User}
             buttonClassName="py-1.5"
           />
 
@@ -275,6 +300,12 @@ export default function TasksPage() {
                         </span>
                         {task.estimatedMinutes && (
                           <span>· ~{task.estimatedMinutes} min</span>
+                        )}
+                        {task.assigneeName && (
+                          <span className="px-2 py-0.5 rounded-full font-sans font-bold text-[10px] bg-[#3b3abf]/10 text-[#3b3abf] dark:text-[#a0a0ff] border border-[#3b3abf]/20 flex items-center gap-1">
+                            <User className="w-2.5 h-2.5" />
+                            <span>{task.assigneeName}</span>
+                          </span>
                         )}
                         {task.location && (
                           <span className="flex items-center gap-1 text-[var(--ink)] font-sans font-medium">

@@ -4,16 +4,17 @@ import { useState, useEffect } from 'react';
 import { useUIStore } from '@/stores/uiStore';
 import { useSemesterData } from '@/hooks/useSemesterData';
 import { examRepository } from '@/lib/storage';
-import { Exam } from '@/types';
-import { X, Calendar, MapPin, FileText, Sparkles, Tag, Clock } from 'lucide-react';
+import { Exam, TeamMember } from '@/types';
+import { X, Calendar, MapPin, FileText, Sparkles, Tag, Clock, User } from 'lucide-react';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 
 export function AddExamModal() {
   const { isAddExamOpen, closeAddExam, editingExam } = useUIStore();
-  const { subjects, refreshData } = useSemesterData();
+  const { subjects, members, refreshData } = useSemesterData();
 
   const [title, setTitle] = useState('');
   const [subjectId, setSubjectId] = useState('');
+  const [assigneeId, setAssigneeId] = useState('');
   const [weight, setWeight] = useState(25);
   const [examDateStr, setExamDateStr] = useState('');
   const [examTimeStr, setExamTimeStr] = useState('08:00');
@@ -36,6 +37,7 @@ export function AddExamModal() {
     if (editingExam) {
       setTitle(editingExam.title || '');
       setSubjectId(editingExam.subjectId || subjects[0]?.id || '');
+      setAssigneeId(editingExam.assigneeId || '');
       setWeight(editingExam.weight || 25);
       setLocation(editingExam.location || '');
       setNotes(editingExam.notes || '');
@@ -57,6 +59,7 @@ export function AddExamModal() {
       // Nuevo examen por defecto
       setTitle('');
       setSubjectId(subjects[0]?.id || '');
+      setAssigneeId('');
       setWeight(25);
       setLocation('');
       setNotes('');
@@ -94,6 +97,8 @@ export function AddExamModal() {
       .map((t) => t.trim())
       .filter((t) => t.length > 0);
 
+    const selectedMember = members.find((m) => m.id === assigneeId);
+
     const examData: Exam = {
       id: editingExam?.id || `exam-${Date.now()}`,
       subjectId: effectiveSubId,
@@ -102,7 +107,9 @@ export function AddExamModal() {
       date: dateIso,
       location: location.trim() || undefined,
       notes: notes.trim() || undefined,
-      topics: cleanTopics.length > 0 ? cleanTopics : ['Unidades temáticas del corte'],
+      topics: cleanTopics.length > 0 ? cleanTopics : ['Entregable clave / Hito'],
+      assigneeId: assigneeId || undefined,
+      assigneeName: selectedMember ? selectedMember.name : undefined,
     };
 
     await examRepository.save(examData);
@@ -164,20 +171,44 @@ export function AddExamModal() {
             />
           </div>
 
-          {/* Materia vinculada */}
-          <div>
-            <label className="block text-xs font-bold text-[var(--ink)] mb-1">Materia</label>
-            <CustomSelect
-              className="w-full"
-              value={subjectId || subjects[0]?.id || ''}
-              onChange={(val) => setSubjectId(val)}
-              options={subjects.map((sub) => ({
-                value: sub.id,
-                label: sub.name,
-                sublabel: sub.code,
-                color: sub.color,
-              }))}
-            />
+          {/* Área vinculada y Responsable */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-[var(--ink)] mb-1">Área / Materia</label>
+              <CustomSelect
+                className="w-full"
+                value={subjectId || subjects[0]?.id || ''}
+                onChange={(val) => setSubjectId(val)}
+                options={subjects.map((sub) => ({
+                  value: sub.id,
+                  label: sub.name,
+                  sublabel: sub.code,
+                  color: sub.color,
+                }))}
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[var(--ink)] mb-1 flex items-center gap-1">
+                <User className="w-3.5 h-3.5 text-[#7c3aed] dark:text-[#c084fc]" />
+                <span>Responsable del Hito</span>
+              </label>
+              <CustomSelect
+                className="w-full"
+                value={assigneeId}
+                onChange={(val) => setAssigneeId(val)}
+                options={[
+                  { value: '', label: 'Sin asignar (Todo el equipo)' },
+                  ...members.map((m) => ({
+                    value: m.id,
+                    label: m.name,
+                    sublabel: m.role,
+                    color: m.color,
+                  })),
+                ]}
+                icon={User}
+              />
+            </div>
           </div>
 
           {/* Ponderación y Ubicación */}
