@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { ingestAcademicEvidence } from '@/lib/importer/universal/pipeline';
 import { commitAcademicDataAtomically } from '@/lib/importer/universal/committer';
+import { STORAGE_KEYS } from '@/lib/storage';
 import {
   IngestResult,
   ParsedAcademicData,
@@ -399,7 +400,7 @@ export function OnboardingFlow({ onComplete, onSelectDemo }: OnboardingFlowProps
         dataToCommit.exams = [urgentExam];
 
         if (typeof window !== 'undefined') {
-          localStorage.setItem('mi_semestre_priority_subject_id', selectedUrgentSubjectId);
+          localStorage.setItem(STORAGE_KEYS.PRIORITY_SUBJECT_ID, selectedUrgentSubjectId);
         }
       }
 

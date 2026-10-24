@@ -33,7 +33,7 @@ export interface DecisionMetricsSummary {
   overrideReasonCounts: Record<OverrideReason, number>;
 }
 
-const STORAGE_KEY = 'mi_semestre_decision_events_v1';
+const STORAGE_KEY = 'mopsg_decision_events_v1';
 
 // Almacén en memoria para entornos Node / SSR o como capa intermedia
 let memoryEvents: DecisionEvent[] = [];

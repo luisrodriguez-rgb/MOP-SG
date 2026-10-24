@@ -51,7 +51,7 @@ export function generateIcsCalendar(params: {
 
     lines.push(
       'BEGIN:VEVENT',
-      `UID:class_${block.id}@misemestre.app`,
+      `UID:class_${block.id}@mopsg.app`,
       `DTSTAMP:${formatIcsDateTime(now)}`,
       `DTSTART:${startDateTime}`,
       `DTEND:${endDateTime}`,
@@ -73,7 +73,7 @@ export function generateIcsCalendar(params: {
 
     lines.push(
       'BEGIN:VEVENT',
-      `UID:exam_${exam.id}@misemestre.app`,
+      `UID:exam_${exam.id}@mopsg.app`,
       `DTSTAMP:${formatIcsDateTime(now)}`,
       `DTSTART:${formatIcsDateTime(examDate)}`,
       `DTEND:${formatIcsDateTime(endDate)}`,
@@ -92,7 +92,7 @@ export function generateIcsCalendar(params: {
 
     lines.push(
       'BEGIN:VEVENT',
-      `UID:routine_${routine.id}@misemestre.app`,
+      `UID:routine_${routine.id}@mopsg.app`,
       `DTSTAMP:${formatIcsDateTime(now)}`,
       `DTSTART:${startDateTime}`,
       `DTEND:${endDateTime}`,

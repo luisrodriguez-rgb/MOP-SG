@@ -6,6 +6,7 @@ import {
   scheduleRepository,
   examRepository,
   assignmentRepository,
+  STORAGE_KEYS,
 } from '../../storage';
 import { ParsedAcademicData, CommitResult } from './types';
 import { Profile, Semester, Subject, ScheduleBlock, Exam, Assignment } from '@/types';
@@ -139,8 +140,8 @@ export async function commitAcademicDataAtomically(data: ParsedAcademicData): Pr
 
   if (typeof window !== 'undefined') {
     localStorage.setItem(IS_USER_CONFIGURED_KEY, 'true');
-    localStorage.setItem('mi_semestre_onboarded_v1', 'true');
-    localStorage.removeItem('mi_semestre_demo_mode');
+    localStorage.setItem(STORAGE_KEYS.ONBOARDED, 'true');
+    localStorage.removeItem(STORAGE_KEYS.DEMO_MODE);
     window.dispatchEvent(new CustomEvent('semester-data-updated'));
   }
 

@@ -100,6 +100,8 @@ export interface Assignment extends Partial<ImportedEventMetadata> {
   status: TaskStatus;
   location?: string;
   notes?: string;
+  assigneeId?: string;
+  assigneeName?: string;
 }
 
 export interface Exam extends Partial<ImportedEventMetadata> {
@@ -111,6 +113,17 @@ export interface Exam extends Partial<ImportedEventMetadata> {
   topics?: string[];
   location?: string;
   notes?: string;
+  assigneeId?: string;
+  assigneeName?: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  color?: string;
+  active: boolean;
+  createdAt?: string;
 }
 
 export type AttendanceStatus = 'present' | 'absent' | 'excused';

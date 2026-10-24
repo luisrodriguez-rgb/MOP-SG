@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Target, ChevronRight, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { Subject, Assignment, Exam, AttendanceRecord } from '@/types';
 import { calculateSubjectRisk } from '@/lib/academic-engine';
+import { STORAGE_KEYS } from '@/lib/storage';
 
 interface RiskRadarWidgetProps {
   subjects?: Subject[];
@@ -24,7 +25,7 @@ export function RiskRadarWidget({
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('mi_semestre_priority_subject_id');
+      const stored = localStorage.getItem(STORAGE_KEYS.PRIORITY_SUBJECT_ID);
       if (stored) {
         setPrioritySubjectId(stored);
       }

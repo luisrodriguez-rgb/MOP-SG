@@ -1,7 +1,8 @@
 import { db } from '../database';
 import { Profile } from '@/types';
+import { STORAGE_KEYS } from '../storageKeys';
 
-const ACTIVE_USER_KEY = 'mi_semestre_active_user_id';
+const ACTIVE_USER_KEY = STORAGE_KEYS.ACTIVE_USER_ID;
 
 export const profileRepository = {
   async getAll(): Promise<Profile[]> {

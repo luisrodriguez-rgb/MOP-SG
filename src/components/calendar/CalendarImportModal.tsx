@@ -235,7 +235,7 @@ export function CalendarImportModal() {
       exams,
       routines,
     });
-    downloadIcsFile('mi_semestre_horario.ics', icsContent);
+    downloadIcsFile('mopsg_horario.ics', icsContent);
   };
 
   return (
@@ -379,7 +379,7 @@ export function CalendarImportModal() {
                 className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black transition-all shadow-md cursor-pointer inline-flex items-center gap-2 active:scale-95"
               >
                 <Download className="w-4 h-4" />
-                <span>Descargar horario_mi_semestre.ics</span>
+                <span>Descargar horario_mopsg.ics</span>
               </button>
             </div>
           )}

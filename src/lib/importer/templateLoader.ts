@@ -8,12 +8,13 @@ import {
   examRepository,
   assignmentRepository,
   attendanceRepository,
+  STORAGE_KEYS,
 } from '../storage';
 import { ACADEMIC_TEMPLATES } from '../templates/academicTemplates';
 import { ParsedAcademicData } from './smartAcademicIngester';
 import { Semester, Profile, Subject, ScheduleBlock, DayOfWeek } from '@/types';
 
-export const IS_USER_CONFIGURED_KEY = 'mi_semestre_user_configured_v1';
+export const IS_USER_CONFIGURED_KEY = STORAGE_KEYS.USER_CONFIGURED;
 
 export async function clearAllSemesterData() {
   await db.transaction(

@@ -10,6 +10,7 @@ import {
   Grade,
   StudySession,
   FixedRoutine,
+  TeamMember,
 } from '@/types';
 
 export class SemesterDatabase extends Dexie {
@@ -23,21 +24,23 @@ export class SemesterDatabase extends Dexie {
   grades!: Table<Grade, string>;
   studySessions!: Table<StudySession, string>;
   routines!: Table<FixedRoutine, string>;
+  members!: Table<TeamMember, string>;
 
   constructor() {
-    super('MiSemestreDB');
+    super('MopSgDB');
 
-    this.version(2).stores({
+    this.version(1).stores({
       profiles: 'id, studentCode, university',
       semesters: 'id, userId, isActive',
       subjects: 'id, semesterId, code',
       scheduleBlocks: 'id, subjectId, dayOfWeek, startTime',
-      assignments: 'id, subjectId, dueDate, status, priority',
-      exams: 'id, subjectId, date',
+      assignments: 'id, subjectId, dueDate, status, priority, assigneeId',
+      exams: 'id, subjectId, date, assigneeId',
       attendance: 'id, subjectId, date, status',
       grades: 'id, subjectId',
       studySessions: 'id, subjectId, startAt, status',
       routines: 'id, dayOfWeek, type',
+      members: 'id, name, active',
     });
   }
 }

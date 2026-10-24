@@ -19,6 +19,7 @@ import {
   examRepository,
   attendanceRepository,
   routineRepository,
+  STORAGE_KEYS,
 } from './storage';
 
 // ═════════════════════════════════════════════════════════════
@@ -492,7 +493,7 @@ export const mockPendingCourses: PendingCourse[] = [
 
 export async function seedDatabaseIfEmpty(force = false): Promise<boolean> {
   if (!force && typeof window !== 'undefined') {
-    const isDemo = localStorage.getItem('mi_semestre_demo_mode') === 'true';
+    const isDemo = localStorage.getItem(STORAGE_KEYS.DEMO_MODE) === 'true';
     if (!isDemo) {
       return false;
     }
@@ -532,7 +533,7 @@ export async function resetDatabaseToDemo(): Promise<void> {
   await assignmentRepository.bulkSave(mockAssignments);
   await attendanceRepository.bulkSave(mockAttendance);
   if (typeof window !== 'undefined') {
-    localStorage.removeItem('mi_semestre_user_configured_v1');
+    localStorage.removeItem(STORAGE_KEYS.USER_CONFIGURED);
   }
 }
 
@@ -563,6 +564,6 @@ export async function resetDatabaseToCleanSlate(): Promise<void> {
   };
   await semesterRepository.save(cleanSemester);
   if (typeof window !== 'undefined') {
-    localStorage.setItem('mi_semestre_user_configured_v1', 'true');
+    localStorage.setItem(STORAGE_KEYS.USER_CONFIGURED, 'true');
   }
 }

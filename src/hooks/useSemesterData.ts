@@ -20,6 +20,7 @@ import {
   examRepository,
   attendanceRepository,
   routineRepository,
+  STORAGE_KEYS,
 } from '@/lib/storage';
 import { seedDatabaseIfEmpty } from '@/lib/mockData';
 
@@ -76,10 +77,10 @@ export function useSemesterData() {
       // Evaluar si requiere onboarding de primera vez
       const hasOnboardedFlag =
         typeof window !== 'undefined' &&
-        localStorage.getItem('mi_semestre_onboarded_v1') === 'true';
+        localStorage.getItem(STORAGE_KEYS.ONBOARDED) === 'true';
       const hasDemoFlag =
         typeof window !== 'undefined' &&
-        localStorage.getItem('mi_semestre_demo_mode') === 'true';
+        localStorage.getItem(STORAGE_KEYS.DEMO_MODE) === 'true';
 
       if (!hasOnboardedFlag && !hasDemoFlag && allSubjects.length === 0) {
         setNeedsOnboarding(true);
@@ -96,8 +97,8 @@ export function useSemesterData() {
   const loadDemoSemester = useCallback(async () => {
     setIsLoading(true);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('mi_semestre_demo_mode', 'true');
-      localStorage.setItem('mi_semestre_user_configured_v1', 'true');
+      localStorage.setItem(STORAGE_KEYS.DEMO_MODE, 'true');
+      localStorage.setItem(STORAGE_KEYS.USER_CONFIGURED, 'true');
     }
     const { resetDatabaseToDemo } = await import('@/lib/mockData');
     await resetDatabaseToDemo();
@@ -108,8 +109,8 @@ export function useSemesterData() {
 
   const completeOnboarding = useCallback(async () => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('mi_semestre_onboarded_v1', 'true');
-      localStorage.removeItem('mi_semestre_demo_mode');
+      localStorage.setItem(STORAGE_KEYS.ONBOARDED, 'true');
+      localStorage.removeItem(STORAGE_KEYS.DEMO_MODE);
     }
     setNeedsOnboarding(false);
     await loadData();
@@ -119,9 +120,9 @@ export function useSemesterData() {
   const resetToOnboarding = useCallback(async () => {
     setIsLoading(true);
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('mi_semestre_onboarded_v1');
-      localStorage.removeItem('mi_semestre_demo_mode');
-      localStorage.removeItem('mi_semestre_user_configured_v1');
+      localStorage.removeItem(STORAGE_KEYS.ONBOARDED);
+      localStorage.removeItem(STORAGE_KEYS.DEMO_MODE);
+      localStorage.removeItem(STORAGE_KEYS.USER_CONFIGURED);
     }
     const { db } = await import('@/lib/storage/database');
     await db.delete();

@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
         response = await fetch(currentUrl, {
           signal: controller.signal,
           headers: {
-            'User-Agent': 'MiSemestre-CalendarSync/1.0',
+            'User-Agent': 'MopSg-CalendarSync/1.0',
             Accept: 'text/calendar, application/json, text/plain, */*',
           },
           redirect: 'manual',

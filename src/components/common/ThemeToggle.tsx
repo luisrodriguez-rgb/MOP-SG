@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Sun, Moon, Monitor } from 'lucide-react';
+import { STORAGE_KEYS } from '@/lib/storage';
 
 export type Theme = 'light' | 'dark' | 'system';
 
@@ -30,7 +31,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
-    const saved = (localStorage.getItem('misemestre-theme') as Theme) || 'light';
+    const saved = (localStorage.getItem(STORAGE_KEYS.THEME) as Theme) || 'light';
     setTheme(saved);
     applyTheme(saved);
   }, []);
@@ -42,7 +43,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     else nextTheme = 'light';
 
     setTheme(nextTheme);
-    localStorage.setItem('misemestre-theme', nextTheme);
+    localStorage.setItem(STORAGE_KEYS.THEME, nextTheme);
     applyTheme(nextTheme);
   };
 
