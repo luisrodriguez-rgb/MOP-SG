@@ -111,7 +111,7 @@ body {
 .card-cambas {
   background: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: 0 4px 20px -2px rgba(26, 26, 94, 0.05), 0 2px 6px -1px rgba(26, 26, 94, 0.03);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
   border-radius: 1.25rem;
 }
 
@@ -119,7 +119,7 @@ body {
 .card-cambas-interactive {
   background: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: 0 4px 20px -2px rgba(26, 26, 94, 0.05);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
   border-radius: 1.25rem;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
