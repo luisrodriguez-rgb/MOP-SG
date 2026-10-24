@@ -100,7 +100,7 @@ export function QuickScheduleImporterModal() {
                     Operaciones Seamos Genios · Temporada Playtest
                   </div>
                   <div className="text-xs text-[var(--muted)] mt-0.5">
-                    5 Áreas: Operaciones, Finanzas, Marketing, Diseño, Desarrollo
+                    4 Áreas: Marketing, Diseño & Video · Desarrollo & Soporte · Docencia & Contenido · Administración & Incubadora
                   </div>
                 </div>
                 <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">

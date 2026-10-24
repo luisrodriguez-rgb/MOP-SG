@@ -51,7 +51,7 @@ export const defaultSemester: Semester = {
 export const mockSemester = defaultSemester;
 
 // ═════════════════════════════════════════════════════════════
-// LAS 5 ÁREAS OPERATIVAS DE SEAMOS GENIOS
+// LAS 4 ÁREAS OPERATIVAS FINALES DE SEAMOS GENIOS
 // ═════════════════════════════════════════════════════════════
 export const defaultSubjects: Subject[] = [
   {
@@ -69,8 +69,8 @@ export const defaultSubjects: Subject[] = [
   {
     id: 'area-dev-soporte',
     semesterId: 'op-lanzamiento-playtest',
-    name: 'Desarrollo, Plataforma & Soporte',
-    code: 'DEV-OPS',
+    name: 'Desarrollo & Soporte',
+    code: 'DEV-SOP',
     professor: 'Dani',
     credits: 4,
     color: '#78716C',
@@ -79,10 +79,10 @@ export const defaultSubjects: Subject[] = [
     currentGrade: 5.0,
   },
   {
-    id: 'area-docencia-pedagogia',
+    id: 'area-docencia-contenido',
     semesterId: 'op-lanzamiento-playtest',
-    name: 'Docencia & Contenido Pedagógico',
-    code: 'DOC-PED',
+    name: 'Docencia & Contenido',
+    code: 'DOC-CNT',
     professor: 'Ángel',
     credits: 4,
     color: '#475569',
@@ -91,25 +91,13 @@ export const defaultSubjects: Subject[] = [
     currentGrade: 5.0,
   },
   {
-    id: 'area-admin-finanzas',
+    id: 'area-admin-incubadora',
     semesterId: 'op-lanzamiento-playtest',
-    name: 'Administración & Finanzas',
-    code: 'ADM-FIN',
+    name: 'Administración & Incubadora',
+    code: 'ADM-INC',
     professor: 'Equipo SG',
     credits: 4,
     color: '#27272A',
-    maxAbsences: 0,
-    passingGrade: 3.0,
-    currentGrade: 5.0,
-  },
-  {
-    id: 'area-operaciones-usuarios',
-    semesterId: 'op-lanzamiento-playtest',
-    name: 'Operaciones & Experiencia de Usuario',
-    code: 'OPS-UX',
-    professor: 'Equipo SG',
-    credits: 4,
-    color: '#52525B',
     maxAbsences: 0,
     passingGrade: 3.0,
     currentGrade: 5.0,
