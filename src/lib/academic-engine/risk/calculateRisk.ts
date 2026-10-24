@@ -1,10 +1,11 @@
 import { Subject, Exam, Assignment, AttendanceRecord, RiskEvaluation, RiskLevel } from '@/types';
+import { LABELS } from '@/lib/labels';
 
 export interface SubjectRiskInputs {
   subject: Subject;
   exams: Exam[];
   assignments: Assignment[];
-  attendanceRecords: AttendanceRecord[];
+  attendanceRecords?: AttendanceRecord[];
   currentDate?: Date; // Por defecto hoy
   availableStudyMinutesThisWeek?: number;
 }
@@ -13,14 +14,13 @@ export function calculateSubjectRisk({
   subject,
   exams,
   assignments,
-  attendanceRecords,
+  attendanceRecords = [],
   currentDate = new Date(),
   availableStudyMinutesThisWeek = 300, // 5 horas por defecto si no se especifica
 }: SubjectRiskInputs): RiskEvaluation {
   const reasons: string[] = [];
 
-  // 1. DEADLINE PRESSURE (Presión de Exámenes Próximos)
-  // Filtrar exámenes futuros para esta materia
+  // 1. DEADLINE PRESSURE (Presión de Hitos Próximos)
   const nowMs = currentDate.getTime();
   const upcomingExams = exams
     .filter((e) => e.subjectId === subject.id)
@@ -38,17 +38,17 @@ export function calculateSubjectRisk({
   if (nearestExam) {
     if (nearestExam.diffDays <= 3) {
       deadlinePressure = 45;
-      reasons.push(`Examen "${nearestExam.exam.title}" en ${nearestExam.diffDays === 0 ? 'hoy' : `${nearestExam.diffDays} días`}.`);
+      reasons.push(LABELS.formatMilestoneDue(nearestExam.exam.title, nearestExam.diffDays));
     } else if (nearestExam.diffDays <= 7) {
       deadlinePressure = 25;
-      reasons.push(`Examen "${nearestExam.exam.title}" en ${nearestExam.diffDays} días.`);
+      reasons.push(LABELS.formatMilestoneDue(nearestExam.exam.title, nearestExam.diffDays));
     } else if (nearestExam.diffDays <= 14) {
       deadlinePressure = 10;
-      reasons.push(`Examen próximo en ${nearestExam.diffDays} días.`);
+      reasons.push(`Hito próximo en ${nearestExam.diffDays} días.`);
     }
   }
 
-  // 2. WORKLOAD PRESSURE (Tareas pendientes vs Tiempo de estudio)
+  // 2. WORKLOAD PRESSURE: Radar de Atrasos (Horas estimadas vs Tiempo libre real)
   const pendingTasks = assignments.filter(
     (a) => a.subjectId === subject.id && a.status !== 'completed'
   );
@@ -57,67 +57,70 @@ export function calculateSubjectRisk({
     0
   );
 
-  // Si hay un examen cercano (<= 7 días) y 0 tareas registradas,
-  // proyectar una carga base automática de estudio sugerido (240 min = 4 horas)
+  // Si hay un hito cercano (<= 7 días) y 0 tareas registradas, proyectar buffer de preparación
   let examStudyBufferMinutes = 0;
   if (nearestExam && nearestExam.diffDays <= 7 && tasksEstimatedMinutes === 0) {
-    examStudyBufferMinutes = 240;
-    reasons.push(`Estudio sugerido de ${Math.round(examStudyBufferMinutes / 60)}h para preparar ${nearestExam.exam.title}.`);
+    examStudyBufferMinutes = 240; // 4 horas
+    reasons.push(LABELS.formatWorkBuffer(Math.round(examStudyBufferMinutes / 60), nearestExam.exam.title));
   }
 
   const totalEstimatedMinutes = tasksEstimatedMinutes + examStudyBufferMinutes;
+  const availableMinutes = Math.max(60, availableStudyMinutesThisWeek);
+  const loadRatio = totalEstimatedMinutes / availableMinutes;
 
   let workloadPressure = 0;
-  if (pendingTasks.length >= 3) {
-    workloadPressure += 25;
-    reasons.push(`${pendingTasks.length} tareas pendientes acumuladas.`);
-  } else if (pendingTasks.length > 0) {
-    workloadPressure += pendingTasks.length * 8;
-  } else if (examStudyBufferMinutes > 0) {
-    workloadPressure += 15;
+
+  if (pendingTasks.length > 0) {
+    reasons.push(LABELS.formatPendingTasks(pendingTasks.length));
   }
 
-  // Si el trabajo pendiente supera el tiempo de estudio disponible
-  if (totalEstimatedMinutes > availableStudyMinutesThisWeek && pendingTasks.length > 0) {
-    workloadPressure += 15;
-    reasons.push(`El trabajo estimado (${Math.round(totalEstimatedMinutes / 60)}h) supera el tiempo libre proyectado.`);
+  // Comparación proporcional de carga vs disponibilidad real
+  if (loadRatio >= 1.5 && totalEstimatedMinutes > 0) {
+    // Déficit severo: el trabajo supera en más de 50% las horas libres disponibles
+    workloadPressure = 50;
+    reasons.push(LABELS.formatWorkloadExceeds(
+      Math.round(totalEstimatedMinutes / 60),
+      Math.round(availableMinutes / 60)
+    ));
+  } else if (loadRatio >= 1.0 && totalEstimatedMinutes > 0) {
+    // Déficit moderado: el trabajo supera el tiempo libre disponible
+    workloadPressure = 35;
+    reasons.push(LABELS.formatWorkloadExceeds(
+      Math.round(totalEstimatedMinutes / 60),
+      Math.round(availableMinutes / 60)
+    ));
+  } else if (loadRatio >= 0.7 && totalEstimatedMinutes > 0) {
+    // Carga alta pero manejable
+    workloadPressure = 20;
+    reasons.push(`Carga alta (${Math.round(totalEstimatedMinutes / 60)}h estimadas), consume el ${Math.round(loadRatio * 100)}% de tu disponibilidad.`);
+  } else if (totalEstimatedMinutes > 0) {
+    workloadPressure = 10;
   }
 
-  // 3. ATTENDANCE PRESSURE (Inasistencias acumuladas y margen de pérdida)
-  const subjectAttendance = attendanceRecords.filter((a) => a.subjectId === subject.id);
-  const totalClassesTracked = subjectAttendance.length;
-  const absences = subjectAttendance.filter((a) => a.status === 'absent').length;
-  const maxAllowed = subject.maxAbsences || 4;
-  const remainingAbsences = Math.max(0, maxAllowed - absences);
-  const attendanceRate = totalClassesTracked > 0 
-    ? Math.round(((totalClassesTracked - absences) / totalClassesTracked) * 100) 
-    : 100;
-
-  let attendancePressure = 0;
-  if (remainingAbsences === 0 && maxAllowed > 0) {
-    attendancePressure = 35;
-    reasons.push(`Límite de inasistencias alcanzado (${absences}/${maxAllowed} faltas). Próxima ausencia implica pérdida.`);
-  } else if (remainingAbsences <= 1 && maxAllowed > 0) {
-    attendancePressure = 25;
-    reasons.push(`Solo te queda 1 falta disponible antes de perder la materia.`);
-  } else if (remainingAbsences <= 2 && maxAllowed > 0) {
-    attendancePressure = 10;
-    reasons.push(`Te quedan ${remainingAbsences} inasistencias permitidas.`);
-  }
+  // 3. ATTENDANCE PRESSURE: Obsoleto para operación empresarial (0 puntos)
+  const attendancePressure = 0;
 
   // Score compuesto (0 a 100)
-  const riskScore = Math.min(100, deadlinePressure + workloadPressure + attendancePressure);
+  const riskScore = Math.min(100, deadlinePressure + workloadPressure);
 
-  // Clasificación estricta: CRÍTICO | ATENCIÓN | ESTABLE (Cero emojis)
+  // Clasificación: CRÍTICO | ATENCIÓN | ESTABLE
   let level: RiskLevel = 'ESTABLE';
-  if (riskScore >= 50 || remainingAbsences <= 1 || (nearestExam && nearestExam.diffDays <= 3)) {
+  if (
+    riskScore >= 50 ||
+    (nearestExam && nearestExam.diffDays <= 3) ||
+    (loadRatio >= 1.5 && nearestExam && nearestExam.diffDays <= 7)
+  ) {
     level = 'CRÍTICO';
-  } else if (riskScore >= 25 || (nearestExam && nearestExam.diffDays <= 7) || pendingTasks.length >= 2) {
+  } else if (
+    riskScore >= 25 ||
+    (nearestExam && nearestExam.diffDays <= 7) ||
+    loadRatio >= 1.0
+  ) {
     level = 'ATENCIÓN';
   }
 
   if (reasons.length === 0) {
-    reasons.push('Materia al día sin entregas críticas inminentes.');
+    reasons.push(LABELS.areaUpToDate());
   }
 
   return {
@@ -134,9 +137,9 @@ export function calculateSubjectRisk({
       pendingTasksCount: pendingTasks.length,
       estimatedStudyMinutes: totalEstimatedMinutes,
       availableMinutesThisWeek: availableStudyMinutesThisWeek,
-      attendanceRate,
-      absencesCount: absences,
-      remainingAllowedAbsences: remainingAbsences,
+      attendanceRate: 100,
+      absencesCount: 0,
+      remainingAllowedAbsences: 0,
       currentGrade: subject.currentGrade,
     },
     reasons,
