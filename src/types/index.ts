@@ -70,6 +70,8 @@ export interface ScheduleBlock extends Partial<ImportedEventMetadata> {
   location?: string; // Salón / Aula
   memberId?: string; // Socio asignado (Leon, Dani, Ángel)
   title?: string;    // Nombre descriptivo del bloque (ej. "Clase de Robótica", "Turno Monitoría")
+  date?: string;     // Fecha específica YYYY-MM-DD si es evento único puntual (NO recurrente)
+  untilDate?: string;// Fecha límite YYYY-MM-DD si es recurrente con regla UNTIL
 }
 
 export type CalendarFeedType = 'fixed_blocks' | 'sg_meetings' | 'ignore';

@@ -17,16 +17,31 @@ interface ScheduleDay {
   dayNum: DayOfWeek;
   name: string;
   dayOfMonth: number;
+  dateStr: string;
 }
 
-const WEEK_DAYS: ScheduleDay[] = [
-  { dayNum: 1, name: 'Lun', dayOfMonth: 8 },
-  { dayNum: 2, name: 'Mar', dayOfMonth: 9 },
-  { dayNum: 3, name: 'Mié', dayOfMonth: 10 },
-  { dayNum: 4, name: 'Jue', dayOfMonth: 11 },
-  { dayNum: 5, name: 'Vie', dayOfMonth: 12 },
-  { dayNum: 6, name: 'Sáb', dayOfMonth: 13 },
-];
+function computeCurrentWeekDays(): ScheduleDay[] {
+  const now = new Date();
+  const currentDay = now.getDay() === 0 ? 7 : now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (currentDay - 1));
+  monday.setHours(0, 0, 0, 0);
+
+  const dayNames = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  return [1, 2, 3, 4, 5, 6].map((dayNum, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return {
+      dayNum: dayNum as DayOfWeek,
+      name: dayNames[i],
+      dayOfMonth: d.getDate(),
+      dateStr: `${y}-${m}-${day}`,
+    };
+  });
+}
 
 const HOURS = [
   '7:00',
@@ -71,7 +86,12 @@ export function WeeklyScheduleWidget({
 }: WeeklyScheduleWidgetProps) {
   const { startFocusSession, openEditClass, openRoutineModal } = useUIStore();
   const [viewMode, setViewMode] = useState<'Semana' | 'Día'>('Semana');
-  const [activeDay, setActiveDay] = useState<number>(2); // Martes 9
+  const weekDays = useMemo(() => computeCurrentWeekDays(), []);
+  const todayDayNum = useMemo<DayOfWeek>(() => {
+    const d = new Date().getDay();
+    return (d === 0 ? 7 : d) as DayOfWeek;
+  }, []);
+  const [activeDay, setActiveDay] = useState<number>(todayDayNum);
 
   // Helper para convertir "08:00" a fracción numérica relativa a 7:00 (base 0)
   const timeToGridOffset = (timeStr: string) => {
@@ -95,8 +115,19 @@ export function WeeklyScheduleWidget({
   const displayBlocks: DisplayBlock[] = useMemo(() => {
     const result: DisplayBlock[] = [];
 
-    // 1. Mapear bloques de la base de datos
+    // 1. Mapear bloques de la base de datos (respetando fecha específica date y regla untilDate)
     classes.forEach((c) => {
+      // Si tiene fecha específica, solo renderizar si coincide con el día de esta semana
+      if (c.date) {
+        const matchingDay = weekDays.find((w) => w.dateStr === c.date && w.dayNum === c.dayOfWeek);
+        if (!matchingDay) return;
+      }
+      // Si tiene fecha límite untilDate, verificar que el día en curso de la semana no haya superado untilDate
+      if (c.untilDate) {
+        const matchingDay = weekDays.find((w) => w.dayNum === c.dayOfWeek);
+        if (matchingDay && matchingDay.dateStr > c.untilDate) return;
+      }
+
       const sub = subjectsMap[c.subjectId];
       const startOffset = timeToGridOffset(c.startTime);
       const duration = getDurationHours(c.startTime, c.endTime);
@@ -142,13 +173,14 @@ export function WeeklyScheduleWidget({
       });
     });
 
-    // 3. Calcular huecos libres reales por cada día
-    WEEK_DAYS.forEach((d) => {
+    // 3. Calcular huecos libres reales por cada día con su fecha específica
+    weekDays.forEach((d) => {
       try {
         const freeSlots = calculateFreeSlots({
           dayOfWeek: d.dayNum,
           classes,
           routines,
+          dateStr: d.dateStr,
           dayStart: '07:00',
           dayEnd: '21:00',
         });
@@ -176,7 +208,7 @@ export function WeeklyScheduleWidget({
     });
 
     return result;
-  }, [classes, subjectsMap, routines]);
+  }, [classes, subjectsMap, routines, weekDays]);
 
   const totalGridHours = 14; // 7:00 a 21:00
 
@@ -241,7 +273,7 @@ export function WeeklyScheduleWidget({
           {/* Fila de Días */}
           <div className="grid grid-cols-[56px_repeat(6,1fr)] border-b border-[var(--border)] pb-2 text-center text-xs">
             <div className="text-[10px] font-mono text-[var(--muted)]"></div>
-            {WEEK_DAYS.map((d) => {
+            {weekDays.map((d) => {
               const isToday = d.dayNum === activeDay;
               return (
                 <div key={d.dayNum} className="flex justify-center px-1">
@@ -273,7 +305,7 @@ export function WeeklyScheduleWidget({
             </div>
 
             {/* Columnas para cada día */}
-            {WEEK_DAYS.map((d) => {
+            {weekDays.map((d) => {
               if (viewMode === 'Día' && d.dayNum !== activeDay) {
                 return null;
               }

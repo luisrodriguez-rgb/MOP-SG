@@ -61,6 +61,14 @@ export function DecisionHeroCard({
     return `${dayFormatted} · ${h12}:${m.toString().padStart(2, '0')} ${period}`;
   }, [dayFormatted, effectiveTime]);
 
+  const todayDateStr = useMemo(() => {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }, []);
+
   // Ejecución del motor de horario en tiempo real
   const currentBlockResult = useMemo(() => {
     return getCurrentBlock({
@@ -69,10 +77,11 @@ export function DecisionHeroCard({
       classes,
       subjectsMap,
       routines,
+      dateStr: todayDateStr,
       dayStart: '07:00',
       dayEnd: '21:30',
     });
-  }, [todayDayOfWeek, effectiveTime, classes, subjectsMap, routines]);
+  }, [todayDayOfWeek, effectiveTime, classes, subjectsMap, routines, todayDateStr]);
 
   // Selección inteligente de la siguiente mejor acción (y segunda en cola)
   const { recommendedTask, nextCandidate } = useMemo(() => {

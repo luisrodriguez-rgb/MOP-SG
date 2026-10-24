@@ -5,6 +5,13 @@ import { parseIcsCalendar } from '../importer/icsParser';
 
 const SG_ADMIN_INCUBATOR_AREA_ID = 'area-admin-incubadora';
 
+export function formatLocalDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 export const calendarFeedService = {
   /**
    * Obtiene todos los feeds guardados exclusivamente en localStorage
@@ -71,12 +78,17 @@ export const calendarFeedService = {
   /**
    * Sincroniza un feed iCal consumiendo /api/calendar/import-url y parseando con parseIcsCalendar.
    * Aplica desduplicación por externalUid y memberId.
+   * Separa eventos recurrentes (ScheduleBlock semanal con untilDate) de eventos únicos (ScheduleBlock con date específico).
+   * No crea Assignments para reuniones (solo bloquean horario).
    */
-  async syncFeed(feed: CalendarFeedConfig): Promise<{ success: boolean; eventCount: number; error?: string }> {
+  async syncFeed(
+    feed: CalendarFeedConfig,
+    baseNow: Date = new Date()
+  ): Promise<{ success: boolean; eventCount: number; error?: string }> {
     if (feed.type === 'ignore') {
       const updatedFeed: CalendarFeedConfig = {
         ...feed,
-        lastSyncedAt: new Date().toISOString(),
+        lastSyncedAt: baseNow.toISOString(),
         eventCount: 0,
       };
       this.saveFeed(updatedFeed);
@@ -84,7 +96,16 @@ export const calendarFeedService = {
     }
 
     try {
-      // 1. Descargar el archivo iCal a través del proxy seguro
+      // 1. Limpiar cualquier assignment rezagado creado previamente por iCal
+      const existingAssignments = await db.assignments.toArray();
+      const icsAssignments = existingAssignments.filter(
+        (a) => a.id.startsWith('asg_ics_') || a.source === 'ics'
+      );
+      for (const a of icsAssignments) {
+        await db.assignments.delete(a.id);
+      }
+
+      // 2. Descargar el archivo iCal a través del proxy seguro
       const res = await fetch('/api/calendar/import-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -100,139 +121,103 @@ export const calendarFeedService = {
         };
       }
 
-      // 2. Parsear eventos RFC 5545
+      // 3. Parsear eventos RFC 5545
       const events = parseIcsCalendar(data.content, { sourceCalendar: feed.name });
       if (events.length === 0) {
         const updatedFeed: CalendarFeedConfig = {
           ...feed,
-          lastSyncedAt: new Date().toISOString(),
+          lastSyncedAt: baseNow.toISOString(),
           eventCount: 0,
         };
         this.saveFeed(updatedFeed);
         return { success: true, eventCount: 0 };
       }
 
-      // 3. Obtener datos actuales para desduplicación
-      const existingBlocks = await db.scheduleBlocks.toArray();
-      const existingAssignments = await db.assignments.toArray();
-      const member = await db.members.get(feed.memberId);
-      const memberName = member ? member.name : 'Socio SG';
+      // 4. Parámetros de ventana temporal
+      const startOfToday = new Date(baseNow.getFullYear(), baseNow.getMonth(), baseNow.getDate(), 0, 0, 0, 0);
+      const maxFutureDate = new Date(startOfToday.getTime() + 60 * 24 * 60 * 60 * 1000); // +60 días
 
+      const existingBlocks = await db.scheduleBlocks.toArray();
       let processedCount = 0;
 
-      if (feed.type === 'fixed_blocks') {
-        // Bloques fijos: clases, monitorías, turnos del socio
-        for (const ev of events) {
-          const match = existingBlocks.find(
-            (b) => b.externalUid === ev.uid && b.memberId === feed.memberId
-          );
+      for (const ev of events) {
+        const isRecurring = Boolean(ev.recurrence);
+        let blockDate: string | undefined = undefined;
+        let blockUntilDate: string | undefined = undefined;
 
-          if (match) {
-            // Actualizar existente sin duplicar
-            await db.scheduleBlocks.update(match.id, {
-              startTime: ev.startTimeStr,
-              endTime: ev.endTimeStr,
-              dayOfWeek: ev.dayOfWeek || match.dayOfWeek || 1,
-              location: ev.location || match.location || 'Presencial / Turno',
-              title: ev.title || match.title,
-            });
-          } else {
-            // Crear nuevo bloque asociado al socio
-            const newBlock: ScheduleBlock = {
-              id: `block_ics_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-              subjectId: SG_ADMIN_INCUBATOR_AREA_ID,
-              dayOfWeek: ev.dayOfWeek || 1,
-              startTime: ev.startTimeStr,
-              endTime: ev.endTimeStr,
-              location: ev.location || 'Presencial / Turno',
-              source: 'ics',
-              externalUid: ev.uid,
-              externalCalendarId: feed.id,
-              memberId: feed.memberId,
-              title: ev.title,
-            };
-            await db.scheduleBlocks.add(newBlock);
+        if (isRecurring) {
+          // Evento recurrente: si tiene UNTIL y ya venció antes de hoy, descartar
+          if (ev.recurrence?.until) {
+            if (ev.recurrence.until < startOfToday) {
+              continue;
+            }
+            blockUntilDate = formatLocalDate(ev.recurrence.until);
           }
-          processedCount++;
+          blockDate = undefined; // Se repite semanalmente
+        } else {
+          // Evento único: descartar si terminó antes de hoy o si está a más de 60 días en el futuro
+          if (ev.end < startOfToday) {
+            continue;
+          }
+          if (ev.start > maxFutureDate) {
+            continue;
+          }
+          blockDate = formatLocalDate(ev.start);
+          blockUntilDate = undefined;
         }
-      } else if (feed.type === 'sg_meetings') {
-        // Reuniones SG: van al área Administración & Incubadora
-        for (const ev of events) {
-          const titleFormatted = ev.title.toLowerCase().startsWith('reunión') || ev.title.toLowerCase().startsWith('reunion')
-            ? ev.title
-            : `Reunión: ${ev.title}`;
 
-          // Bloque de horario para el socio
-          const blockMatch = existingBlocks.find(
-            (b) => b.externalUid === ev.uid && b.memberId === feed.memberId
-          );
+        // Determinar título y ubicación según el tipo de feed
+        let titleFormatted = ev.title;
+        let locationFormatted = ev.location || 'Presencial / Turno';
 
-          if (blockMatch) {
-            await db.scheduleBlocks.update(blockMatch.id, {
-              startTime: ev.startTimeStr,
-              endTime: ev.endTimeStr,
-              dayOfWeek: ev.dayOfWeek || blockMatch.dayOfWeek || 1,
-              location: ev.location || blockMatch.location || 'Reunión SG',
-              title: titleFormatted,
-            });
-          } else {
-            const newBlock: ScheduleBlock = {
-              id: `block_mtg_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-              subjectId: SG_ADMIN_INCUBATOR_AREA_ID,
-              dayOfWeek: ev.dayOfWeek || 1,
-              startTime: ev.startTimeStr,
-              endTime: ev.endTimeStr,
-              location: ev.location || 'Reunión SG',
-              source: 'ics',
-              externalUid: ev.uid,
-              externalCalendarId: feed.id,
-              memberId: feed.memberId,
-              title: titleFormatted,
-            };
-            await db.scheduleBlocks.add(newBlock);
-          }
-
-          // Entregable/evento de reunión para seguimiento
-          const asgMatch = existingAssignments.find(
-            (a) => a.externalUid === ev.uid && a.assigneeId === feed.memberId
-          );
-
-          const dueDateIso = ev.start ? ev.start.toISOString() : new Date().toISOString();
-
-          if (asgMatch) {
-            await db.assignments.update(asgMatch.id, {
-              title: titleFormatted,
-              dueDate: dueDateIso,
-              location: ev.location || asgMatch.location,
-              description: ev.description || asgMatch.description,
-            });
-          } else {
-            const newAsg: Assignment = {
-              id: `asg_ics_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-              subjectId: SG_ADMIN_INCUBATOR_AREA_ID,
-              title: titleFormatted,
-              description: ev.description || ev.location || 'Reunión sincronizada vía iCal',
-              dueDate: dueDateIso,
-              priority: 'high',
-              estimatedMinutes: 45,
-              status: 'pending',
-              location: ev.location || 'Virtual / Presencial',
-              source: 'ics',
-              externalUid: ev.uid,
-              externalCalendarId: feed.id,
-              assigneeId: feed.memberId,
-              assigneeName: memberName,
-            };
-            await db.assignments.add(newAsg);
-          }
-          processedCount++;
+        if (feed.type === 'sg_meetings') {
+          titleFormatted =
+            ev.title.toLowerCase().startsWith('reunión') || ev.title.toLowerCase().startsWith('reunion')
+              ? ev.title
+              : `Reunión: ${ev.title}`;
+          locationFormatted = ev.location || 'Reunión SG';
         }
+
+        // Buscar coincidencia para desduplicación
+        const match = existingBlocks.find(
+          (b) => b.externalUid === ev.uid && b.memberId === feed.memberId
+        );
+
+        if (match) {
+          await db.scheduleBlocks.update(match.id, {
+            startTime: ev.startTimeStr,
+            endTime: ev.endTimeStr,
+            dayOfWeek: ev.dayOfWeek || match.dayOfWeek || 1,
+            location: locationFormatted,
+            title: titleFormatted,
+            date: blockDate,
+            untilDate: blockUntilDate,
+          });
+        } else {
+          const newBlock: ScheduleBlock = {
+            id: `block_ics_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+            subjectId: SG_ADMIN_INCUBATOR_AREA_ID,
+            dayOfWeek: ev.dayOfWeek || 1,
+            startTime: ev.startTimeStr,
+            endTime: ev.endTimeStr,
+            location: locationFormatted,
+            source: 'ics',
+            externalUid: ev.uid,
+            externalCalendarId: feed.id,
+            memberId: feed.memberId,
+            title: titleFormatted,
+            date: blockDate,
+            untilDate: blockUntilDate,
+          };
+          await db.scheduleBlocks.add(newBlock);
+        }
+        processedCount++;
       }
 
-      // 4. Actualizar metadatos de sincronización
+      // 5. Actualizar metadatos de sincronización del feed
       const updatedFeed: CalendarFeedConfig = {
         ...feed,
-        lastSyncedAt: new Date().toISOString(),
+        lastSyncedAt: baseNow.toISOString(),
         eventCount: processedCount,
       };
       this.saveFeed(updatedFeed);

@@ -8,6 +8,7 @@ export interface GetCurrentBlockParams {
   classes: ScheduleBlock[];
   subjectsMap: Record<string, Subject>;
   routines?: FixedRoutine[];
+  dateStr?: string; // YYYY-MM-DD de la fecha evaluada (por defecto hoy)
   dayStart?: string;
   dayEnd?: string;
 }
@@ -50,6 +51,7 @@ export function getCurrentBlock({
   classes,
   subjectsMap,
   routines = [],
+  dateStr,
   dayStart = '07:00',
   dayEnd = '21:30',
 }: GetCurrentBlockParams): CurrentBlockResult {
@@ -57,8 +59,23 @@ export function getCurrentBlock({
   const startMin = timeToMinutes(dayStart);
   const endMin = timeToMinutes(dayEnd);
 
+  const todayDateStr =
+    dateStr ||
+    (() => {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    })();
+
   const todayClasses = classes
-    .filter((c) => c.dayOfWeek === dayOfWeek)
+    .filter((c) => {
+      if (c.dayOfWeek !== dayOfWeek) return false;
+      if (c.date && c.date !== todayDateStr) return false;
+      if (c.untilDate && todayDateStr > c.untilDate) return false;
+      return true;
+    })
     .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
 
   const todayRoutines = routines
@@ -123,6 +140,7 @@ export function getCurrentBlock({
       dayOfWeek,
       classes: todayClasses,
       routines: todayRoutines,
+      dateStr: todayDateStr,
       dayStart,
       dayEnd,
     });

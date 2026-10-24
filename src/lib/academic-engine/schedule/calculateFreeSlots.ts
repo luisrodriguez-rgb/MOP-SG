@@ -5,6 +5,7 @@ export interface CalculateFreeSlotsParams {
   dayOfWeek: DayOfWeek;
   classes: ScheduleBlock[];
   routines?: FixedRoutine[];
+  dateStr?: string;  // Fecha YYYY-MM-DD específica evaluada
   dayStart?: string; // Por defecto "07:00"
   dayEnd?: string;   // Por defecto "21:00"
   minUsefulMinutes?: number; // Por defecto 30 minutos
@@ -14,6 +15,7 @@ export function calculateFreeSlots({
   dayOfWeek,
   classes,
   routines = [],
+  dateStr,
   dayStart = '07:00',
   dayEnd = '21:00',
   minUsefulMinutes = 30,
@@ -21,13 +23,22 @@ export function calculateFreeSlots({
   const startMin = timeToMinutes(dayStart);
   const endMin = timeToMinutes(dayEnd);
 
-  // Filtrar bloques del día correspondiente
+  // Filtrar bloques del día correspondiente (validando fechas puntuales y límite untilDate)
   const todayClasses = classes
-    .filter((c) => c.dayOfWeek === dayOfWeek)
+    .filter((c) => {
+      if (c.dayOfWeek !== dayOfWeek) return false;
+      if (c.date) {
+        if (!dateStr || c.date !== dateStr) return false;
+      }
+      if (c.untilDate && dateStr) {
+        if (dateStr > c.untilDate) return false;
+      }
+      return true;
+    })
     .map((c) => ({
       start: timeToMinutes(c.startTime),
       end: timeToMinutes(c.endTime),
-      title: 'Bloque fijo',
+      title: c.title || 'Bloque fijo',
       isClass: true,
     }));
 

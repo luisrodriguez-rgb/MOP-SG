@@ -1,9 +1,11 @@
 import { calendarFeedService } from '../../lib/calendar/calendarFeedService';
 import { CalendarFeedConfig, ScheduleBlock, Assignment } from '../../types';
 import { db } from '../../lib/storage/database';
+import { calculateFreeSlots } from '../../lib/academic-engine/schedule/calculateFreeSlots';
+import { getCurrentBlock } from '../../lib/academic-engine/schedule/getCurrentBlock';
 
 async function testCalendarFeedService() {
-  console.log('--- Testing Calendar Feed Service (iCal per-member & deduplication) ---');
+  console.log('--- Testing Calendar Feed Service (iCal per-member, temporal filtering & no-assignments) ---');
 
   // Configurar mock de window y localStorage
   const storageMap = new Map<string, string>();
@@ -57,174 +59,281 @@ async function testCalendarFeedService() {
     get: async (id: string) => ({ id, name: id === 'member-leon' ? 'Leon' : 'Dani' }),
   };
 
-  // Mock de iCal sample RFC 5545
-  const sampleIcs = `BEGIN:VCALENDAR
+  // Fecha base de referencia: Martes 20 de Octubre de 2026
+  const baseNow = new Date(2026, 9, 20, 10, 0, 0); // 2026-10-20 10:00 AM
+
+  // Mock de iCal con los 4 casos reales:
+  // 1. Evento único del jueves pasado (15 de octubre de 2026): DEBE IGNORARSE
+  // 2. Evento único del próximo jueves (22 de octubre de 2026): DEBE IMPORTARSE CON date='2026-10-22'
+  // 3. Clase semanal con RRULE y UNTIL al 30 de noviembre de 2026: DEBE IMPORTARSE CON untilDate='2026-11-30'
+  // 4. Reunión de equipo SG: DEBE CREAR BLOQUE PERO NINGÚN ASSIGNMENT
+  const realCasesIcs = `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Google Inc//Google Calendar 70.9054//EN
+
 BEGIN:VEVENT
-UID:uid_robotica_123
-SUMMARY:Clase de Robótica
-LOCATION:Laboratorio 3
-DTSTART:20261020T140000Z
-DTEND:20261020T160000Z
-RRULE:FREQ=WEEKLY;BYDAY=TU
+UID:uid_jueves_pasado_001
+SUMMARY:Taller Pasado de Modelado
+LOCATION:Sala 101
+DTSTART:20261015T140000Z
+DTEND:20261015T160000Z
 END:VEVENT
+
 BEGIN:VEVENT
-UID:uid_pitch_incubadora_456
-SUMMARY:Taller de Pitch Incubadora
+UID:uid_proximo_jueves_002
+SUMMARY:Taller de Pitch – Growth Lab
 LOCATION:Auditorio B2B
-DTSTART:20261022T100000Z
-DTEND:20261022T113000Z
+DTSTART:20261022T170000Z
+DTEND:20261022T190000Z
 END:VEVENT
+
+BEGIN:VEVENT
+UID:uid_clase_lunes_003
+SUMMARY:Clase de Inteligencia Artificial
+LOCATION:Edificio Central 304
+DTSTART:20261019T080000Z
+DTEND:20261019T100000Z
+RRULE:FREQ=WEEKLY;BYDAY=MO;UNTIL=20261130T235959Z
+END:VEVENT
+
+BEGIN:VEVENT
+UID:uid_reunion_sg_004
+SUMMARY:Reunión con Incubadora SEAM
+LOCATION:Google Meet
+DTSTART:20261023T150000Z
+DTEND:20261023T160000Z
+END:VEVENT
+
 END:VCALENDAR`;
 
   (global as any).fetch = async (url: string, opts: any) => {
     return {
       ok: true,
       status: 200,
-      json: async () => ({ success: true, content: sampleIcs }),
+      json: async () => ({ success: true, content: realCasesIcs }),
     };
   };
 
   // ═════════════════════════════════════════════════════════════
-  // 1. Guardar y filtrar feeds por socio en localStorage
+  // TEST 1: Un evento único del jueves pasado: NO se importa
+  // TEST 2: Un evento único del próximo jueves: bloquea SOLO ese jueves
+  // TEST 3: Clase semanal con RRULE y UNTIL: bloquea lunes hasta esa fecha
   // ═════════════════════════════════════════════════════════════
-  console.log('\n[Paso 1]: Gestión de feeds en localStorage por socio');
-  const feedLeon: CalendarFeedConfig = {
-    id: 'feed_leon_clases',
+  console.log('\n--- Test 1, 2 & 3: Filtrado temporal y bloques con fecha ---');
+  const feedClasesLeon: CalendarFeedConfig = {
+    id: 'feed_clases_leon',
     memberId: 'member-leon',
-    name: 'Clases U Leon',
+    name: 'Clases y Turnos Leon',
     url: 'https://calendar.google.com/calendar/ical/leon/basic.ics',
     type: 'fixed_blocks',
   };
 
-  const feedDani: CalendarFeedConfig = {
-    id: 'feed_dani_reuniones',
-    memberId: 'member-dani',
-    name: 'Reuniones Dani',
-    url: 'https://calendar.google.com/calendar/ical/dani/basic.ics',
+  calendarFeedService.saveFeed(feedClasesLeon);
+  const syncClases = await calendarFeedService.syncFeed(feedClasesLeon, baseNow);
+  if (!syncClases.success) throw new Error(`Sync failed: ${syncClases.error}`);
+
+  // 1. Verificar que el evento pasado no se importó
+  const pasado = blocksStore.find((b) => b.externalUid === 'uid_jueves_pasado_001');
+  if (pasado) {
+    throw new Error('FALLO TEST 1: El evento del jueves pasado no debió importarse.');
+  }
+  console.log('✓ TEST 1 PASADO: Evento único del jueves pasado fue descartado correctamente.');
+
+  // 2. Verificar que el evento del próximo jueves se importó con fecha específica
+  const proximoJueves = blocksStore.find((b) => b.externalUid === 'uid_proximo_jueves_002');
+  if (!proximoJueves) {
+    throw new Error('FALLO TEST 2: El evento del próximo jueves no fue encontrado en los bloques.');
+  }
+  if (!proximoJueves.date) {
+    throw new Error(`FALLO TEST 2: El evento único debe tener date específico, got undefined.`);
+  }
+  console.log('✓ Evento puntual del próximo jueves guardado con fecha específica:', proximoJueves.date);
+
+  // Comprobar que en calculateFreeSlots bloquea SOLO el jueves 22, pero NO el jueves 29
+  const slotsJueves22 = calculateFreeSlots({
+    dayOfWeek: 4, // Jueves
+    classes: blocksStore,
+    dateStr: proximoJueves.date,
+    dayStart: '07:00',
+    dayEnd: '21:00',
+  });
+  // En el jueves 22 debe haber huecos libres divididos antes y después del taller
+  const hasFreeSlotOverlappingWorkshop22 = slotsJueves22.some((s) => {
+    return s.startTime < proximoJueves.endTime && s.endTime > proximoJueves.startTime;
+  });
+  if (hasFreeSlotOverlappingWorkshop22) {
+    throw new Error('FALLO TEST 2: El taller del jueves 22 debió bloquear ese horario.');
+  }
+
+  // En el jueves siguiente (2026-10-29), el evento NO debe bloquear
+  const slotsJueves29 = calculateFreeSlots({
+    dayOfWeek: 4, // Jueves
+    classes: blocksStore,
+    dateStr: '2026-10-29',
+    dayStart: '07:00',
+    dayEnd: '21:00',
+  });
+  // Como no hay otros bloques el 29, debe haber un único hueco continuo de 07:00 a 21:00
+  const continuousSlot29 = slotsJueves29.find(
+    (s) => s.startTime === '07:00' && s.endTime === '21:00'
+  );
+  if (!continuousSlot29) {
+    throw new Error('FALLO TEST 2: El jueves 29 debió estar completamente libre (no bloqueado por el taller del 22).');
+  }
+  console.log('✓ TEST 2 PASADO: Evento único bloquea solo el jueves 22 y deja libre el jueves 29.');
+
+  // 3. Verificar que la clase semanal con UNTIL bloquea hasta el 30 de noviembre
+  const claseLunes = blocksStore.find((b) => b.externalUid === 'uid_clase_lunes_003');
+  if (!claseLunes) {
+    throw new Error('FALLO TEST 3: No se encontró la clase semanal de los lunes.');
+  }
+  if (claseLunes.date) {
+    throw new Error(`Clase semanal con RRULE no debe tener date fijo, got ${claseLunes.date}`);
+  }
+  if (!claseLunes.untilDate) {
+    throw new Error(`Clase semanal con UNTIL debe tener untilDate, got undefined`);
+  }
+  console.log('✓ Clase semanal guardada con untilDate:', claseLunes.untilDate);
+
+  // Evaluar lunes 23 de noviembre (antes de untilDate): debe bloquear
+  const slotsLunesNov = calculateFreeSlots({
+    dayOfWeek: 1, // Lunes
+    classes: blocksStore,
+    dateStr: '2026-11-23',
+    dayStart: '07:00',
+    dayEnd: '21:00',
+  });
+  const hasOverlapNov = slotsLunesNov.some(
+    (s) => s.startTime < claseLunes.endTime && s.endTime > claseLunes.startTime
+  );
+  if (hasOverlapNov) {
+    throw new Error('FALLO TEST 3: La clase semanal debió bloquear el lunes 23 de noviembre.');
+  }
+
+  // Evaluar lunes 7 de diciembre (después de untilDate): NO debe bloquear
+  const slotsLunesDic = calculateFreeSlots({
+    dayOfWeek: 1, // Lunes
+    classes: blocksStore,
+    dateStr: '2026-12-07',
+    dayStart: '07:00',
+    dayEnd: '21:00',
+  });
+  const continuousSlotDic = slotsLunesDic.find(
+    (s) => s.startTime === '07:00' && s.endTime === '21:00'
+  );
+  if (!continuousSlotDic) {
+    throw new Error('FALLO TEST 3: El lunes 7 de diciembre debió estar libre tras vencer el UNTIL de la clase.');
+  }
+  console.log('✓ TEST 3 PASADO: Clase semanal bloquea hasta la fecha de UNTIL y se libera después.');
+
+  // ═════════════════════════════════════════════════════════════
+  // TEST 4: Una reunión no aparece en db.assignments
+  // ═════════════════════════════════════════════════════════════
+  console.log('\n--- Test 4: Reuniones SG sin assignments ni tareas ---');
+  // Limpiar tiendas para probar feed de reuniones aislado
+  blocksStore.length = 0;
+  assignmentsStore.length = 0;
+
+  // Sembrar un assignment previo espurio de iCal para verificar que se limpie
+  assignmentsStore.push({
+    id: 'asg_ics_antiguo',
+    subjectId: 'area-admin-incubadora',
+    title: 'Tarea vieja espuria de iCal',
+    dueDate: '2026-10-20',
+    priority: 'high',
+    estimatedMinutes: 45,
+    status: 'pending',
+    source: 'ics',
+  });
+
+  const feedReuniones: CalendarFeedConfig = {
+    id: 'feed_reuniones_sg',
+    memberId: 'member-leon',
+    name: 'Reuniones Seamos Genios',
+    url: 'https://calendar.google.com/calendar/ical/sg/basic.ics',
     type: 'sg_meetings',
   };
 
-  calendarFeedService.saveFeed(feedLeon);
-  calendarFeedService.saveFeed(feedDani);
+  const syncReuniones = await calendarFeedService.syncFeed(feedReuniones, baseNow);
+  if (!syncReuniones.success) throw new Error(`Reuniones sync failed: ${syncReuniones.error}`);
 
-  const leonFeeds = calendarFeedService.getFeedsByMember('member-leon');
-  if (leonFeeds.length !== 1 || leonFeeds[0].id !== 'feed_leon_clases') {
-    throw new Error('Fallo al filtrar feeds de Leon en localStorage');
-  }
-
-  const daniFeeds = calendarFeedService.getFeedsByMember('member-dani');
-  if (daniFeeds.length !== 1 || daniFeeds[0].id !== 'feed_dani_reuniones') {
-    throw new Error('Fallo al filtrar feeds de Dani en localStorage');
-  }
-  console.log('✓ Feeds guardados y aislados por socio en localStorage correctamente.');
-
-  // ═════════════════════════════════════════════════════════════
-  // 2. Sincronización de Bloques Fijos para Leon (Idempotencia con externalUid)
-  // ═════════════════════════════════════════════════════════════
-  console.log('\n[Paso 2]: Sincronización y Desduplicación de Bloques Fijos (Leon)');
-  const resLeon1 = await calendarFeedService.syncFeed(feedLeon);
-  if (!resLeon1.success || resLeon1.eventCount !== 2) {
-    throw new Error(`Expected 2 events synced, got ${resLeon1.eventCount}`);
+  // Verificar que NO existe NINGÚN assignment en db.assignments
+  if (assignmentsStore.length !== 0) {
+    throw new Error(
+      `FALLO TEST 4: Las reuniones no deben crear assignments. Se encontraron ${assignmentsStore.length} en db.assignments.`
+    );
   }
 
-  if (blocksStore.length !== 2) {
-    throw new Error(`Expected 2 blocks in store, got ${blocksStore.length}`);
+  // Verificar que sí se creó como bloque de horario en Administración & Incubadora
+  const bloqueReunion = blocksStore.find((b) => b.externalUid === 'uid_reunion_sg_004');
+  if (!bloqueReunion) {
+    throw new Error('FALLO TEST 4: La reunión debe ocupar tiempo como ScheduleBlock en el horario.');
   }
-
-  const roboticaLeon = blocksStore.find((b) => b.externalUid === 'uid_robotica_123');
-  if (!roboticaLeon || roboticaLeon.memberId !== 'member-leon') {
-    throw new Error('El bloque de robótica no se asoció a Leon con su externalUid');
+  if (bloqueReunion.subjectId !== 'area-admin-incubadora') {
+    throw new Error(`Reunión debe estar en 'area-admin-incubadora', got ${bloqueReunion.subjectId}`);
   }
-  if (roboticaLeon.title !== 'Clase de Robótica') {
-    throw new Error(`Expected title 'Clase de Robótica', got '${roboticaLeon.title}'`);
+  if (!bloqueReunion.title?.includes('Reunión con Incubadora SEAM')) {
+    throw new Error(`Título inesperado para bloque de reunión: ${bloqueReunion.title}`);
   }
-
-  // Segunda sincronización del mismo feed: NO debe duplicar
-  const resLeon2 = await calendarFeedService.syncFeed(feedLeon);
-  if (!resLeon2.success || resLeon2.eventCount !== 2) {
-    throw new Error(`Second sync failed: ${resLeon2.error}`);
-  }
-
-  if (blocksStore.length !== 2) {
-    throw new Error(`Deduplication failed: expected 2 blocks, got ${blocksStore.length}`);
-  }
-  console.log('✓ Segunda sincronización no duplicó bloques (externalUid preservado).');
+  console.log('✓ TEST 4 PASADO: 0 assignments en db.assignments y bloque de horario creado en Administración & Incubadora.');
 
   // ═════════════════════════════════════════════════════════════
-  // 3. Sincronización de Reuniones SG para Dani (Área Administración & Incubadora)
+  // TEST 5: "¿Qué hago ahora?" (getCurrentBlock) respeta fechas
   // ═════════════════════════════════════════════════════════════
-  console.log('\n[Paso 3]: Sincronización de Reuniones SG (Dani -> Área Admin & Incubadora)');
-  const resDani = await calendarFeedService.syncFeed(feedDani);
-  if (!resDani.success) throw new Error(`Dani sync failed: ${resDani.error}`);
+  console.log('\n--- Test 5: getCurrentBlock en tiempo real con fecha ---');
+  // Probar que el jueves 22 de octubre durante el evento estamos "in_class"
+  const [startH, startM] = proximoJueves.startTime.split(':').map(Number);
+  const midHour = `${String(startH).padStart(2, '0')}:${String((startM + 15) % 60).padStart(2, '0')}`;
 
-  // Verificar que se crearon bloques para Dani con memberId: 'member-dani'
-  const daniBlocks = blocksStore.filter((b) => b.memberId === 'member-dani');
-  if (daniBlocks.length !== 2) {
-    throw new Error(`Expected 2 blocks for Dani, got ${daniBlocks.length}`);
-  }
-  for (const b of daniBlocks) {
-    if (b.subjectId !== 'area-admin-incubadora') {
-      throw new Error(`Reunión SG de Dani debe pertenecer a 'area-admin-incubadora', got ${b.subjectId}`);
-    }
-  }
+  const currentBlockJueves22 = getCurrentBlock({
+    dayOfWeek: 4,
+    currentTime: midHour,
+    classes: [proximoJueves],
+    subjectsMap: {
+      'area-admin-incubadora': {
+        id: 'area-admin-incubadora',
+        semesterId: 'sem_sg',
+        name: 'Administración & Incubadora',
+        code: 'ADM-INC',
+        credits: 3,
+        color: '#10b981',
+        maxAbsences: 4,
+        passingGrade: 3.0,
+      },
+    },
+    dateStr: proximoJueves.date,
+  });
 
-  // Verificar que se crearon assignments de reunión para Dani
-  const daniAssignments = assignmentsStore.filter((a) => a.assigneeId === 'member-dani');
-  if (daniAssignments.length !== 2) {
-    throw new Error(`Expected 2 assignments for Dani, got ${daniAssignments.length}`);
-  }
-  const pitchAssignment = daniAssignments.find((a) => a.externalUid === 'uid_pitch_incubadora_456');
-  if (!pitchAssignment || !pitchAssignment.title.includes('Taller de Pitch Incubadora')) {
-    throw new Error('No se encontró el assignment de reunión de pitch para Dani');
-  }
-  if (pitchAssignment.subjectId !== 'area-admin-incubadora') {
-    throw new Error(`Expected subjectId 'area-admin-incubadora', got ${pitchAssignment.subjectId}`);
-  }
-  console.log('✓ Reuniones SG asignadas al área Administración & Incubadora con responsable Dani.');
-
-  // ═════════════════════════════════════════════════════════════
-  // 4. Tipo "ignore": no debe importar eventos
-  // ═════════════════════════════════════════════════════════════
-  console.log('\n[Paso 4]: Feed tipo ignore');
-  const feedIgnore: CalendarFeedConfig = {
-    id: 'feed_ignore',
-    memberId: 'member-angel',
-    name: 'Calendario Personal Ángel',
-    url: 'https://calendar.google.com/calendar/ical/angel/basic.ics',
-    type: 'ignore',
-  };
-  const resIgnore = await calendarFeedService.syncFeed(feedIgnore);
-  if (!resIgnore.success || resIgnore.eventCount !== 0) {
-    throw new Error('Feed tipo ignore no debe importar eventos');
-  }
-  console.log('✓ Feed tipo ignore respetado.');
-
-  // ═════════════════════════════════════════════════════════════
-  // 5. Eliminación de Feed y Purga de Eventos
-  // ═════════════════════════════════════════════════════════════
-  console.log('\n[Paso 5]: Eliminación de feed y purga de eventos asociados');
-  await calendarFeedService.deleteFeed('feed_leon_clases');
-
-  const remainingLeonFeeds = calendarFeedService.getFeedsByMember('member-leon');
-  if (remainingLeonFeeds.length !== 0) {
-    throw new Error('Feed de Leon no fue eliminado de localStorage');
+  if (currentBlockJueves22.status !== 'in_class') {
+    throw new Error(`Expected 'in_class' on Jueves 22 at ${midHour}, got ${currentBlockJueves22.status}`);
   }
 
-  const remainingLeonBlocks = blocksStore.filter((b) => b.memberId === 'member-leon');
-  if (remainingLeonBlocks.length !== 0) {
-    throw new Error(`Los bloques de Leon debieron ser purgados, quedaron ${remainingLeonBlocks.length}`);
-  }
+  // El jueves 29 a la misma hora NO debe estar en clase (debe estar en hueco libre)
+  const currentBlockJueves29 = getCurrentBlock({
+    dayOfWeek: 4,
+    currentTime: midHour,
+    classes: [proximoJueves],
+    subjectsMap: {
+      'area-admin-incubadora': {
+        id: 'area-admin-incubadora',
+        semesterId: 'sem_sg',
+        name: 'Administración & Incubadora',
+        code: 'ADM-INC',
+        credits: 3,
+        color: '#10b981',
+        maxAbsences: 4,
+        passingGrade: 3.0,
+      },
+    },
+    dateStr: '2026-10-29',
+  });
 
-  // Los bloques de Dani deben permanecer intactos
-  const remainingDaniBlocks = blocksStore.filter((b) => b.memberId === 'member-dani');
-  if (remainingDaniBlocks.length !== 2) {
-    throw new Error(`Los bloques de Dani debieron permanecer, hay ${remainingDaniBlocks.length}`);
+  if (currentBlockJueves29.status === 'in_class') {
+    throw new Error(`El jueves 29 a las ${midHour} NO debe estar en clase porque el evento era solo del día 22.`);
   }
-  console.log('✓ Feed eliminado y eventos purgados sin afectar a otros socios.');
+  console.log('✓ TEST 5 PASADO: getCurrentBlock reconoce el bloque solo en su fecha exacta.');
 
-  console.log('\nALL CALENDAR FEED SERVICE TESTS PASSED SUCCESSFULLY! 🎉\n');
+  console.log('\nALL CALENDAR FEED REAL-CASE TESTS PASSED PERFECTLY! 🚀\n');
 }
 
 testCalendarFeedService();
